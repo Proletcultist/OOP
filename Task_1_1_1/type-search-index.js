@@ -1,0 +1,1 @@
+typeSearchIndex = [{"l":"All Classes","url":"allclasses-index.html"},{"p":"org.example.util","l":"Heapifier"},{"p":"org.example.util","l":"IntArraySorter"}]
