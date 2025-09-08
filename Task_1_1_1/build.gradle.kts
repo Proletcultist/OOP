@@ -9,6 +9,7 @@ plugins {
     `java-library`
     id("com.diffplug.spotless") version "7.2.1"
     jacoco
+    checkstyle
 }
 
 repositories {
@@ -35,8 +36,14 @@ java {
 
 spotless{
 	java{
-		googleJavaFormat()
+		googleJavaFormat().aosp()
 	}
+}
+
+tasks.jacocoTestReport {
+    reports {
+        xml.required = true
+    }
 }
 
 tasks.named<Test>("test") {
