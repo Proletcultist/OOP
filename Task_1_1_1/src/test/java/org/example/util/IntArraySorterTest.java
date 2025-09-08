@@ -50,4 +50,20 @@ public class IntArraySorterTest {
 
     Assertions.assertArrayEquals(arr, new int[] {1, 2, 3, 4, 5});
   }
+
+  @Test
+  public void testNegative() {
+    var arr = IntArraySorter.heapSort(new int[] {-12, 0, 9, -100, 92});
+
+    Assertions.assertArrayEquals(arr, new int[] {-100, -12, 0, 9, 92});
+  }
+
+  @Test
+  public void testMinMax() {
+    var arr =
+        IntArraySorter.heapSort(new int[] {Integer.MAX_VALUE, 0, 127, 512, -10, Integer.MIN_VALUE});
+
+    Assertions.assertArrayEquals(
+        arr, new int[] {Integer.MIN_VALUE, -10, 0, 127, 512, Integer.MAX_VALUE});
+  }
 }
