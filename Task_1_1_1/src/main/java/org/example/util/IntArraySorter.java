@@ -3,6 +3,8 @@ package org.example.util;
 /** Collection of sorting algorithms for arrays (only heapsort for now). */
 public class IntArraySorter {
 
+    private IntArraySorter() {}
+
     /**
      * Sort array with heapsort algorithm.
      *

@@ -3,6 +3,8 @@ package org.example.util;
 /** Utils for making and maintaining heap on int array. */
 public class Heapifier {
 
+    private Heapifier() {}
+
     /**
      * Make heap on existing array.
      *
