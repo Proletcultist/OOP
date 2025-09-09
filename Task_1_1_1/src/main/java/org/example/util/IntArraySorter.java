@@ -10,6 +10,10 @@ public class IntArraySorter {
      * @return Reference on sorted array (same as passed as argument)
      */
     public static int[] heapSort(int[] arr) {
+        if (arr == null) {
+            throw new NullPointerException();
+        }
+
         Heapifier.makeHeap(arr, arr.length);
 
         for (int i = arr.length - 1; i > 0; i--) {
