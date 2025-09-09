@@ -9,7 +9,7 @@ public class Heapifier {
      * @param arr - array, on which heap will be built
      * @param size - size of a heap on array
      */
-    public static void makeHeap(int[] arr, int size) {
+    static void makeHeap(int[] arr, int size) {
         // Sift down all nodes, starting from last non-leaf node
         for (int i = size / 2 - 1; i >= 0; i--) {
             siftDown(arr, size, i);
@@ -23,7 +23,7 @@ public class Heapifier {
      * @param size - size of a heap
      * @param index - index of node to sift down
      */
-    public static void siftDown(int[] arr, int size, int index) {
+    static void siftDown(int[] arr, int size, int index) {
         int l = index * 2 + 1;
         int r = index * 2 + 2;
 
