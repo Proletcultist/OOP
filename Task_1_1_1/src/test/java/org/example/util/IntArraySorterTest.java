@@ -68,4 +68,13 @@ public class IntArraySorterTest {
         Assertions.assertArrayEquals(
                 arr, new int[] {Integer.MIN_VALUE, -10, 0, 127, 512, Integer.MAX_VALUE});
     }
+
+    @Test
+    public void testNull() {
+        Assertions.assertThrows(
+                NullPointerException.class,
+                () -> {
+                    IntArraySorter.heapSort(null);
+                });
+    }
 }
