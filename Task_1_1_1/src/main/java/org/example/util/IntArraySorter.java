@@ -9,9 +9,8 @@ public class IntArraySorter {
      * Sort array with heapsort algorithm.
      *
      * @param arr - Array to sort
-     * @return Reference on sorted array (same as passed as argument)
      */
-    public static int[] heapSort(int[] arr) {
+    public static void heapSort(int[] arr) {
         if (arr == null) {
             throw new NullPointerException();
         }
@@ -26,7 +25,5 @@ public class IntArraySorter {
 
             Heapifier.siftDown(arr, i, 0);
         }
-
-        return arr;
     }
 }
