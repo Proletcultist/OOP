@@ -11,8 +11,7 @@ if [ ! -d "$CLASSES_DIR" ]; then
 	mkdir -p "$CLASSES_DIR"
 fi
 
-# Compile org.example.util.* classes
-javac "$SRC_DIR"/org/example/util/* -d "$CLASSES_DIR"
+javac -d "$CLASSES_DIR" "$SRC_DIR"/org/example/*.java "$SRC_DIR"/org/example/util/*.java
 
 # Create lib output dir if not exist
 if [ ! -d "$JAR_DIR" ]; then
@@ -20,7 +19,7 @@ if [ ! -d "$JAR_DIR" ]; then
 fi
 
 # Create jar archive with all compiled classes
-jar -cf "$JAR_DIR/$LIB_NAME.jar" -C "$CLASSES_DIR" .
+jar -cfe "$JAR_DIR/$LIB_NAME.jar" org.example.Main -C "$CLASSES_DIR" .
 
 # Create javadoc output dit if not exist
 if [ ! -d "$JAVADOC_DIR" ]; then
@@ -29,3 +28,5 @@ fi
 
 # Generate javadoc for org.example.util.* classes
 javadoc "$SRC_DIR"/org/example/util/* -d "$JAVADOC_DIR"
+
+java -jar "$JAR_DIR/$LIB_NAME.jar"
