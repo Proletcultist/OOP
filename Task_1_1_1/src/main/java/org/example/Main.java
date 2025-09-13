@@ -3,18 +3,21 @@ package org.example;
 import java.util.Arrays;
 import org.example.util.IntArraySorter;
 
-public class Main{
-	public static void main(String[] args){
-		System.out.println("Example of using hapsort");
+/** Example of usage of IntArraySorter. */
+public class Main {
 
-		var arr = new int[] {4, 3, 2, 1};
+    /** Main method. */
+    public static void main(String[] args) {
+        System.out.println("Example of using hapsort");
 
-		System.out.print("Unsorted array: ");
-		System.out.println(Arrays.toString(arr));
+        var arr = new int[] {4, 3, 2, 1};
 
-		IntArraySorter.heapSort(arr);
-		
-		System.out.print("Sorted array: ");
-		System.out.println(Arrays.toString(arr));
-	}
+        System.out.print("Unsorted array: ");
+        System.out.println(Arrays.toString(arr));
+
+        IntArraySorter.heapSort(arr);
+
+        System.out.print("Sorted array: ");
+        System.out.println(Arrays.toString(arr));
+    }
 }
