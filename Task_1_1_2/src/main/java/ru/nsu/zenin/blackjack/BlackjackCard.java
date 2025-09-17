@@ -2,25 +2,56 @@ package ru.nsu.zenin.blackjack;
 
 import static ru.nsu.zenin.cardgame.Card.Rank.*;
 
-import java.util.function.Function;
 import ru.nsu.zenin.cardgame.Card;
-import ru.nsu.zenin.cardgame.Card.Rank;
 import ru.nsu.zenin.cardgame.exception.DriverException;
 
 public class BlackjackCard extends Card {
 
-    private boolean isHidden;
-    private final Function<Integer, Integer> getPoints;
+    private boolean isHidden = false;
+    private BlackjackPlayer owner;
+    private int points;
 
-    public BlackjackCard(Card card, boolean isHidden) {
+    public BlackjackCard(Card card) {
         super(card.getSuit(), card.getRank());
-
-        this.isHidden = isHidden;
-        this.getPoints = rankToGetPointsFunc(card.getRank());
     }
 
-    public int getPoints(int currScore) {
-        return this.getPoints.apply(currScore);
+    public BlackjackCard withOwner(BlackjackPlayer owner) {
+        this.owner = owner;
+
+        points =
+                switch (this.getRank()) {
+                    case TWO -> 2;
+                    case THREE -> 3;
+                    case FOUR -> 4;
+                    case FIVE -> 5;
+                    case SIX -> 6;
+                    case SEVEN -> 7;
+                    case EIGHT -> 8;
+                    case NINE -> 9;
+                    case TEN -> 10;
+                    case JACK -> 10;
+                    case QUEEN -> 10;
+                    case KING -> 10;
+                    case ACE -> owner.getPoints() + 11 > 21 ? 1 : 11;
+                    default ->
+                            throw new DriverException(
+                                    String.format(
+                                            "Illegal card rank \"%s\" for blackjack",
+                                            this.getRank().toString()));
+                };
+
+        owner.addPoints(points);
+        return this;
+    }
+
+    public BlackjackCard cleared() {
+        this.owner = null;
+        this.isHidden = false;
+        return this;
+    }
+
+    public boolean isHidden() {
+        return isHidden;
     }
 
     public void hide() {
@@ -36,29 +67,7 @@ public class BlackjackCard extends Card {
         if (isHidden) {
             return "<Hidden card>";
         } else {
-            return super.toString() + String.format(" (%d)", points);
+            return super.toString() + (owner == null ? "" : String.format(" (%d)", points));
         }
-    }
-
-    private Function<Integer, Integer> rankToGetPointsFunc(Rank rank) {
-        return switch (rank) {
-            case TWO -> x -> 2;
-            case THREE -> x -> 3;
-            case FOUR -> x -> 4;
-            case FIVE -> x -> 5;
-            case SIX -> x -> 6;
-            case SEVEN -> x -> 7;
-            case EIGHT -> x -> 8;
-            case NINE -> x -> 9;
-            case TEN -> x -> 10;
-            case JACK -> x -> 10;
-            case QUEEN -> x -> 10;
-            case KING -> x -> 10;
-            case ACE -> currScore -> currScore + 11 > 21 ? 1 : 1;
-            default ->
-                    throw new DriverException(
-                            String.format(
-                                    "Illegal card rank \"%s\" for blackjack", rank.toString()));
-        };
     }
 }
