@@ -31,7 +31,7 @@ dependencies {
 // Apply a specific Java toolchain to ease working on different environments.
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(11)
+        languageVersion = JavaLanguageVersion.of(14)
     }
 }
 
@@ -49,7 +49,13 @@ tasks.jacocoTestReport {
 
 application {
     // Define the main class for the application.
-    mainClass = "ru.nsu.zenin.CLIblackjack.App"
+    mainClass = "ru.nsu.zenin.cliblackjack.App"
+}
+
+tasks.jar{
+	manifest{
+		attributes["Main-Class"] = "ru.nsu.zenin.cliblackjack.App"
+	}
 }
 
 tasks.named<Test>("test") {
