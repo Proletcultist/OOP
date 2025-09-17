@@ -5,7 +5,6 @@ import ru.nsu.zenin.cardgame.Card.Rank.*;
 import ru.nsu.zenin.cardgame.Deck;
 import ru.nsu.zenin.cardgame.Driver;
 import ru.nsu.zenin.cardgame.Game;
-import ru.nsu.zenin.cardgame.Hand;
 import ru.nsu.zenin.cardgame.Message;
 import ru.nsu.zenin.cardgame.PlayerInterface;
 import ru.nsu.zenin.cardgame.Request;
@@ -13,25 +12,26 @@ import ru.nsu.zenin.cardgame.exception.DriverException;
 
 public class BlackjackDriver implements Driver {
 
-    private int playerPoints = 0, dealerPoints = 0;
     private boolean isPlayersTurn = true;
     private boolean isDealersCardsUnhidden = false;
     private boolean isDealerEndedHisTurn = false;
     private int roundNumber = 1;
     private int playerWins = 0, dealerWins = 0;
 
+    private final BlackjackPlayer player = new BlackjackPlayer();
+    private final BlackjackPlayer dealer = new BlackjackPlayer();
     private Game game;
-    private Hand dealerHand = new Hand();
-    private PlayerInterface playerInterface;
     private Deck deck;
     private HandsStatus handsStatus = HandsStatus.UNFINISHED;
+
+    private PlayerInterface playerInterface;
 
     public void initializeGame(Game game) {
         if (game.getPlayerInterfaces().length != 1) {
             throw new DriverException(
                     String.format(
                             "Need exactly 1 player for blackjack, got %d",
-                            game.getPlayers().length));
+                            game.getPlayerInterfaces().length));
         }
         if (game.getDeck().size() < 4) {
             throw new DriverException(
@@ -42,7 +42,7 @@ public class BlackjackDriver implements Driver {
         playerInterface = game.getPlayerInterfaces()[0];
         deck = game.getDeck();
 
-        deck.convertAllCards(card -> new BlackjackCard(card, false));
+        deck.convertAllCards(card -> new BlackjackCard(card));
 
         playerInterface.tell(new Message("Welcome to the CLI Blackjack!"));
 
@@ -62,33 +62,48 @@ public class BlackjackDriver implements Driver {
         }
     }
 
-    public void initializeNextRound() {}
+    public void initializeNextRound() {
+        while (player.getHand().size() != 0) {
+            deck.putOnTop(((BlackjackCard) player.getHand().removeCard(0)).cleared());
+        }
+        while (dealer.getHand().size() != 0) {
+            deck.putOnTop(((BlackjackCard) dealer.getHand().removeCard(0)).cleared());
+        }
+        isPlayersTurn = true;
+        isDealerEndedHisTurn = false;
+        isDealersCardsUnhidden = false;
+
+        player.setPointToZero();
+        dealer.setPointToZero();
+
+        roundNumber++;
+
+        playerInterface.printLinesSeparator();
+
+        startRound();
+    }
 
     private void startRound() {
         deck.shuffle();
 
-        dealerHand.addCards(deck.getTop(), deck.getTop());
-        dealerPoints +=
-                dealerHand.stream()
-                        .map(card -> ((BlackjackCard) card).getPoints(dealerPoints))
-                        .reduce((a, b) -> a + b)
-                        .orElse(0);
+        dealer.getHand()
+                .addCards(
+                        ((BlackjackCard) deck.getTop()).withOwner(dealer),
+                        ((BlackjackCard) deck.getTop()).withOwner(dealer));
 
-        player.getHand().addCards(deck.getTop(), deck.getTop());
-        playerPoints +=
-                player.getHand().stream()
-                        .map(card -> ((BlackjackCard) card).getPoints(playerPoints))
-                        .reduce((a, b) -> a + b)
-                        .orElse(0);
+        player.getHand()
+                .addCards(
+                        ((BlackjackCard) deck.getTop()).withOwner(player),
+                        ((BlackjackCard) deck.getTop()).withOwner(player));
 
         handsStatus = checkHands();
         if (handsStatus == HandsStatus.UNFINISHED) {
-            ((BlackjackCard) dealerHand.getCard(1)).hide();
+            ((BlackjackCard) dealer.getHand().getCard(1)).hide();
+        } else {
+            isDealersCardsUnhidden = true;
         }
 
         printRoundStartMessage();
-
-        roundNumber++;
 
         playerInterface.printLinesSeparator();
 
@@ -105,7 +120,7 @@ public class BlackjackDriver implements Driver {
             printHands();
             playerInterface.printLinesSeparator();
 
-            endRound();
+            changeTurn();
         }
 
         String choice;
@@ -123,8 +138,7 @@ public class BlackjackDriver implements Driver {
             Card takenCard = deck.getTop();
 
             playerInterface.tell(new Message("You opened card " + takenCard.toString()));
-            player.getHand().addCard(takenCard);
-            playerPoints += ((BlackjackCard) takenCard).getPoints(playerPoints);
+            player.getHand().addCard(((BlackjackCard) takenCard).withOwner(player));
 
             printHands();
             playerInterface.printLinesSeparator();
@@ -134,7 +148,42 @@ public class BlackjackDriver implements Driver {
         }
     }
 
-    private void dealersTurn() {}
+    private void dealersTurn() {
+
+        if (!isDealersCardsUnhidden) {
+            ((BlackjackCard) dealer.getHand().getCard(1)).unhide();
+            isDealersCardsUnhidden = true;
+
+            playerInterface.tell(
+                    new Message(
+                            "Dealer opened closed card " + dealer.getHand().getCard(1).toString()));
+            printHands();
+            playerInterface.printLinesSeparator();
+        }
+
+        if (deck.isEmpty()) {
+            playerInterface.tell(new Message("No cards in deck left"));
+            printHands();
+            playerInterface.printLinesSeparator();
+
+            isDealerEndedHisTurn = true;
+            endRound();
+        }
+
+        if (dealer.getPoints() < 17) {
+            Card takenCard = deck.getTop();
+
+            playerInterface.tell(new Message("Dealer opened card " + takenCard.toString()));
+            dealer.getHand().addCard(((BlackjackCard) takenCard).withOwner(dealer));
+
+            printHands();
+            playerInterface.printLinesSeparator();
+        } else {
+            isDealerEndedHisTurn = true;
+            handsStatus = checkHands();
+            endRound();
+        }
+    }
 
     private void changeTurn() {
         if (isPlayersTurn) {
@@ -150,7 +199,8 @@ public class BlackjackDriver implements Driver {
 
     private HandsStatus checkHands() {
         if (isDealerEndedHisTurn) {
-            int comparisonRes = Integer.signum(Integer.compare(playerPoints, dealerPoints));
+            int comparisonRes =
+                    Integer.signum(Integer.compare(player.getPoints(), dealer.getPoints()));
             return switch (comparisonRes) {
                 case 0 -> HandsStatus.DRAW;
                 case 1 -> HandsStatus.PLAYER_WIN;
@@ -163,16 +213,16 @@ public class BlackjackDriver implements Driver {
             };
         }
 
-        if (playerPoints > 21) {
+        if (player.getPoints() > 21) {
             return HandsStatus.DEALER_WIN;
         }
-        if (dealerPoints > 21) {
+        if (dealer.getPoints() > 21) {
             return HandsStatus.PLAYER_WIN;
         }
-        if (playerPoints == 21) {
+        if (player.getPoints() == 21) {
             return HandsStatus.PLAYER_WIN;
         }
-        if (dealerPoints == 21) {
+        if (dealer.getPoints() == 21) {
             return HandsStatus.DEALER_WIN;
         }
 
@@ -192,13 +242,13 @@ public class BlackjackDriver implements Driver {
                 new Message(
                         "\tYour cards: "
                                 + player.getHand().toString()
-                                + String.format(" => %d", playerPoints)));
+                                + String.format(" => %d", player.getPoints())));
         playerInterface.tell(
                 new Message(
                         "\tDealers' cards: "
-                                + dealerHand.toString()
+                                + dealer.getHand().toString()
                                 + (isDealersCardsUnhidden
-                                        ? String.format(" => %d", dealerPoints)
+                                        ? String.format(" => %d", dealer.getPoints())
                                         : "")));
     }
 
@@ -230,9 +280,9 @@ public class BlackjackDriver implements Driver {
                 }
                 + String.format(" Score is: %d:%d ", playerWins, dealerWins)
                 + switch (winsComparisonRes) {
-                    case 0 -> "One more time?";
+                    case 0 -> "Draw for now";
                     case 1 -> "You're winning now!";
-                    case -1 -> "You'd better try harder!";
+                    case -1 -> "Dealer's winning now!";
                     default ->
                             throw new DriverException(
                                     String.format(
