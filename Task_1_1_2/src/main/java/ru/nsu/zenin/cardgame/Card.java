@@ -1,20 +1,20 @@
-package ru.nsu.zenin.cardgames;
+package ru.nsu.zenin.cardgame;
 
-public final class Card {
+public class Card {
 
-    private final CardSuit suit;
-    private final CardRank rank;
+    private final Suit suit;
+    private final Rank rank;
 
-    public Card(CardSuit suit, CardRank rank) {
+    public Card(Suit suit, Rank rank) {
         this.suit = suit;
         this.rank = rank;
     }
 
-    public CardSuit getSuit() {
+    public Suit getSuit() {
         return suit;
     }
 
-    public CardRank getRank() {
+    public Rank getRank() {
         return rank;
     }
 
@@ -23,7 +23,19 @@ public final class Card {
         return rank.toString() + " " + suit.toString();
     }
 
-    public enum CardSuit {
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (!(obj instanceof Card)) {
+            return false;
+        }
+
+        return this.suit == ((Card) obj).getSuit() && this.rank == ((Card) obj).getRank();
+    }
+
+    public enum Suit {
         CLUBS("♣"),
         DIAMONDS("♦"),
         HEARTS("♥"),
@@ -31,7 +43,7 @@ public final class Card {
 
         private final String asString;
 
-        private CardSuit(String asString) {
+        private Suit(String asString) {
             this.asString = asString;
         }
 
@@ -40,7 +52,7 @@ public final class Card {
         }
     }
 
-    public enum CardRank {
+    public enum Rank {
         TWO("2"),
         THREE("3"),
         FOUR("4"),
@@ -58,7 +70,7 @@ public final class Card {
 
         private final String asString;
 
-        private CardRank(String asString) {
+        private Rank(String asString) {
             this.asString = asString;
         }
 
