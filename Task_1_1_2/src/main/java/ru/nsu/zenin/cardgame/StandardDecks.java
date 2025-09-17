@@ -1,14 +1,14 @@
-package ru.nsu.zenin.cardgames;
+package ru.nsu.zenin.cardgame;
 
-import static ru.nsu.zenin.cardgames.Card.CardRank.*;
-import static ru.nsu.zenin.cardgames.Card.CardSuit.*;
+import static ru.nsu.zenin.cardgame.Card.Rank.*;
+import static ru.nsu.zenin.cardgame.Card.Suit.*;
 
-public final class StandardCardDecks {
+public final class StandardDecks {
 
-    private StandardCardDecks() {}
+    private StandardDecks() {}
 
-    public static CardDeck fullFrenchSuitedDeck() {
-        return new CardDeck(
+    public static Deck fullFrenchSuitedDeck() {
+        return new Deck(
                 new Card(CLUBS, TWO),
                 new Card(CLUBS, THREE),
                 new Card(CLUBS, FOUR),
