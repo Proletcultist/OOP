@@ -27,7 +27,7 @@ public class Game {
         return deck;
     }
 
-    public Player[] getPlayerInterfaces() {
+    public PlayerInterface[] getPlayerInterfaces() {
         return playerInterfaces;
     }
 
@@ -57,7 +57,7 @@ public class Game {
 
     public static class Builder {
         private Deck deck;
-        private Player[] playerInterfaces;
+        private PlayerInterface[] playerInterfaces;
         private Driver driver;
 
         public Builder deck(Deck deck) {
@@ -65,7 +65,7 @@ public class Game {
             return this;
         }
 
-        public Builder playerInterfaces(Player[] playerInterfaces) {
+        public Builder playerInterfaces(PlayerInterface[] playerInterfaces) {
             this.playerInterfaces = playerInterfaces;
             return this;
         }
