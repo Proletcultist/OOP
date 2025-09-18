@@ -6,7 +6,7 @@ import ru.nsu.zenin.cardgame.PlayerInterface;
 import ru.nsu.zenin.cardgame.Request;
 import ru.nsu.zenin.cardgame.Response;
 
-public class CliPlayerInterface implements PlayerInterface {
+class CliPlayerInterface implements PlayerInterface {
 
     private final Scanner scanner;
 
