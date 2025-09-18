@@ -5,17 +5,17 @@ import static ru.nsu.zenin.cardgame.Card.Rank.*;
 import ru.nsu.zenin.cardgame.Card;
 import ru.nsu.zenin.cardgame.exception.DriverException;
 
-public class BlackjackCard extends Card {
+class BlackjackCard extends Card {
 
     private boolean isHidden = false;
-    private BlackjackPlayer owner;
-    private int points;
+    private BlackjackHand owner = null;
+    private int points = 0;
 
     public BlackjackCard(Card card) {
         super(card.getSuit(), card.getRank());
     }
 
-    public BlackjackCard withOwner(BlackjackPlayer owner) {
+    void addOwnerHand(BlackjackHand owner) {
         this.owner = owner;
 
         points =
@@ -39,26 +39,23 @@ public class BlackjackCard extends Card {
                                             "Illegal card rank \"%s\" for blackjack",
                                             this.getRank().toString()));
                 };
-
-        owner.addPoints(points);
-        return this;
     }
 
-    public BlackjackCard cleared() {
+    void clear() {
         this.owner = null;
         this.isHidden = false;
-        return this;
+        this.points = 0;
     }
 
-    public boolean isHidden() {
+    boolean isHidden() {
         return isHidden;
     }
 
-    public void hide() {
+    void hide() {
         isHidden = true;
     }
 
-    public void unhide() {
+    void unhide() {
         isHidden = false;
     }
 
@@ -69,5 +66,9 @@ public class BlackjackCard extends Card {
         } else {
             return super.toString() + (owner == null ? "" : String.format(" (%d)", points));
         }
+    }
+
+    int getPoints() {
+        return points;
     }
 }

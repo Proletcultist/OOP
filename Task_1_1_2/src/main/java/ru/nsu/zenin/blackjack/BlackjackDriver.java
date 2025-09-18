@@ -13,7 +13,6 @@ import ru.nsu.zenin.cardgame.exception.DriverException;
 public class BlackjackDriver implements Driver {
 
     private boolean isPlayersTurn = true;
-    private boolean isDealersCardsUnhidden = false;
     private boolean isDealerEndedHisTurn = false;
     private int roundNumber = 1;
     private int playerWins = 0, dealerWins = 0;
@@ -64,17 +63,13 @@ public class BlackjackDriver implements Driver {
 
     public void initializeNextRound() {
         while (player.getHand().size() != 0) {
-            deck.putOnTop(((BlackjackCard) player.getHand().removeCard(0)).cleared());
+            deck.putOnTop(player.getHand().removeCard(0));
         }
         while (dealer.getHand().size() != 0) {
-            deck.putOnTop(((BlackjackCard) dealer.getHand().removeCard(0)).cleared());
+            deck.putOnTop(dealer.getHand().removeCard(0));
         }
         isPlayersTurn = true;
         isDealerEndedHisTurn = false;
-        isDealersCardsUnhidden = false;
-
-        player.setPointToZero();
-        dealer.setPointToZero();
 
         roundNumber++;
 
@@ -86,23 +81,14 @@ public class BlackjackDriver implements Driver {
     private void startRound() {
         deck.shuffle();
 
-        dealer.getHand()
-                .addCards(
-                        ((BlackjackCard) deck.getTop()).withOwner(dealer),
-                        ((BlackjackCard) deck.getTop()).withOwner(dealer));
+        dealer.getHand().addCards(deck.getTop(), deck.getTop());
 
-        player.getHand()
-                .addCards(
-                        ((BlackjackCard) deck.getTop()).withOwner(player),
-                        ((BlackjackCard) deck.getTop()).withOwner(player));
+        player.getHand().addCards(deck.getTop(), deck.getTop());
 
         handsStatus = checkHands();
         if (handsStatus == HandsStatus.UNFINISHED) {
-            ((BlackjackCard) dealer.getHand().getCard(1)).hide();
-        } else {
-            isDealersCardsUnhidden = true;
+            dealer.getHand().hideCard(1);
         }
-
         printRoundStartMessage();
 
         playerInterface.printLinesSeparator();
@@ -138,7 +124,7 @@ public class BlackjackDriver implements Driver {
             Card takenCard = deck.getTop();
 
             playerInterface.tell(new Message("You opened card " + takenCard.toString()));
-            player.getHand().addCard(((BlackjackCard) takenCard).withOwner(player));
+            player.getHand().addCard(takenCard);
 
             printHands();
             playerInterface.printLinesSeparator();
@@ -150,9 +136,8 @@ public class BlackjackDriver implements Driver {
 
     private void dealersTurn() {
 
-        if (!isDealersCardsUnhidden) {
-            ((BlackjackCard) dealer.getHand().getCard(1)).unhide();
-            isDealersCardsUnhidden = true;
+        if (dealer.getHand().hasHiddenCards()) {
+            dealer.getHand().unhideCard(1);
 
             playerInterface.tell(
                     new Message(
@@ -170,11 +155,11 @@ public class BlackjackDriver implements Driver {
             endRound();
         }
 
-        if (dealer.getPoints() < 17) {
+        if (dealer.getHand().getPoints() < 17) {
             Card takenCard = deck.getTop();
 
             playerInterface.tell(new Message("Dealer opened card " + takenCard.toString()));
-            dealer.getHand().addCard(((BlackjackCard) takenCard).withOwner(dealer));
+            dealer.getHand().addCard(takenCard);
 
             printHands();
             playerInterface.printLinesSeparator();
@@ -200,7 +185,9 @@ public class BlackjackDriver implements Driver {
     private HandsStatus checkHands() {
         if (isDealerEndedHisTurn) {
             int comparisonRes =
-                    Integer.signum(Integer.compare(player.getPoints(), dealer.getPoints()));
+                    Integer.signum(
+                            Integer.compare(
+                                    player.getHand().getPoints(), dealer.getHand().getPoints()));
             return switch (comparisonRes) {
                 case 0 -> HandsStatus.DRAW;
                 case 1 -> HandsStatus.PLAYER_WIN;
@@ -213,16 +200,16 @@ public class BlackjackDriver implements Driver {
             };
         }
 
-        if (player.getPoints() > 21) {
+        if (player.getHand().getPoints() > 21) {
             return HandsStatus.DEALER_WIN;
         }
-        if (dealer.getPoints() > 21) {
+        if (dealer.getHand().getPoints() > 21) {
             return HandsStatus.PLAYER_WIN;
         }
-        if (player.getPoints() == 21) {
+        if (player.getHand().getPoints() == 21) {
             return HandsStatus.PLAYER_WIN;
         }
-        if (dealer.getPoints() == 21) {
+        if (dealer.getHand().getPoints() == 21) {
             return HandsStatus.DEALER_WIN;
         }
 
@@ -238,18 +225,8 @@ public class BlackjackDriver implements Driver {
     }
 
     private void printHands() {
-        playerInterface.tell(
-                new Message(
-                        "\tYour cards: "
-                                + player.getHand().toString()
-                                + String.format(" => %d", player.getPoints())));
-        playerInterface.tell(
-                new Message(
-                        "\tDealers' cards: "
-                                + dealer.getHand().toString()
-                                + (isDealersCardsUnhidden
-                                        ? String.format(" => %d", dealer.getPoints())
-                                        : "")));
+        playerInterface.tell(new Message("\tYour cards: " + player.getHand().toString()));
+        playerInterface.tell(new Message("\tDealers' cards: " + dealer.getHand().toString()));
     }
 
     private void endRound() {
