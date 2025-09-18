@@ -10,7 +10,7 @@ class CliPlayerInterface implements PlayerInterface {
 
     private final Scanner scanner;
 
-    public CliPlayerInterface(Scanner scanner) {
+    CliPlayerInterface(Scanner scanner) {
         this.scanner = scanner;
     }
 
