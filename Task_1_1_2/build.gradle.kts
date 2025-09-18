@@ -35,11 +35,17 @@ java {
     }
 }
 
+
 spotless{
 	java{
 		googleJavaFormat().aosp()
+		suppressLintsFor {
+			step = "google-java-format"
+			shortCode = "java.lang.NoSuchMethodError"
+		}
 	}
 }
+
 
 tasks.jacocoTestReport {
     reports {
