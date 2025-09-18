@@ -11,7 +11,7 @@ class BlackjackCard extends Card {
     private BlackjackHand owner = null;
     private int points = 0;
 
-    public BlackjackCard(Card card) {
+    BlackjackCard(Card card) {
         super(card.getSuit(), card.getRank());
     }
 

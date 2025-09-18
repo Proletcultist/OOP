@@ -3,7 +3,7 @@ package ru.nsu.zenin.blackjack;
 import ru.nsu.zenin.cardgame.Request;
 import ru.nsu.zenin.cardgame.exception.DriverException;
 
-public class BlackjackRequest extends Request {
+class BlackjackRequest extends Request {
     private final BlackjackHand dealerHand, playerHand;
 
     private BlackjackRequest(Builder builder) {
@@ -15,6 +15,14 @@ public class BlackjackRequest extends Request {
 
     static Builder builder() {
         return new Builder();
+    }
+
+    BlackjackHand getDealerHand() {
+        return dealerHand;
+    }
+
+    BlackjackHand getPlayerHand() {
+        return playerHand;
     }
 
     static class Builder {

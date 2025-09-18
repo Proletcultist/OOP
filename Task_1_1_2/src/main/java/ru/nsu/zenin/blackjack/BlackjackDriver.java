@@ -107,6 +107,7 @@ public class BlackjackDriver implements Driver {
             playerInterface.printLinesSeparator();
 
             changeTurn();
+            return;
         }
 
         String choice;
@@ -130,10 +131,10 @@ public class BlackjackDriver implements Driver {
         if (choice.equals("1")) {
             Card takenCard = deck.getTop();
 
+            player.getHand().addCard(takenCard);
             sendMessage(
                     BlackjackMessage.MessageType.YOU_OPENED_CARD,
                     "You opened card " + takenCard.toString());
-            player.getHand().addCard(takenCard);
 
             printHands();
             playerInterface.printLinesSeparator();
@@ -162,16 +163,16 @@ public class BlackjackDriver implements Driver {
             playerInterface.printLinesSeparator();
 
             isDealerEndedHisTurn = true;
-            endRound();
+            return;
         }
 
         if (dealer.getHand().getPoints() < 17) {
             Card takenCard = deck.getTop();
 
+            dealer.getHand().addCard(takenCard);
             sendMessage(
                     BlackjackMessage.MessageType.DEALER_OPENED_NEW_CARD,
                     "Dealer opened card " + takenCard.toString());
-            dealer.getHand().addCard(takenCard);
 
             printHands();
             playerInterface.printLinesSeparator();
