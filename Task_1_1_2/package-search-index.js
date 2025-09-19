@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"ru.nsu.zenin.blackjack"},{"l":"ru.nsu.zenin.cardgame"},{"l":"ru.nsu.zenin.cardgame.exception"},{"l":"ru.nsu.zenin.cliblackjack"}]
