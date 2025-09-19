@@ -25,6 +25,7 @@ hs_err_pid*
 HELP.md
 target/
 !.mvn/wrapper/maven-wrapper.jar
+!**/gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
 
