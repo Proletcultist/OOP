@@ -66,7 +66,7 @@ public class BlackjackHandTest {
 
         BlackjackCard removedCard = ((BlackjackCard) hand.removeCard(0));
 
-	Assertions.assertEquals(removedCard, card);
+        Assertions.assertEquals(removedCard, card);
 
         Assertions.assertThrows(
                 DriverException.class,
