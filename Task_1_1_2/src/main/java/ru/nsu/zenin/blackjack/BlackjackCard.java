@@ -69,6 +69,9 @@ class BlackjackCard extends Card {
     }
 
     int getPoints() {
+        if (owner == null) {
+            throw new DriverException("Cannot determine points amount for card withou owner");
+        }
         return points;
     }
 }
