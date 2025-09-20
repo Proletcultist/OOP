@@ -8,7 +8,7 @@
 plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
     application
-    id("com.diffplug.spotless") version "7.2.1"
+    id("com.diffplug.spotless") version "8.0.0"
     jacoco
     checkstyle
 }
@@ -39,10 +39,6 @@ java {
 spotless{
 	java{
 		googleJavaFormat().aosp()
-		suppressLintsFor {
-			step = "google-java-format"
-			shortCode = "java.lang.NoSuchMethodError"
-		}
 	}
 }
 
