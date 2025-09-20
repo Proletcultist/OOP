@@ -13,11 +13,11 @@ public class BlackjackRequest extends Request {
         this.playerHand = builder.playerHand;
     }
 
-    Builder builder() {
+    static Builder builder() {
         return new Builder();
     }
 
-    class Builder {
+    static class Builder {
 
         private BlackjackHand dealerHand, playerHand;
         private String msg;

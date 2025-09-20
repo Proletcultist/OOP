@@ -5,9 +5,8 @@ import ru.nsu.zenin.cardgame.Card.Rank.*;
 import ru.nsu.zenin.cardgame.Deck;
 import ru.nsu.zenin.cardgame.Driver;
 import ru.nsu.zenin.cardgame.Game;
-import ru.nsu.zenin.cardgame.Message;
 import ru.nsu.zenin.cardgame.PlayerInterface;
-import ru.nsu.zenin.cardgame.Request;
+import ru.nsu.zenin.cardgame.Response;
 import ru.nsu.zenin.cardgame.exception.DriverException;
 
 public class BlackjackDriver implements Driver {
@@ -43,7 +42,7 @@ public class BlackjackDriver implements Driver {
 
         deck.convertAllCards(card -> new BlackjackCard(card));
 
-        playerInterface.tell(new Message("Welcome to the CLI Blackjack!"));
+        sendMessage(BlackjackMessage.MessageType.WELCOME, "Welcome to the CLI blackjack");
 
         startRound();
     }
@@ -102,7 +101,8 @@ public class BlackjackDriver implements Driver {
     private void playersTurn() {
 
         if (deck.isEmpty()) {
-            playerInterface.tell(new Message("No cards in deck left"));
+            sendMessage(
+                    BlackjackMessage.MessageType.NO_CARDS_IN_DECK_LEFT, "No cards in deck left");
             printHands();
             playerInterface.printLinesSeparator();
 
@@ -111,10 +111,17 @@ public class BlackjackDriver implements Driver {
 
         String choice;
         while (true) {
-            choice =
-                    playerInterface
-                            .ask(new Request("Enter \"1\" to take card and \"0\" to stop..."))
-                            .getText();
+            Response resp = askPlayer("Enter \"1\" to take card and \"0\" to stop...");
+            if (resp instanceof BlackjackResponse) {
+                if (((BlackjackResponse) resp).getTakeCard()) {
+                    choice = "1";
+                } else {
+                    choice = "0";
+                }
+            } else {
+                choice = resp.getText();
+            }
+
             if (choice.equals("1") || choice.equals("0")) {
                 break;
             }
@@ -123,7 +130,9 @@ public class BlackjackDriver implements Driver {
         if (choice.equals("1")) {
             Card takenCard = deck.getTop();
 
-            playerInterface.tell(new Message("You opened card " + takenCard.toString()));
+            sendMessage(
+                    BlackjackMessage.MessageType.YOU_OPENED_CARD,
+                    "You opened card " + takenCard.toString());
             player.getHand().addCard(takenCard);
 
             printHands();
@@ -139,15 +148,16 @@ public class BlackjackDriver implements Driver {
         if (dealer.getHand().hasHiddenCards()) {
             dealer.getHand().unhideCard(1);
 
-            playerInterface.tell(
-                    new Message(
-                            "Dealer opened closed card " + dealer.getHand().getCard(1).toString()));
+            sendMessage(
+                    BlackjackMessage.MessageType.DEALER_OPENED_CLOSED_CARD,
+                    "Dealer opened closed card " + dealer.getHand().getCard(1).toString());
             printHands();
             playerInterface.printLinesSeparator();
         }
 
         if (deck.isEmpty()) {
-            playerInterface.tell(new Message("No cards in deck left"));
+            sendMessage(
+                    BlackjackMessage.MessageType.NO_CARDS_IN_DECK_LEFT, "No cards in deck left");
             printHands();
             playerInterface.printLinesSeparator();
 
@@ -158,7 +168,9 @@ public class BlackjackDriver implements Driver {
         if (dealer.getHand().getPoints() < 17) {
             Card takenCard = deck.getTop();
 
-            playerInterface.tell(new Message("Dealer opened card " + takenCard.toString()));
+            sendMessage(
+                    BlackjackMessage.MessageType.DEALER_OPENED_NEW_CARD,
+                    "Dealer opened card " + takenCard.toString());
             dealer.getHand().addCard(takenCard);
 
             printHands();
@@ -172,11 +184,9 @@ public class BlackjackDriver implements Driver {
 
     private void changeTurn() {
         if (isPlayersTurn) {
-            playerInterface.tell(new Message("Dealers' turn"));
-            playerInterface.tell(new Message("-------"));
+            sendMessage(BlackjackMessage.MessageType.TURN_CHANGE, "Dealers' turn\n-------");
         } else {
-            playerInterface.tell(new Message("Your turn"));
-            playerInterface.tell(new Message("-------"));
+            sendMessage(BlackjackMessage.MessageType.TURN_CHANGE, "Your turn\n-------");
         }
 
         isPlayersTurn = !isPlayersTurn;
@@ -217,34 +227,43 @@ public class BlackjackDriver implements Driver {
     }
 
     private void printRoundStartMessage() {
-        playerInterface.tell(new Message(String.format("Round %d", roundNumber)));
-
-        playerInterface.tell(new Message("The dealer dealt the cards"));
+        sendMessage(
+                BlackjackMessage.MessageType.NEW_ROUND_WELCOME,
+                String.format("Round %d", roundNumber) + "\nThe dealer dealt the cards");
 
         printHands();
     }
 
     private void printHands() {
-        playerInterface.tell(new Message("\tYour cards: " + player.getHand().toString()));
-        playerInterface.tell(new Message("\tDealers' cards: " + dealer.getHand().toString()));
+        sendMessage(
+                BlackjackMessage.MessageType.HANDS_INFO,
+                "\tYour cards: "
+                        + player.getHand().toString()
+                        + "\n\tDealers' cards: "
+                        + dealer.getHand().toString());
     }
 
     private void endRound() {
         game.setStatus(Game.GameStatus.DONE);
 
+        BlackjackMessage.MessageType type;
+
         switch (handsStatus) {
             case DEALER_WIN:
                 dealerWins++;
+                type = BlackjackMessage.MessageType.DEALER_WON;
                 break;
             case PLAYER_WIN:
                 playerWins++;
+                type = BlackjackMessage.MessageType.PLAYER_WON;
                 break;
             case DRAW:
+                type = BlackjackMessage.MessageType.DRAW;
                 break;
             default:
                 throw new DriverException("Driver unexcpectedly tried to end round");
         }
-        playerInterface.tell(new Message(getRoundEndingString()));
+        sendMessage(type, getRoundEndingString());
     }
 
     private String getRoundEndingString() {
@@ -266,6 +285,27 @@ public class BlackjackDriver implements Driver {
                                             "Unexpected return from Integer.signum: %d",
                                             winsComparisonRes));
                 };
+    }
+
+    private void sendMessage(BlackjackMessage.MessageType type, String msg) {
+        playerInterface.tell(
+                BlackjackMessage.builder()
+                        .type(type)
+                        .dealerHand(dealer.getHand())
+                        .playerHand(player.getHand())
+                        .cardsInDeckLeft(deck.size())
+                        .isDealerEndedHisTurn(isDealerEndedHisTurn)
+                        .msg(msg)
+                        .build());
+    }
+
+    private Response askPlayer(String msg) {
+        return playerInterface.ask(
+                BlackjackRequest.builder()
+                        .dealerHand(dealer.getHand())
+                        .playerHand(player.getHand())
+                        .msg(msg)
+                        .build());
     }
 
     private enum HandsStatus {
