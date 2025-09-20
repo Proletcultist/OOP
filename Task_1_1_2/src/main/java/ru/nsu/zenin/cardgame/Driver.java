@@ -1,9 +1,9 @@
 package ru.nsu.zenin.cardgame;
 
 public interface Driver {
-    public void initializeGame(Game game);
+    void initializeGame(Game game);
 
-    public void step();
+    void step();
 
-    public void initializeNextRound();
+    void initializeNextRound();
 }
