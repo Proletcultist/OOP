@@ -1,6 +1,15 @@
 package ru.nsu.zenin.cardgame;
 
+import java.util.Locale;
+import java.util.ResourceBundle;
+
 public class Card {
+
+    private static final ResourceBundle cardRanks =
+            ResourceBundle.getBundle("cardgame.CardRanks", Locale.getDefault());
+
+    private static final ResourceBundle cardSuits =
+            ResourceBundle.getBundle("cardgame.CardSuits", Locale.getDefault());
 
     private final Suit suit;
     private final Rank rank;
@@ -36,10 +45,10 @@ public class Card {
     }
 
     public enum Suit {
-        CLUBS("♣"),
-        DIAMONDS("♦"),
-        HEARTS("♥"),
-        SPADES("♠");
+        CLUBS(cardSuits.getString("clubs")),
+        DIAMONDS(cardSuits.getString("diamonds")),
+        HEARTS(cardSuits.getString("hearts")),
+        SPADES(cardSuits.getString("spades"));
 
         private final String asString;
 
@@ -53,20 +62,20 @@ public class Card {
     }
 
     public enum Rank {
-        TWO("2"),
-        THREE("3"),
-        FOUR("4"),
-        FIVE("5"),
-        SIX("6"),
-        SEVEN("7"),
-        EIGHT("8"),
-        NINE("9"),
-        TEN("10"),
-        JACK("Jack"),
-        QUEEN("Queen"),
-        KING("King"),
-        ACE("Ace"),
-        JOKER("Joker");
+        TWO(cardRanks.getString("two")),
+        THREE(cardRanks.getString("three")),
+        FOUR(cardRanks.getString("four")),
+        FIVE(cardRanks.getString("five")),
+        SIX(cardRanks.getString("six")),
+        SEVEN(cardRanks.getString("seven")),
+        EIGHT(cardRanks.getString("eight")),
+        NINE(cardRanks.getString("nine")),
+        TEN(cardRanks.getString("ten")),
+        JACK(cardRanks.getString("jack")),
+        QUEEN(cardRanks.getString("queen")),
+        KING(cardRanks.getString("king")),
+        ACE(cardRanks.getString("ace")),
+        JOKER(cardRanks.getString("joker"));
 
         private final String asString;
 
