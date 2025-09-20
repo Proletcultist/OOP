@@ -193,6 +193,13 @@ public class BlackjackDriver implements Driver {
 
     private HandsStatus checkHands() {
         if (isDealerEndedHisTurn) {
+		return endGameCheckHands();
+        }
+
+	return gameRunningCheckHands();
+    }
+
+    private HandsStatus endGameCheckHands() {
             int comparisonRes =
                     Integer.signum(
                             Integer.compare(
@@ -207,8 +214,9 @@ public class BlackjackDriver implements Driver {
                                         "Unexpected return from Integer.signum: %d",
                                         comparisonRes));
             };
-        }
+    }
 
+    private HandsStatus gameRunningCheckHands() {
         if (player.getHand().getPoints() > 21) {
             return HandsStatus.DEALER_WIN;
         }
