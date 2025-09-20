@@ -15,23 +15,7 @@ public class App {
                         .driver(new BlackjackDriver())
                         .build();
 
-        while (true) {
-            game.startNextRound();
-
-            System.out.println("Another round? (y/n)");
-
-            String choice;
-            while (true) {
-                choice = scanner.nextLine();
-                if (choice.equals("y") || choice.equals("n")) {
-                    break;
-                }
-            }
-
-            if (choice.equals("n")) {
-                break;
-            }
-        }
+	GameController.runGame(game, scanner);
 
         scanner.close();
     }
