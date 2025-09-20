@@ -2,7 +2,7 @@ package ru.nsu.zenin.cardgame;
 
 public class Request {
 
-    private String text;
+    private final String text;
 
     public Request(String text) {
         this.text = text;
