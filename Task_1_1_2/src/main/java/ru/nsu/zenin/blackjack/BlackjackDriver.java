@@ -49,7 +49,7 @@ public class BlackjackDriver implements Driver {
 
     public void step() {
         handsStatus = checkHands();
-        if (handsStatus == HandsStatus.UNFINISHED) {
+        if (handsStatus == HandsStatus.UNFINISHED && !isDealerEndedHisTurn) {
             if (isPlayersTurn) {
                 playersTurn();
             } else {
@@ -178,8 +178,6 @@ public class BlackjackDriver implements Driver {
             playerInterface.printLinesSeparator();
         } else {
             isDealerEndedHisTurn = true;
-            handsStatus = checkHands();
-            endRound();
         }
     }
 
