@@ -3,11 +3,7 @@ package ru.nsu.zenin.blackjack;
 import ru.nsu.zenin.cardgame.Message;
 import ru.nsu.zenin.cardgame.exception.DriverException;
 
-/**
- * Class for transfering messages to some bots, implemented for this driver, so they can use this
- * class for sure. E.g. bot for testing (will be implemented soon.
- */
-public class BlackjackMessage extends Message {
+class BlackjackMessage extends Message {
 
     private final MessageType type;
     private final BlackjackHand dealerHand, playerHand;
@@ -26,6 +22,26 @@ public class BlackjackMessage extends Message {
 
     static Builder builder() {
         return new Builder();
+    }
+
+    MessageType getType() {
+        return type;
+    }
+
+    BlackjackHand getDealerHand() {
+        return dealerHand;
+    }
+
+    BlackjackHand getPlayerHand() {
+        return playerHand;
+    }
+
+    int getCardsInDeckLeft() {
+        return cardsInDeckLeft;
+    }
+
+    boolean isDealerEndedHisTurn() {
+        return isDealerEndedHisTurn;
     }
 
     enum MessageType {
