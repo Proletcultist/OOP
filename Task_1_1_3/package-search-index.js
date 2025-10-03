@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"ru.nsu.zenin.assignment"},{"l":"ru.nsu.zenin.assignment.exception"},{"l":"ru.nsu.zenin.expression"}];updateSearchResults();
