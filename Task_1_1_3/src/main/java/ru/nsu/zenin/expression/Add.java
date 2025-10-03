@@ -18,7 +18,7 @@ public class Add extends BinOperator {
         return leftOperand.eval(assignment) + rightOperand.eval(assignment);
     }
 
-    public Expression simpify() {
+    public Expression simplify() {
         try {
             Assignment emptyAssignment = new Assignment();
             return new Number(eval(emptyAssignment));
