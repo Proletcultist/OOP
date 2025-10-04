@@ -1,9 +1,14 @@
 package ru.nsu.zenin.cliblackjack;
 
+import java.util.Locale;
+import java.util.ResourceBundle;
 import java.util.Scanner;
 import ru.nsu.zenin.cardgame.Game;
 
 class GameController {
+
+    private static final ResourceBundle resources =
+            ResourceBundle.getBundle("cliblackjack.Messages", Locale.getDefault());
 
     private GameController() {}
 
@@ -11,7 +16,7 @@ class GameController {
         while (true) {
             game.startNextRound();
 
-            System.out.println("Another round? (y/n)");
+            System.out.println(resources.getString("askAnotherRound") + " (y/n)");
 
             String choice;
             while (true) {
