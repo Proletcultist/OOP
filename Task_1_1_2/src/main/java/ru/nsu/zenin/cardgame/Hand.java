@@ -56,10 +56,7 @@ public class Hand {
     @Override
     public String toString() {
         return "["
-                + stream()
-                        .map(card -> card.toString())
-                        .reduce((a, b) -> a + ", " + b)
-                        .orElse("")
+                + stream().map(card -> card.toString()).reduce((a, b) -> a + ", " + b).orElse("")
                 + "]";
     }
 }
