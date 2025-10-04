@@ -193,27 +193,26 @@ public class BlackjackDriver implements Driver {
 
     private HandsStatus checkHands() {
         if (isDealerEndedHisTurn) {
-		return endGameCheckHands();
+            return endGameCheckHands();
         }
 
-	return gameRunningCheckHands();
+        return gameRunningCheckHands();
     }
 
     private HandsStatus endGameCheckHands() {
-            int comparisonRes =
-                    Integer.signum(
-                            Integer.compare(
-                                    player.getHand().getPoints(), dealer.getHand().getPoints()));
-            return switch (comparisonRes) {
-                case 0 -> HandsStatus.DRAW;
-                case 1 -> HandsStatus.PLAYER_WIN;
-                case -1 -> HandsStatus.DEALER_WIN;
-                default ->
-                        throw new DriverException(
-                                String.format(
-                                        "Unexpected return from Integer.signum: %d",
-                                        comparisonRes));
-            };
+        int comparisonRes =
+                Integer.signum(
+                        Integer.compare(
+                                player.getHand().getPoints(), dealer.getHand().getPoints()));
+        return switch (comparisonRes) {
+            case 0 -> HandsStatus.DRAW;
+            case 1 -> HandsStatus.PLAYER_WIN;
+            case -1 -> HandsStatus.DEALER_WIN;
+            default ->
+                    throw new DriverException(
+                            String.format(
+                                    "Unexpected return from Integer.signum: %d", comparisonRes));
+        };
     }
 
     private HandsStatus gameRunningCheckHands() {

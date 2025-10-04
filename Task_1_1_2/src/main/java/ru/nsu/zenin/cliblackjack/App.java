@@ -15,7 +15,7 @@ public class App {
                         .driver(new BlackjackDriver())
                         .build();
 
-	GameController.runGame(game, scanner);
+        GameController.runGame(game, scanner);
 
         scanner.close();
     }
