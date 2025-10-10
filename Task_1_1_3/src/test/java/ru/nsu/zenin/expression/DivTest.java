@@ -53,7 +53,7 @@ class DivTest {
                 new Div(
                         new Sub(
                                 new Mul(new Number(0), new Variable("a")),
-                                new Mul(new Number(3), new Variable("a"))),
+                                new Mul(new Number(3), new Number(0))),
                         new Mul(new Variable("a"), new Variable("a"))));
         Assertions.assertEquals(
                 a.derivative("a"),
@@ -68,8 +68,10 @@ class DivTest {
     void simplifyTest() {
         Div a = new Div(new Number(2), new Number(2));
         Div b = new Div(new Div(new Number(3), new Number(5)), new Number(2));
+        Div c = new Div(new Variable("a"), new Number(2));
 
-        Assertions.assertEquals(a.simpify(), new Number(1));
-        Assertions.assertEquals(b.simpify(), new Number(0));
+        Assertions.assertEquals(a.simplify(), new Number(1));
+        Assertions.assertEquals(b.simplify(), new Number(0));
+        Assertions.assertEquals(c.simplify(), new Div(new Variable("a"), new Number(2)));
     }
 }

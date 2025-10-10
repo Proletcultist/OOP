@@ -47,5 +47,11 @@ class AsignmentParserTest {
                 () -> {
                     Assignment ass = AssignmentParser.parse("a = 100; b = a");
                 });
+
+        Assertions.assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    Assignment ass = AssignmentParser.parse("a = 100;; b = 2");
+                });
     }
 }
