@@ -52,7 +52,10 @@ loadScripts(document, 'script');</script>
 <ul class="horizontal">
 <li><a href="ru/nsu/zenin/assignment/package-tree.html">ru.nsu.zenin.assignment</a>, </li>
 <li><a href="ru/nsu/zenin/assignment/exception/package-tree.html">ru.nsu.zenin.assignment.exception</a>, </li>
-<li><a href="ru/nsu/zenin/expression/package-tree.html">ru.nsu.zenin.expression</a></li>
+<li><a href="ru/nsu/zenin/expression/package-tree.html">ru.nsu.zenin.expression</a>, </li>
+<li><a href="ru/nsu/zenin/lexer/package-tree.html">ru.nsu.zenin.lexer</a>, </li>
+<li><a href="ru/nsu/zenin/lexer/token/package-tree.html">ru.nsu.zenin.lexer.token</a>, </li>
+<li><a href="ru/nsu/zenin/parser/package-tree.html">ru.nsu.zenin.parser</a></li>
 </ul>
 </div>
 <section class="hierarchy">
@@ -62,10 +65,8 @@ loadScripts(document, 'script');</script>
 <ul>
 <li class="circle">ru.nsu.zenin.assignment.<a href="ru/nsu/zenin/assignment/Assignment.html" class="type-name-link" title="class in ru.nsu.zenin.assignment">Assignment</a></li>
 <li class="circle">ru.nsu.zenin.assignment.<a href="ru/nsu/zenin/assignment/AssignmentParser.html" class="type-name-link" title="class in ru.nsu.zenin.assignment">AssignmentParser</a></li>
+<li class="circle">ru.nsu.zenin.lexer.token.<a href="ru/nsu/zenin/lexer/token/BracketToken.html" class="type-name-link" title="class in ru.nsu.zenin.lexer.token">BracketToken</a></li>
 <li class="circle">ru.nsu.zenin.expression.<a href="ru/nsu/zenin/expression/Expression.html" class="type-name-link" title="class in ru.nsu.zenin.expression">Expression</a> (implements java.lang.<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Cloneable.html" title="class or interface in java.lang" class="external-link">Cloneable</a>)
-<ul>
-<li class="circle">ru.nsu.zenin.expression.<a href="ru/nsu/zenin/expression/Number.html" class="type-name-link" title="class in ru.nsu.zenin.expression">Number</a></li>
-<li class="circle">ru.nsu.zenin.expression.<a href="ru/nsu/zenin/expression/Operator.html" class="type-name-link" title="class in ru.nsu.zenin.expression">Operator</a>
 <ul>
 <li class="circle">ru.nsu.zenin.expression.<a href="ru/nsu/zenin/expression/BinOperator.html" class="type-name-link" title="class in ru.nsu.zenin.expression">BinOperator</a>
 <ul>
@@ -75,14 +76,22 @@ loadScripts(document, 'script');</script>
 <li class="circle">ru.nsu.zenin.expression.<a href="ru/nsu/zenin/expression/Sub.html" class="type-name-link" title="class in ru.nsu.zenin.expression">Sub</a></li>
 </ul>
 </li>
+<li class="circle">ru.nsu.zenin.expression.<a href="ru/nsu/zenin/expression/Number.html" class="type-name-link" title="class in ru.nsu.zenin.expression">Number</a></li>
 <li class="circle">ru.nsu.zenin.expression.<a href="ru/nsu/zenin/expression/UnOperator.html" class="type-name-link" title="class in ru.nsu.zenin.expression">UnOperator</a>
 <ul>
 <li class="circle">ru.nsu.zenin.expression.<a href="ru/nsu/zenin/expression/UnSub.html" class="type-name-link" title="class in ru.nsu.zenin.expression">UnSub</a></li>
 </ul>
 </li>
+<li class="circle">ru.nsu.zenin.expression.<a href="ru/nsu/zenin/expression/Variable.html" class="type-name-link" title="class in ru.nsu.zenin.expression">Variable</a></li>
 </ul>
 </li>
-<li class="circle">ru.nsu.zenin.expression.<a href="ru/nsu/zenin/expression/Variable.html" class="type-name-link" title="class in ru.nsu.zenin.expression">Variable</a></li>
+<li class="circle">ru.nsu.zenin.lexer.<a href="ru/nsu/zenin/lexer/ExpressionLexer.html" class="type-name-link" title="class in ru.nsu.zenin.lexer">ExpressionLexer</a></li>
+<li class="circle">ru.nsu.zenin.parser.<a href="ru/nsu/zenin/parser/ExpressionParser.html" class="type-name-link" title="class in ru.nsu.zenin.parser">ExpressionParser</a></li>
+<li class="circle">ru.nsu.zenin.lexer.token.<a href="ru/nsu/zenin/lexer/token/NumberToken.html" class="type-name-link" title="class in ru.nsu.zenin.lexer.token">NumberToken</a></li>
+<li class="circle">ru.nsu.zenin.lexer.token.<a href="ru/nsu/zenin/lexer/token/OperatorToken.html" class="type-name-link" title="class in ru.nsu.zenin.lexer.token">OperatorToken</a>
+<ul>
+<li class="circle">ru.nsu.zenin.lexer.token.<a href="ru/nsu/zenin/lexer/token/BinOperatorToken.html" class="type-name-link" title="class in ru.nsu.zenin.lexer.token">BinOperatorToken</a></li>
+<li class="circle">ru.nsu.zenin.lexer.token.<a href="ru/nsu/zenin/lexer/token/UnOperatorToken.html" class="type-name-link" title="class in ru.nsu.zenin.lexer.token">UnOperatorToken</a></li>
 </ul>
 </li>
 <li class="circle">java.lang.<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Throwable.html" class="type-name-link external-link" title="class or interface in java.lang">Throwable</a> (implements java.io.<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/Serializable.html" title="class or interface in java.io" class="external-link">Serializable</a>)
@@ -96,6 +105,22 @@ loadScripts(document, 'script');</script>
 </li>
 </ul>
 </li>
+</ul>
+</li>
+<li class="circle">ru.nsu.zenin.lexer.token.<a href="ru/nsu/zenin/lexer/token/VariableToken.html" class="type-name-link" title="class in ru.nsu.zenin.lexer.token">VariableToken</a></li>
+</ul>
+</li>
+</ul>
+</section>
+<section class="hierarchy">
+<h2 title="Enum Class Hierarchy">Enum Class Hierarchy</h2>
+<ul>
+<li class="circle">java.lang.<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" class="type-name-link external-link" title="class or interface in java.lang">Object</a>
+<ul>
+<li class="circle">java.lang.<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Enum.html" class="type-name-link external-link" title="class or interface in java.lang">Enum</a>&lt;E&gt; (implements java.lang.<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link">Comparable</a>&lt;T&gt;, java.lang.constant.<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/constant/Constable.html" title="class or interface in java.lang.constant" class="external-link">Constable</a>, java.io.<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/Serializable.html" title="class or interface in java.io" class="external-link">Serializable</a>)
+<ul>
+<li class="circle">ru.nsu.zenin.lexer.<a href="ru/nsu/zenin/lexer/ExpressionLexer.TokenType.html" class="type-name-link" title="enum class in ru.nsu.zenin.lexer">ExpressionLexer.TokenType</a></li>
+<li class="circle">ru.nsu.zenin.lexer.token.<a href="ru/nsu/zenin/lexer/token/OperatorToken.Associativity.html" class="type-name-link" title="enum class in ru.nsu.zenin.lexer.token">OperatorToken.Associativity</a></li>
 </ul>
 </li>
 </ul>

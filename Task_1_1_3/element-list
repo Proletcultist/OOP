@@ -1,3 +1,6 @@
 ru.nsu.zenin.assignment
 ru.nsu.zenin.assignment.exception
 ru.nsu.zenin.expression
+ru.nsu.zenin.lexer
+ru.nsu.zenin.lexer.token
+ru.nsu.zenin.parser
