@@ -42,7 +42,7 @@ class SubTest {
     void derivativeTest() {
         Sub a = new Sub(new Number(3), new Variable("a"));
 
-        Assertions.assertEquals(a.derivative("b"), new Sub(new Number(0), new Variable("a")));
+        Assertions.assertEquals(a.derivative("b"), new Sub(new Number(0), new Number(0)));
         Assertions.assertEquals(a.derivative("a"), new Sub(new Number(0), new Number(1)));
     }
 
@@ -54,9 +54,11 @@ class SubTest {
                 new Sub(
                         new Add(new Variable("a"), new Variable("b")),
                         new Add(new Variable("b"), new Variable("a")));
+        Sub d = new Sub(new Variable("a"), new Number(2));
 
-        Assertions.assertEquals(a.simpify(), new Number(0));
-        Assertions.assertEquals(b.simpify(), new Number(-4));
-        Assertions.assertEquals(c.simpify(), new Number(0));
+        Assertions.assertEquals(a.simplify(), new Number(0));
+        Assertions.assertEquals(b.simplify(), new Number(-4));
+        Assertions.assertEquals(c.simplify(), new Number(0));
+        Assertions.assertEquals(d.simplify(), new Sub(new Variable("a"), new Number(2)));
     }
 }

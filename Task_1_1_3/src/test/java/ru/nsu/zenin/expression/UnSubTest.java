@@ -38,14 +38,16 @@ class UnSubTest {
     void derivativeTest() {
         UnSub a = new UnSub(new Variable("a"));
 
-        Assertions.assertEquals(a.derivative("b"), new UnSub(new Variable("a")));
+        Assertions.assertEquals(a.derivative("b"), new UnSub(new Number(0)));
         Assertions.assertEquals(a.derivative("a"), new UnSub(new Number(1)));
     }
 
     @Test
     void simplifyTest() {
         UnSub a = new UnSub(new Number(2));
+        UnSub b = new UnSub(new Variable("a"));
 
-        Assertions.assertEquals(a.simpify(), new Number(-2));
+        Assertions.assertEquals(a.simplify(), new Number(-2));
+        Assertions.assertEquals(b.simplify(), new UnSub(new Variable("a")));
     }
 }

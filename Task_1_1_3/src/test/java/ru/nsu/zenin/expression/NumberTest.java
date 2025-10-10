@@ -43,6 +43,6 @@ class NumberTest {
     void simplifyTest() {
         Number a = new Number(3);
 
-        Assertions.assertEquals(a.simpify(), new Number(3));
+        Assertions.assertEquals(a.simplify(), new Number(3));
     }
 }

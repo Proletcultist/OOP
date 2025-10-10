@@ -36,7 +36,7 @@ class VariableTest {
     void derivativeTest() {
         Variable a = new Variable("a");
 
-        Assertions.assertEquals(a.derivative("b"), new Variable("a"));
+        Assertions.assertEquals(a.derivative("b"), new Number(0));
         Assertions.assertEquals(a.derivative("a"), new Number(1));
     }
 
@@ -44,6 +44,15 @@ class VariableTest {
     void simplifyTest() {
         Variable a = new Variable("a");
 
-        Assertions.assertEquals(a.simpify(), new Variable("a"));
+        Assertions.assertEquals(a.simplify(), new Variable("a"));
+    }
+
+    @Test
+    void invalidNameTest() {
+        Assertions.assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    Variable a = new Variable("()");
+                });
     }
 }
