@@ -61,6 +61,17 @@ public class ExpressionLexer {
         this.binOps = binOps;
         this.unOps = unOps;
         this.input = str;
+
+        for (char c : binOps.keySet()) {
+            if (c == '(' || c == ')' || Character.isDigit(c) || Character.isWhitespace(c)) {
+                throw new InputMismatchException("Invalid operator name");
+            }
+        }
+        for (char c : unOps.keySet()) {
+            if (c == '(' || c == ')' || Character.isDigit(c) || Character.isWhitespace(c)) {
+                throw new InputMismatchException("Invalid operator name");
+            }
+        }
     }
 
     public boolean hasNextToken() {
