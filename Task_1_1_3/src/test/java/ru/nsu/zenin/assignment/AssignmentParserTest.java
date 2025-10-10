@@ -2,6 +2,7 @@ package ru.nsu.zenin.assignment;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import ru.nsu.zenin.assignment.exception.AssignmentParserException;
 import ru.nsu.zenin.expression.Variable;
 
 class AsignmentParserTest {
@@ -15,7 +16,7 @@ class AsignmentParserTest {
     }
 
     @Test
-    void parseTest() {
+    void parseTest() throws AssignmentParserException {
         Assignment ass = AssignmentParser.parse("a = 100; b = 2");
 
         Assertions.assertEquals(ass.getValue(new Variable("a")), 100);
@@ -23,33 +24,33 @@ class AsignmentParserTest {
     }
 
     @Test
-    void invalidAssignmentTest() {
+    void invalidAssignmentTest() throws AssignmentParserException {
         Assertions.assertThrows(
-                IllegalArgumentException.class,
+                AssignmentParserException.class,
                 () -> {
                     Assignment ass = AssignmentParser.parse("a = = 100; b = 2");
                 });
 
         Assertions.assertThrows(
-                IllegalArgumentException.class,
+                AssignmentParserException.class,
                 () -> {
                     Assignment ass = AssignmentParser.parse("a = 100 b = 2");
                 });
 
         Assertions.assertThrows(
-                IllegalArgumentException.class,
+                AssignmentParserException.class,
                 () -> {
                     Assignment ass = AssignmentParser.parse("10a = 100; b = 2");
                 });
 
         Assertions.assertThrows(
-                IllegalArgumentException.class,
+                AssignmentParserException.class,
                 () -> {
                     Assignment ass = AssignmentParser.parse("a = 100; b = a");
                 });
 
         Assertions.assertThrows(
-                IllegalArgumentException.class,
+                AssignmentParserException.class,
                 () -> {
                     Assignment ass = AssignmentParser.parse("a = 100;; b = 2");
                 });

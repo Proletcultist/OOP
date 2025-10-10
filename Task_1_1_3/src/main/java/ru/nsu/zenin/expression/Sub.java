@@ -3,6 +3,7 @@ package ru.nsu.zenin.expression;
 import java.util.Objects;
 import ru.nsu.zenin.assignment.Assignment;
 import ru.nsu.zenin.assignment.exception.AssignmentException;
+import ru.nsu.zenin.expression.exception.EvaluationException;
 
 public class Sub extends BinOperator {
 
@@ -14,11 +15,11 @@ public class Sub extends BinOperator {
         return new Sub(leftOperand.derivative(variable), rightOperand.derivative(variable));
     }
 
-    int eval(Assignment assignment) throws AssignmentException {
+    int eval(Assignment assignment) throws EvaluationException {
         return leftOperand.eval(assignment) - rightOperand.eval(assignment);
     }
 
-    public Expression simplify() {
+    public Expression simplify() throws EvaluationException {
         try {
             Assignment emptyAssignment = new Assignment();
             return new Number(eval(emptyAssignment));

@@ -4,20 +4,23 @@ import java.util.HashMap;
 import java.util.InputMismatchException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import ru.nsu.zenin.assignment.exception.AssignmentParserException;
 import ru.nsu.zenin.expression.Add;
 import ru.nsu.zenin.expression.Div;
 import ru.nsu.zenin.expression.Mul;
 import ru.nsu.zenin.expression.Sub;
 import ru.nsu.zenin.expression.UnSub;
+import ru.nsu.zenin.expression.exception.EvaluationException;
 import ru.nsu.zenin.lexer.ExpressionLexer;
 import ru.nsu.zenin.lexer.token.BinOperatorToken;
 import ru.nsu.zenin.lexer.token.OperatorToken;
 import ru.nsu.zenin.lexer.token.UnOperatorToken;
+import ru.nsu.zenin.parser.exception.ParserException;
 
 class ExpressionParserTest {
 
     @Test
-    void test() {
+    void test() throws EvaluationException, ParserException, AssignmentParserException {
         HashMap<Character, BinOperatorToken> binOps = new HashMap<Character, BinOperatorToken>();
         HashMap<Character, UnOperatorToken> unOps = new HashMap<Character, UnOperatorToken>();
 
@@ -33,7 +36,7 @@ class ExpressionParserTest {
     }
 
     @Test
-    void test2() {
+    void test2() throws EvaluationException, ParserException, AssignmentParserException {
         HashMap<Character, BinOperatorToken> binOps = new HashMap<Character, BinOperatorToken>();
         HashMap<Character, UnOperatorToken> unOps = new HashMap<Character, UnOperatorToken>();
 
@@ -49,7 +52,7 @@ class ExpressionParserTest {
     }
 
     @Test
-    void test3() {
+    void test3() throws EvaluationException, ParserException, AssignmentParserException {
         HashMap<Character, BinOperatorToken> binOps = new HashMap<Character, BinOperatorToken>();
         HashMap<Character, UnOperatorToken> unOps = new HashMap<Character, UnOperatorToken>();
 
@@ -65,7 +68,7 @@ class ExpressionParserTest {
     }
 
     @Test
-    void test4() {
+    void test4() throws EvaluationException, ParserException, AssignmentParserException {
         HashMap<Character, BinOperatorToken> binOps = new HashMap<Character, BinOperatorToken>();
         HashMap<Character, UnOperatorToken> unOps = new HashMap<Character, UnOperatorToken>();
 
@@ -81,7 +84,7 @@ class ExpressionParserTest {
     }
 
     @Test
-    void test5() {
+    void test5() throws EvaluationException, ParserException, AssignmentParserException {
         HashMap<Character, BinOperatorToken> binOps = new HashMap<Character, BinOperatorToken>();
         HashMap<Character, UnOperatorToken> unOps = new HashMap<Character, UnOperatorToken>();
 
@@ -97,7 +100,7 @@ class ExpressionParserTest {
     }
 
     @Test
-    void test6() {
+    void test6() throws EvaluationException, ParserException, AssignmentParserException {
         HashMap<Character, BinOperatorToken> binOps = new HashMap<Character, BinOperatorToken>();
         HashMap<Character, UnOperatorToken> unOps = new HashMap<Character, UnOperatorToken>();
 
@@ -113,7 +116,7 @@ class ExpressionParserTest {
     }
 
     @Test
-    void test7() {
+    void test7() throws EvaluationException, ParserException, AssignmentParserException {
         HashMap<Character, BinOperatorToken> binOps = new HashMap<Character, BinOperatorToken>();
         HashMap<Character, UnOperatorToken> unOps = new HashMap<Character, UnOperatorToken>();
 
@@ -129,7 +132,7 @@ class ExpressionParserTest {
     }
 
     @Test
-    void test8() {
+    void test8() throws EvaluationException, ParserException, AssignmentParserException {
         HashMap<Character, BinOperatorToken> binOps = new HashMap<Character, BinOperatorToken>();
         HashMap<Character, UnOperatorToken> unOps = new HashMap<Character, UnOperatorToken>();
 
@@ -145,7 +148,7 @@ class ExpressionParserTest {
     }
 
     @Test
-    void test9() {
+    void test9() throws EvaluationException, ParserException, AssignmentParserException {
         HashMap<Character, BinOperatorToken> binOps = new HashMap<Character, BinOperatorToken>();
         HashMap<Character, UnOperatorToken> unOps = new HashMap<Character, UnOperatorToken>();
 
@@ -161,7 +164,7 @@ class ExpressionParserTest {
     }
 
     @Test
-    void testError() {
+    void testError() throws EvaluationException, ParserException {
         HashMap<Character, BinOperatorToken> binOps = new HashMap<Character, BinOperatorToken>();
         HashMap<Character, UnOperatorToken> unOps = new HashMap<Character, UnOperatorToken>();
 
@@ -174,14 +177,14 @@ class ExpressionParserTest {
         ExpressionLexer lexer = new ExpressionLexer("(x*y", binOps, unOps);
 
         Assertions.assertThrows(
-                InputMismatchException.class,
+                ParserException.class,
                 () -> {
                     ExpressionParser.parse(lexer);
                 });
     }
 
     @Test
-    void testError2() {
+    void testError2() throws EvaluationException, ParserException {
         HashMap<Character, BinOperatorToken> binOps = new HashMap<Character, BinOperatorToken>();
         HashMap<Character, UnOperatorToken> unOps = new HashMap<Character, UnOperatorToken>();
 
@@ -194,14 +197,14 @@ class ExpressionParserTest {
         ExpressionLexer lexer = new ExpressionLexer("22 22 + 33", binOps, unOps);
 
         Assertions.assertThrows(
-                InputMismatchException.class,
+                ParserException.class,
                 () -> {
                     ExpressionParser.parse(lexer);
                 });
     }
 
     @Test
-    void testError3() {
+    void testError3() throws EvaluationException, ParserException {
         HashMap<Character, BinOperatorToken> binOps = new HashMap<Character, BinOperatorToken>();
         HashMap<Character, UnOperatorToken> unOps = new HashMap<Character, UnOperatorToken>();
 
@@ -221,7 +224,7 @@ class ExpressionParserTest {
     }
 
     @Test
-    void testError4() {
+    void testError4() throws EvaluationException, ParserException {
         HashMap<Character, BinOperatorToken> binOps = new HashMap<Character, BinOperatorToken>();
         HashMap<Character, UnOperatorToken> unOps = new HashMap<Character, UnOperatorToken>();
 
@@ -234,7 +237,7 @@ class ExpressionParserTest {
         ExpressionLexer lexer = new ExpressionLexer("3+22)", binOps, unOps);
 
         Assertions.assertThrows(
-                InputMismatchException.class,
+                ParserException.class,
                 () -> {
                     ExpressionParser.parse(lexer);
                 });

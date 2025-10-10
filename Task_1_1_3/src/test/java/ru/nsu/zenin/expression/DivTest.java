@@ -2,6 +2,8 @@ package ru.nsu.zenin.expression;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import ru.nsu.zenin.assignment.exception.AssignmentParserException;
+import ru.nsu.zenin.expression.exception.EvaluationException;
 
 class DivTest {
 
@@ -30,7 +32,7 @@ class DivTest {
     }
 
     @Test
-    void evalTest() {
+    void evalTest() throws EvaluationException, AssignmentParserException {
         Div a = new Div(new Number(30), new Variable("a"));
         Div b = new Div(new Variable("a"), new Number(3));
         Div c = new Div(new Number(3), new Number(0));
@@ -38,7 +40,7 @@ class DivTest {
         Assertions.assertEquals(a.eval("a = 6"), 5);
         Assertions.assertEquals(b.eval("a = 6"), 2);
         Assertions.assertThrows(
-                ArithmeticException.class,
+                EvaluationException.class,
                 () -> {
                     int res = c.eval("");
                 });
@@ -65,7 +67,7 @@ class DivTest {
     }
 
     @Test
-    void simplifyTest() {
+    void simplifyTest() throws EvaluationException, AssignmentParserException {
         Div a = new Div(new Number(2), new Number(2));
         Div b = new Div(new Div(new Number(3), new Number(5)), new Number(2));
         Div c = new Div(new Variable("a"), new Number(2));

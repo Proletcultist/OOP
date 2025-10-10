@@ -2,6 +2,8 @@ package ru.nsu.zenin.expression;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import ru.nsu.zenin.assignment.exception.AssignmentParserException;
+import ru.nsu.zenin.expression.exception.EvaluationException;
 
 class MulTest {
 
@@ -30,7 +32,7 @@ class MulTest {
     }
 
     @Test
-    void evalTest() {
+    void evalTest() throws EvaluationException, AssignmentParserException {
         Mul a = new Mul(new Number(3), new Variable("a"));
 
         Assertions.assertEquals(a.eval("a = 10"), 30);
@@ -53,7 +55,7 @@ class MulTest {
     }
 
     @Test
-    void simplifyTest() {
+    void simplifyTest() throws EvaluationException, AssignmentParserException {
         Mul a = new Mul(new Number(2), new Number(2));
         Mul b = new Mul(new Mul(new Number(3), new Number(5)), new Number(2));
 

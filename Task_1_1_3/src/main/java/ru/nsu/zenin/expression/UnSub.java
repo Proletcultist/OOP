@@ -2,6 +2,7 @@ package ru.nsu.zenin.expression;
 
 import ru.nsu.zenin.assignment.Assignment;
 import ru.nsu.zenin.assignment.exception.AssignmentException;
+import ru.nsu.zenin.expression.exception.EvaluationException;
 
 public class UnSub extends UnOperator {
 
@@ -13,11 +14,11 @@ public class UnSub extends UnOperator {
         return new UnSub(operand.derivative(variable));
     }
 
-    int eval(Assignment assignment) throws AssignmentException, ArithmeticException {
+    int eval(Assignment assignment) throws AssignmentException, EvaluationException {
         return -operand.eval(assignment);
     }
 
-    public Expression simplify() {
+    public Expression simplify() throws EvaluationException {
         try {
             Assignment emptyAssignment = new Assignment();
             return new Number(eval(emptyAssignment));

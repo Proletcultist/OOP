@@ -2,6 +2,8 @@ package ru.nsu.zenin.expression;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import ru.nsu.zenin.assignment.exception.AssignmentParserException;
+import ru.nsu.zenin.expression.exception.EvaluationException;
 
 class VariableTest {
 
@@ -26,7 +28,7 @@ class VariableTest {
     }
 
     @Test
-    void evalTest() {
+    void evalTest() throws EvaluationException, AssignmentParserException {
         Variable a = new Variable("a");
 
         Assertions.assertEquals(a.eval("a = 10"), 10);
@@ -41,7 +43,7 @@ class VariableTest {
     }
 
     @Test
-    void simplifyTest() {
+    void simplifyTest() throws EvaluationException, AssignmentParserException {
         Variable a = new Variable("a");
 
         Assertions.assertEquals(a.simplify(), new Variable("a"));

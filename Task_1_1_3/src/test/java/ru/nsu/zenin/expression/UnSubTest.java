@@ -2,6 +2,8 @@ package ru.nsu.zenin.expression;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import ru.nsu.zenin.assignment.exception.AssignmentParserException;
+import ru.nsu.zenin.expression.exception.EvaluationException;
 
 class UnSubTest {
 
@@ -26,7 +28,7 @@ class UnSubTest {
     }
 
     @Test
-    void evalTest() {
+    void evalTest() throws EvaluationException, AssignmentParserException {
         UnSub a = new UnSub(new Number(3));
         UnSub b = new UnSub(new Variable("a"));
 
@@ -43,7 +45,7 @@ class UnSubTest {
     }
 
     @Test
-    void simplifyTest() {
+    void simplifyTest() throws EvaluationException, AssignmentParserException {
         UnSub a = new UnSub(new Number(2));
         UnSub b = new UnSub(new Variable("a"));
 
