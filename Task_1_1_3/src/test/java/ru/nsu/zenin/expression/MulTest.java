@@ -44,7 +44,7 @@ class MulTest {
                 a.derivative("b"),
                 new Add(
                         new Mul(new Number(0), new Variable("a")),
-                        new Mul(new Number(3), new Variable("a"))));
+                        new Mul(new Number(3), new Number(0))));
         Assertions.assertEquals(
                 a.derivative("a"),
                 new Add(
@@ -61,10 +61,21 @@ class MulTest {
         Mul d = new Mul(new Add(new Number(1), new Number(0)), new Variable("a"));
         Mul e = new Mul(new Variable("a"), new Add(new Number(1), new Number(0)));
 
-        Assertions.assertEquals(a.simpify(), new Number(4));
-        Assertions.assertEquals(b.simpify(), new Number(30));
-        Assertions.assertEquals(c.simpify(), new Number(0));
-        Assertions.assertEquals(d.simpify(), new Variable("a"));
-        Assertions.assertEquals(e.simpify(), new Variable("a"));
+        Mul f = new Mul(new Variable("a"), new Number(3));
+
+        Assertions.assertEquals(a.simplify(), new Number(4));
+        Assertions.assertEquals(b.simplify(), new Number(30));
+        Assertions.assertEquals(c.simplify(), new Number(0));
+        Assertions.assertEquals(d.simplify(), new Variable("a"));
+        Assertions.assertEquals(e.simplify(), new Variable("a"));
+        Assertions.assertEquals(f.simplify(), new Mul(new Variable("a"), new Number(3)));
+    }
+
+    @Test
+    void cloneTest() {
+        Mul a = new Mul(new Number(2), new Number(2));
+
+        Assertions.assertFalse(a == a.clone());
+        Assertions.assertEquals(a, a.clone());
     }
 }
