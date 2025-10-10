@@ -18,7 +18,7 @@ public class Number extends Expression {
         return value;
     }
 
-    public Expression simpify() {
+    public Expression simplify() {
         return (Expression) clone();
     }
 

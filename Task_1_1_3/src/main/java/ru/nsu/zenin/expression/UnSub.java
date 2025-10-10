@@ -17,7 +17,7 @@ public class UnSub extends UnOperator {
         return -operand.eval(assignment);
     }
 
-    public Expression simpify() {
+    public Expression simplify() {
         try {
             Assignment emptyAssignment = new Assignment();
             return new Number(eval(emptyAssignment));
@@ -29,7 +29,7 @@ public class UnSub extends UnOperator {
 
     @Override
     public String toString() {
-        return "-(" + operand + ")";
+        return "(-" + operand + ")";
     }
 
     @Override

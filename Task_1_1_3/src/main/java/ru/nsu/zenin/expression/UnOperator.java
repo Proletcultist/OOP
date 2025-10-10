@@ -1,6 +1,6 @@
 package ru.nsu.zenin.expression;
 
-public abstract class UnOperator extends Operator {
+public abstract class UnOperator extends Expression {
     protected Expression operand;
 
     public UnOperator(Expression operand) {

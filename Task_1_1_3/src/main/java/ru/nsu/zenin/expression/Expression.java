@@ -18,7 +18,7 @@ public abstract class Expression implements Cloneable {
 
     abstract int eval(Assignment assignment) throws AssignmentException, ArithmeticException;
 
-    public abstract Expression simpify();
+    public abstract Expression simplify();
 
     @Override
     public abstract String toString();
