@@ -1,6 +1,6 @@
 package ru.nsu.zenin.expression;
 
-public abstract class BinOperator extends Operator {
+public abstract class BinOperator extends Expression {
 
     protected Expression leftOperand, rightOperand;
 

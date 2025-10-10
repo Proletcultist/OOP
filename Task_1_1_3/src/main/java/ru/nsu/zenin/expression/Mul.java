@@ -20,15 +20,15 @@ public class Mul extends BinOperator {
         return leftOperand.eval(assignment) * rightOperand.eval(assignment);
     }
 
-    public Expression simpify() {
+    public Expression simplify() {
         try {
             Assignment emptyAssignment = new Assignment();
             return new Number(eval(emptyAssignment));
         } catch (AssignmentException e) {
         }
 
-        Expression leftSimplificated = leftOperand.simpify(),
-                rightSimplificated = rightOperand.simpify();
+        Expression leftSimplificated = leftOperand.simplify(),
+                rightSimplificated = rightOperand.simplify();
 
         Number one = new Number(1);
         Number zero = new Number(0);
@@ -72,6 +72,6 @@ public class Mul extends BinOperator {
 
     @Override
     public Object clone() {
-        return new Add((Expression) leftOperand.clone(), (Expression) rightOperand.clone());
+        return new Mul((Expression) leftOperand.clone(), (Expression) rightOperand.clone());
     }
 }

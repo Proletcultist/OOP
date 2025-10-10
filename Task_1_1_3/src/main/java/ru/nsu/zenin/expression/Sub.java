@@ -18,15 +18,15 @@ public class Sub extends BinOperator {
         return leftOperand.eval(assignment) - rightOperand.eval(assignment);
     }
 
-    public Expression simpify() {
+    public Expression simplify() {
         try {
             Assignment emptyAssignment = new Assignment();
             return new Number(eval(emptyAssignment));
         } catch (AssignmentException e) {
         }
 
-        Expression leftSimplificated = leftOperand.simpify(),
-                rightSimplificated = rightOperand.simpify();
+        Expression leftSimplificated = leftOperand.simplify(),
+                rightSimplificated = rightOperand.simplify();
 
         if (leftSimplificated.equals(rightSimplificated)) {
             return new Number(0);

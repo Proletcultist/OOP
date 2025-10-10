@@ -8,7 +8,7 @@ public class Variable extends Expression {
 
     public Variable(String name) {
         if (!isValidName(name)) {
-            throw new IllegalArgumentException("Invalid variable name");
+            throw new IllegalArgumentException("Invalid variable name \"" + name + "\"");
         }
         this.name = name;
     }
@@ -17,7 +17,7 @@ public class Variable extends Expression {
         if (variable.equals(name)) {
             return new Number(1);
         } else {
-            return (Expression) clone();
+            return new Number(0);
         }
     }
 
@@ -25,7 +25,7 @@ public class Variable extends Expression {
         return assignment.getValue(this);
     }
 
-    public Expression simpify() {
+    public Expression simplify() {
         return (Expression) clone();
     }
 
@@ -61,6 +61,10 @@ public class Variable extends Expression {
     }
 
     public static boolean isValidName(String name) {
-        return name.length() != 0 && !name.contains(" ") && !Character.isDigit(name.charAt(0));
+        return name.length() != 0
+                && !name.contains(" ")
+                && !Character.isDigit(name.charAt(0))
+                && !name.contains("(")
+                && !name.contains(")");
     }
 }
