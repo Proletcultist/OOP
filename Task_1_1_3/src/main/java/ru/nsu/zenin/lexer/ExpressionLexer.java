@@ -49,9 +49,6 @@ public class ExpressionLexer {
     private final String input;
     private int position = 0;
 
-    private String binOpRegex;
-    private String unOpRegex;
-
     private TokenType lastTokenType = null;
 
     public ExpressionLexer(
