@@ -11,11 +11,17 @@ import java.util.List;
 import ru.nsu.zenin.graph.Graph;
 
 /**
- * Parser for simple format of graph description. Format is following: <amount_of_vertexes> <edge>
- * ... <edge>
+ * Parser for simple format of graph description. Format is following:
  *
- * <p>Here: - <amount_of_vertexes> - positive int - <edge> - pair of indexes of vertexes, separated
- * with witespace. Indexes start from 0
+ * <pre>
+ * {@code <amount_of_vertexes>}
+ * {@code <edge>}
+ * ...
+ * {@code <edge>}
+ * </pre>
+ *
+ * <p>Here: - {@code <amount_of_vertexes>} - positive int - {@code <edge>} - pair of indexes of
+ * vertexes, separated with witespace. Indexes start from 0
  *
  * <p>The only allowed encoding for the file is UTF-8.
  */
