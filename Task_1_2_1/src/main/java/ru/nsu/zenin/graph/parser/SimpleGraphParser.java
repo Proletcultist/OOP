@@ -5,37 +5,50 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.InputMismatchException;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import ru.nsu.zenin.graph.Graph;
+import ru.nsu.zenin.graph.exception.IdCollisionException;
 
 /**
  * Parser for simple format of graph description. Format is following:
  *
  * <pre>
- * {@code <amount_of_vertexes>}
+ * {@code <vertex> <vertex> ... <vertex>}
  * {@code <edge>}
  * ...
  * {@code <edge>}
  * </pre>
  *
- * <p>Here: - {@code <amount_of_vertexes>} - positive int - {@code <edge>} - pair of indexes of
- * vertexes, separated with witespace. Indexes start from 0
+ * <p>Here:
+ *
+ * <ul>
+ *   <li>{@code <amount_of_vertexes>} - positive int
+ *   <li>{@code <edge>} - pair of indexes of vertexes, separated with witespace. Indexes start from
+ *       0
+ *   <li>{@code <vertex>} - integer
+ * </ul>
  *
  * <p>The only allowed encoding for the file is UTF-8.
  */
-public class SimpleGraphParser implements GraphParser {
+public class SimpleGraphParser<T> implements GraphParser<T> {
 
-    private List<Integer> indexToId = new ArrayList<Integer>();
-
-    public void addSubgraphFromFile(Path file, Graph graph) throws IOException {
+    // labelParser should assume, what string representation of label cannot contain whitespaces
+    // inside
+    public void addSubgraphFromFile(Path file, Graph<T> graph, Function<String, T> labelParser)
+            throws IOException, IdCollisionException {
         try (BufferedReader br = Files.newBufferedReader(file, StandardCharsets.UTF_8)) {
 
-            int vertexesAmount = Integer.valueOf(br.readLine());
+            List<T> vertexes =
+                    Arrays.stream(br.readLine().split("\\w+"))
+                            .map(str -> labelParser.apply(str))
+                            .collect(Collectors.toList());
 
-            for (int i = 0; i < vertexesAmount; i++) {
-                indexToId.add(graph.addVertex());
+            for (T id : vertexes) {
+                graph.addVertex(id);
             }
 
             while (br.ready()) {
@@ -44,10 +57,10 @@ public class SimpleGraphParser implements GraphParser {
                     throw new InputMismatchException("Invalid edge format");
                 }
 
-                int fromIndex = Integer.valueOf(splited[0]);
-                int toIndex = Integer.valueOf(splited[1]);
+                T fromId = labelParser.apply(splited[0]);
+                T toId = labelParser.apply(splited[1]);
 
-                graph.addEdgeBetween(indexToId.get(fromIndex), indexToId.get(toIndex));
+                graph.addEdgeBetween(fromId, toId);
             }
         }
     }

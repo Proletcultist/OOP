@@ -6,21 +6,28 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
+import java.util.function.Function;
+import org.apache.commons.lang3.tuple.Pair;
+import ru.nsu.zenin.graph.exception.IdCollisionException;
 import ru.nsu.zenin.graph.exception.NoSuchEdgeException;
 import ru.nsu.zenin.graph.exception.NoSuchVertexException;
 import ru.nsu.zenin.graph.parser.GraphParser;
 
-public class AdjMatrixGraph implements Graph {
+public class AdjMatrixGraph<T> extends AbstractGraph<T> {
 
     private LinkedList<LinkedList<Integer>> adjMatrix = new LinkedList<LinkedList<Integer>>();
-    private Map<Integer, Integer> idToIndex = new TreeMap<Integer, Integer>();
-    private TreeMap<Integer, Integer> indexToId = new TreeMap<Integer, Integer>();
-    private int idCounter = 0;
+    private Map<T, Integer> idToIndex = new TreeMap<T, Integer>();
+    private TreeMap<Integer, T> indexToId = new TreeMap<Integer, T>();
 
-    public int addVertex() {
-        idToIndex.put(idCounter, adjMatrix.size());
-        indexToId.put(adjMatrix.size(), idCounter);
+    public void addVertex(T id) throws IdCollisionException {
+        if (idToIndex.containsKey(id)) {
+            throw new IdCollisionException("Vertex with such id already exists");
+        }
+        idToIndex.put(id, adjMatrix.size());
+        indexToId.put(adjMatrix.size(), id);
 
         for (LinkedList row : adjMatrix) {
             row.add(0);
@@ -31,11 +38,9 @@ public class AdjMatrixGraph implements Graph {
         for (int i = 0; i < getVertexesAmount(); i++) {
             adjMatrix.get(adjMatrix.size() - 1).add(0);
         }
-
-        return idCounter++;
     }
 
-    public void removeVertexById(int id) {
+    public void removeVertexById(T id) {
         int index;
         try {
             index = idToIndex.remove(id);
@@ -65,7 +70,7 @@ public class AdjMatrixGraph implements Graph {
                         });
     }
 
-    public void addEdgeBetween(int from, int to) {
+    public void addEdgeBetween(T from, T to) {
         int fromIndex, toIndex;
 
         try {
@@ -78,7 +83,7 @@ public class AdjMatrixGraph implements Graph {
         adjMatrix.get(fromIndex).set(toIndex, adjMatrix.get(fromIndex).get(toIndex) + 1);
     }
 
-    public void removeEdgeBetween(int from, int to) {
+    public void removeEdgeBetween(T from, T to) {
         int fromIndex, toIndex;
 
         try {
@@ -95,7 +100,7 @@ public class AdjMatrixGraph implements Graph {
         adjMatrix.get(fromIndex).set(toIndex, adjMatrix.get(fromIndex).get(toIndex) - 1);
     }
 
-    public List<Integer> getVertexNeighbours(int id) {
+    public List<T> getVertexNeighbours(T id) {
         int index;
         try {
             index = idToIndex.remove(id);
@@ -103,7 +108,7 @@ public class AdjMatrixGraph implements Graph {
             throw new NoSuchVertexException("No vertex with such id in graph", e);
         }
 
-        List<Integer> out = new ArrayList<Integer>();
+        List<T> out = new ArrayList<T>();
 
         for (int i = 0; i < getVertexesAmount(); i++) {
             if (adjMatrix.get(index).get(i) > 0) {
@@ -114,45 +119,36 @@ public class AdjMatrixGraph implements Graph {
         return out;
     }
 
-    public void addSubgraphFromFile(Path file, GraphParser parser) throws IOException {
-        parser.addSubgraphFromFile(file, this);
+    public void addSubgraphFromFile(
+            Path file, GraphParser<T> parser, Function<String, T> labelParser)
+            throws IOException, IdCollisionException {
+        parser.addSubgraphFromFile(file, this, labelParser);
     }
 
     public int getVertexesAmount() {
         return adjMatrix.size();
     }
 
-    @Override
-    public String toString() {
-        StringBuilder strBld = new StringBuilder();
-
-        strBld.append("Vertexes: ");
-
-        List<Integer> ids = new ArrayList<Integer>();
+    public Set<T> getVertexes() {
+        Set<T> vertexes = new TreeSet<T>();
         idToIndex.forEach(
                 (K, V) -> {
-                    ids.add(K);
+                    vertexes.add(K);
                 });
+        return vertexes;
+    }
 
-        strBld.append(ids.toString() + "\n");
-
-        strBld.append("Edges: ");
-
-        ArrayList<ArrayList<Integer>> edges = new ArrayList<ArrayList<Integer>>();
+    public List<Pair<T, T>> getEdges() {
+        List<Pair<T, T>> edges = new ArrayList<Pair<T, T>>();
 
         for (int i = 0; i < getVertexesAmount(); i++) {
             for (int j = 0; j < getVertexesAmount(); j++) {
                 for (int k = 0; k < adjMatrix.get(i).get(j); k++) {
-                    ArrayList<Integer> edge = new ArrayList<Integer>();
-                    edge.add(indexToId.get(i));
-                    edge.add(indexToId.get(j));
-                    edges.add(edge);
+                    edges.add(Pair.of(indexToId.get(i), indexToId.get(j)));
                 }
             }
         }
 
-        strBld.append(edges.toString() + "\n");
-
-        return strBld.toString();
+        return edges;
     }
 }
