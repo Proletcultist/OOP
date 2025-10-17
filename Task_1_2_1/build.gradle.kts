@@ -10,7 +10,6 @@ plugins {
     `java-library`
     id("com.diffplug.spotless") version "8.0.0"
     jacoco
-    checkstyle
 }
 
 repositories {
