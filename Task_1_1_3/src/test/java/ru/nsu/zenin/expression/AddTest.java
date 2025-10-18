@@ -2,6 +2,8 @@ package ru.nsu.zenin.expression;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import ru.nsu.zenin.assignment.exception.AssignmentParserException;
+import ru.nsu.zenin.expression.exception.EvaluationException;
 
 class AddTest {
 
@@ -30,7 +32,7 @@ class AddTest {
     }
 
     @Test
-    void evalTest() {
+    void evalTest() throws EvaluationException, AssignmentParserException {
         Add a = new Add(new Number(3), new Variable("a"));
 
         Assertions.assertEquals(a.eval("a = 10"), 13);
@@ -45,7 +47,7 @@ class AddTest {
     }
 
     @Test
-    void simplifyTest() {
+    void simplifyTest() throws EvaluationException, AssignmentParserException {
         Add a = new Add(new Number(2), new Number(2));
         Add b = new Add(new Add(new Number(3), new Number(5)), new Number(2));
 

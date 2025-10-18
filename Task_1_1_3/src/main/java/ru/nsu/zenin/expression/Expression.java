@@ -3,6 +3,8 @@ package ru.nsu.zenin.expression;
 import ru.nsu.zenin.assignment.Assignment;
 import ru.nsu.zenin.assignment.AssignmentParser;
 import ru.nsu.zenin.assignment.exception.AssignmentException;
+import ru.nsu.zenin.assignment.exception.AssignmentParserException;
+import ru.nsu.zenin.expression.exception.EvaluationException;
 
 public abstract class Expression implements Cloneable {
 
@@ -12,13 +14,14 @@ public abstract class Expression implements Cloneable {
 
     public abstract Expression derivative(String variable);
 
-    public int eval(String assignment) throws AssignmentException, ArithmeticException {
+    public int eval(String assignment)
+            throws AssignmentException, EvaluationException, AssignmentParserException {
         return eval(AssignmentParser.parse(assignment));
     }
 
-    abstract int eval(Assignment assignment) throws AssignmentException, ArithmeticException;
+    abstract int eval(Assignment assignment) throws AssignmentException, EvaluationException;
 
-    public abstract Expression simplify();
+    public abstract Expression simplify() throws EvaluationException;
 
     @Override
     public abstract String toString();
