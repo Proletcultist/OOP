@@ -24,7 +24,7 @@ public class Div extends BinOperator {
     }
 
     int eval(Assignment assignment) throws AssignmentException, EvaluationException {
-        if (rightOperand.equals(new Number(0))) {
+        if (rightOperand.eval(assignment).equals(new Number(0))) {
             throw new EvaluationException("Devision by zero");
         }
         return leftOperand.eval(assignment) / rightOperand.eval(assignment);
