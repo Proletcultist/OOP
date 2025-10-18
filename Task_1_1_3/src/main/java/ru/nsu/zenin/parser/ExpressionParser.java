@@ -1,19 +1,19 @@
 package ru.nsu.zenin.parser;
 
 import java.util.EmptyStackException;
-import java.util.InputMismatchException;
 import java.util.Stack;
 import ru.nsu.zenin.expression.Expression;
 import ru.nsu.zenin.lexer.ExpressionLexer;
 import ru.nsu.zenin.lexer.token.BinOperatorToken;
 import ru.nsu.zenin.lexer.token.OperatorToken;
 import ru.nsu.zenin.lexer.token.UnOperatorToken;
+import ru.nsu.zenin.parser.exception.ParserException;
 
 public class ExpressionParser {
 
     private ExpressionParser() {}
 
-    public static Expression parse(ExpressionLexer lexer) {
+    public static Expression parse(ExpressionLexer lexer) throws ParserException {
         Stack<Expression> expressionsStack = new Stack<Expression>();
         Stack<OperatorToken> operatorsStack = new Stack<OperatorToken>();
 
@@ -47,14 +47,14 @@ public class ExpressionParser {
             OperatorToken op = operatorsStack.pop();
 
             if (op instanceof OpenParenthesis) {
-                throw new InputMismatchException("Missing matching bracket");
+                throw new ParserException("Missing matching bracket");
             }
 
             applyOperator(op, expressionsStack);
         }
 
         if (expressionsStack.size() != 1) {
-            throw new InputMismatchException("Invalid expression");
+            throw new ParserException("Invalid expression");
         }
 
         return expressionsStack.pop();
@@ -63,7 +63,8 @@ public class ExpressionParser {
     private static void processOperator(
             OperatorToken op,
             Stack<Expression> expressionsStack,
-            Stack<OperatorToken> operatorsStack) {
+            Stack<OperatorToken> operatorsStack)
+            throws ParserException {
 
         while (true) {
             if (operatorsStack.empty()) {
@@ -88,7 +89,8 @@ public class ExpressionParser {
         operatorsStack.push(op);
     }
 
-    private static void applyOperator(OperatorToken op, Stack<Expression> expressionsStack) {
+    private static void applyOperator(OperatorToken op, Stack<Expression> expressionsStack)
+            throws ParserException {
         try {
             if (op instanceof BinOperatorToken) {
                 Expression rightOperand = expressionsStack.pop();
@@ -104,19 +106,20 @@ public class ExpressionParser {
                 throw new RuntimeException("Unexpected OperatorToken subclass on operators stack");
             }
         } catch (EmptyStackException e) {
-            throw new InputMismatchException("Invalid expression");
+            throw new ParserException("Invalid expression");
         }
     }
 
     private static void processCloseParenthesis(
             ExpressionLexer lexer,
             Stack<Expression> expressionsStack,
-            Stack<OperatorToken> operatorsStack) {
+            Stack<OperatorToken> operatorsStack)
+            throws ParserException {
         lexer.nextCloseParenthesis();
 
         while (true) {
             if (operatorsStack.empty()) {
-                throw new InputMismatchException("Missing matching bracket");
+                throw new ParserException("Missing matching bracket");
             }
 
             OperatorToken topOp = operatorsStack.pop();

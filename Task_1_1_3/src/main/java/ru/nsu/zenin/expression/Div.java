@@ -3,6 +3,7 @@ package ru.nsu.zenin.expression;
 import java.util.Objects;
 import ru.nsu.zenin.assignment.Assignment;
 import ru.nsu.zenin.assignment.exception.AssignmentException;
+import ru.nsu.zenin.expression.exception.EvaluationException;
 
 public class Div extends BinOperator {
 
@@ -22,11 +23,14 @@ public class Div extends BinOperator {
                 new Mul((Expression) rightOperand.clone(), (Expression) rightOperand.clone()));
     }
 
-    int eval(Assignment assignment) throws AssignmentException, ArithmeticException {
+    int eval(Assignment assignment) throws AssignmentException, EvaluationException {
+        if (rightOperand.equals(new Number(0))) {
+            throw new EvaluationException("Devision by zero");
+        }
         return leftOperand.eval(assignment) / rightOperand.eval(assignment);
     }
 
-    public Expression simplify() {
+    public Expression simplify() throws EvaluationException {
         try {
             Assignment emptyAssignment = new Assignment();
             return new Number(eval(emptyAssignment));

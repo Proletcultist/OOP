@@ -2,14 +2,16 @@ package ru.nsu.zenin.lexer.token;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import ru.nsu.zenin.assignment.exception.AssignmentParserException;
 import ru.nsu.zenin.expression.Add;
 import ru.nsu.zenin.expression.Expression;
 import ru.nsu.zenin.expression.Number;
+import ru.nsu.zenin.expression.exception.EvaluationException;
 
 class BinOperatorTokenTest {
 
     @Test
-    void test() {
+    void test() throws EvaluationException, AssignmentParserException {
         BinOperatorToken binOp =
                 new BinOperatorToken(1, OperatorToken.Associativity.LEFT, Add.class);
 
