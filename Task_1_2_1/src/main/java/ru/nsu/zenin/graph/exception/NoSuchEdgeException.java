@@ -1,6 +1,6 @@
 package ru.nsu.zenin.graph.exception;
 
-public class NoSuchEdgeException extends RuntimeException {
+public class NoSuchEdgeException extends Exception {
     public NoSuchEdgeException(String msg) {
         super(msg);
     }

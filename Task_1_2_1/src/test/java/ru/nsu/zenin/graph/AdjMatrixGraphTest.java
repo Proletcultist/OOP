@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.nsu.zenin.graph.exception.IdCollisionException;
+import ru.nsu.zenin.graph.exception.NoSuchEdgeException;
+import ru.nsu.zenin.graph.exception.NoSuchVertexException;
 
 class AdjMatrixGraphTest {
 
     @Test
-    void test() throws IdCollisionException {
+    void test() throws IdCollisionException, NoSuchVertexException, NoSuchEdgeException {
         Graph<Integer> g = new AdjMatrixGraph<Integer>();
 
         g.addVertex(1);

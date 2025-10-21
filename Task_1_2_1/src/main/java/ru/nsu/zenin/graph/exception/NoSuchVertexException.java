@@ -1,6 +1,6 @@
 package ru.nsu.zenin.graph.exception;
 
-public class NoSuchVertexException extends RuntimeException {
+public class NoSuchVertexException extends Exception {
     public NoSuchVertexException(String msg) {
         super(msg);
     }
