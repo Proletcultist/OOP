@@ -40,7 +40,7 @@ public class AdjMatrixGraph<T> extends AbstractGraph<T> {
         }
     }
 
-    public void removeVertexById(T id) {
+    public void removeVertexById(T id) throws NoSuchVertexException {
         int index;
         try {
             index = idToIndex.remove(id);
@@ -70,7 +70,7 @@ public class AdjMatrixGraph<T> extends AbstractGraph<T> {
                         });
     }
 
-    public void addEdgeBetween(T from, T to) {
+    public void addEdgeBetween(T from, T to) throws NoSuchVertexException {
         int fromIndex, toIndex;
 
         try {
@@ -83,7 +83,7 @@ public class AdjMatrixGraph<T> extends AbstractGraph<T> {
         adjMatrix.get(fromIndex).set(toIndex, adjMatrix.get(fromIndex).get(toIndex) + 1);
     }
 
-    public void removeEdgeBetween(T from, T to) {
+    public void removeEdgeBetween(T from, T to) throws NoSuchVertexException, NoSuchEdgeException {
         int fromIndex, toIndex;
 
         try {
@@ -100,7 +100,7 @@ public class AdjMatrixGraph<T> extends AbstractGraph<T> {
         adjMatrix.get(fromIndex).set(toIndex, adjMatrix.get(fromIndex).get(toIndex) - 1);
     }
 
-    public List<T> getVertexNeighbours(T id) {
+    public List<T> getVertexNeighbours(T id) throws NoSuchVertexException {
         int index;
         try {
             index = idToIndex.remove(id);
@@ -121,7 +121,7 @@ public class AdjMatrixGraph<T> extends AbstractGraph<T> {
 
     public void addSubgraphFromFile(
             Path file, GraphParser<T> parser, Function<String, T> labelParser)
-            throws IOException, IdCollisionException {
+            throws IOException, IdCollisionException, NoSuchVertexException {
         parser.addSubgraphFromFile(file, this, labelParser);
     }
 

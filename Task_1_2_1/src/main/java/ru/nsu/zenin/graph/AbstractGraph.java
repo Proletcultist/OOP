@@ -44,8 +44,12 @@ public abstract class AbstractGraph<T> implements Graph<T> {
         Set<T> vertexes = this.getVertexes();
         ArrayList<List<T>> neighbours = new ArrayList<List<T>>();
 
-        for (T id : vertexes) {
-            neighbours.add(this.getVertexNeighbours(id));
+        try {
+            for (T id : vertexes) {
+                neighbours.add(this.getVertexNeighbours(id));
+            }
+        } catch (NoSuchVertexException e) {
+            throw new RuntimeException("Unexpected exception", e);
         }
 
         return Objects.hash(vertexes, neighbours);
