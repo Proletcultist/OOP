@@ -12,6 +12,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import ru.nsu.zenin.graph.Graph;
 import ru.nsu.zenin.graph.exception.IdCollisionException;
+import ru.nsu.zenin.graph.exception.NoSuchVertexException;
 
 /**
  * Parser for simple format of graph description. Format is following:
@@ -39,7 +40,7 @@ public class SimpleGraphParser<T> implements GraphParser<T> {
     // labelParser should assume, what string representation of label cannot contain whitespaces
     // inside
     public void addSubgraphFromFile(Path file, Graph<T> graph, Function<String, T> labelParser)
-            throws IOException, IdCollisionException {
+            throws IOException, IdCollisionException, NoSuchVertexException {
         try (BufferedReader br = Files.newBufferedReader(file, StandardCharsets.UTF_8)) {
 
             List<T> vertexes =
