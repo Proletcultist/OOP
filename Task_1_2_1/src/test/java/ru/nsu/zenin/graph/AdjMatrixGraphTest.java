@@ -1,5 +1,8 @@
 package ru.nsu.zenin.graph;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.TreeSet;
 import org.apache.commons.lang3.tuple.Pair;
@@ -8,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import ru.nsu.zenin.graph.exception.IdCollisionException;
 import ru.nsu.zenin.graph.exception.NoSuchEdgeException;
 import ru.nsu.zenin.graph.exception.NoSuchVertexException;
+import ru.nsu.zenin.graph.parser.SimpleGraphParser;
 
 class AdjMatrixGraphTest {
 
@@ -154,6 +158,45 @@ class AdjMatrixGraphTest {
                 NoSuchVertexException.class,
                 () -> {
                     g.getVertexNeighbours('A');
+                });
+    }
+
+    @Test
+    void parsingTest()
+            throws IOException, URISyntaxException, IdCollisionException, NoSuchVertexException {
+        Graph<String> g = new AdjMatrixGraph<String>();
+
+        g.addSubgraphFromFile(
+                Paths.get(AdjMatrixGraphTest.class.getResource("/test_graph").toURI()),
+                new SimpleGraphParser(),
+                str -> str);
+
+        Graph<String> expected = new AdjMatrixGraph<String>();
+
+        expected.addVertex("A");
+        expected.addVertex("B");
+        expected.addVertex("C");
+        expected.addVertex("D");
+
+        expected.addEdge("B", "C");
+        expected.addEdge("D", "A");
+        expected.addEdge("C", "D");
+        expected.addEdge("A", "B");
+
+        Assertions.assertEquals(g, expected);
+
+        Graph<String> g2 = new AdjMatrixGraph<String>();
+
+        Assertions.assertThrows(
+                NoSuchVertexException.class,
+                () -> {
+                    g2.addSubgraphFromFile(
+                            Paths.get(
+                                    AdjMatrixGraphTest.class
+                                            .getResource("/test_graph_invalid")
+                                            .toURI()),
+                            new SimpleGraphParser(),
+                            str -> str);
                 });
     }
 }
