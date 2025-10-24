@@ -1,20 +1,17 @@
 package ru.nsu.zenin.graph;
 
-import java.io.IOException;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.function.Function;
 import org.apache.commons.lang3.tuple.Pair;
 import ru.nsu.zenin.graph.exception.IdCollisionException;
 import ru.nsu.zenin.graph.exception.NoSuchEdgeException;
 import ru.nsu.zenin.graph.exception.NoSuchVertexException;
-import ru.nsu.zenin.graph.parser.GraphParser;
 
 public class AdjMatrixGraph<T> extends AbstractGraph<T> {
 
@@ -40,7 +37,7 @@ public class AdjMatrixGraph<T> extends AbstractGraph<T> {
         }
     }
 
-    public void removeVertexById(T id) throws NoSuchVertexException {
+    public void removeVertex(T id) throws NoSuchVertexException {
         int index;
         try {
             index = idToIndex.remove(id);
@@ -70,7 +67,7 @@ public class AdjMatrixGraph<T> extends AbstractGraph<T> {
                         });
     }
 
-    public void addEdgeBetween(T from, T to) throws NoSuchVertexException {
+    public void addEdge(T from, T to) throws NoSuchVertexException {
         int fromIndex, toIndex;
 
         try {
@@ -83,7 +80,7 @@ public class AdjMatrixGraph<T> extends AbstractGraph<T> {
         adjMatrix.get(fromIndex).set(toIndex, adjMatrix.get(fromIndex).get(toIndex) + 1);
     }
 
-    public void removeEdgeBetween(T from, T to) throws NoSuchVertexException, NoSuchEdgeException {
+    public void removeEdge(T from, T to) throws NoSuchVertexException, NoSuchEdgeException {
         int fromIndex, toIndex;
 
         try {
@@ -103,26 +100,21 @@ public class AdjMatrixGraph<T> extends AbstractGraph<T> {
     public List<T> getVertexNeighbours(T id) throws NoSuchVertexException {
         int index;
         try {
-            index = idToIndex.remove(id);
+            index = idToIndex.get(id);
         } catch (NullPointerException e) {
             throw new NoSuchVertexException("No vertex with such id in graph", e);
         }
 
         List<T> out = new ArrayList<T>();
 
+        ListIterator<Integer> it = adjMatrix.get(index).listIterator(0);
         for (int i = 0; i < getVertexesAmount(); i++) {
-            if (adjMatrix.get(index).get(i) > 0) {
+            if (it.next() > 0) {
                 out.add(indexToId.get(i));
             }
         }
 
         return out;
-    }
-
-    public void addSubgraphFromFile(
-            Path file, GraphParser<T> parser, Function<String, T> labelParser)
-            throws IOException, IdCollisionException, NoSuchVertexException {
-        parser.addSubgraphFromFile(file, this, labelParser);
     }
 
     public int getVertexesAmount() {
@@ -141,9 +133,12 @@ public class AdjMatrixGraph<T> extends AbstractGraph<T> {
     public List<Pair<T, T>> getEdges() {
         List<Pair<T, T>> edges = new ArrayList<Pair<T, T>>();
 
+        ListIterator<LinkedList<Integer>> rowIt = adjMatrix.listIterator(0);
         for (int i = 0; i < getVertexesAmount(); i++) {
+            ListIterator<Integer> it = rowIt.next().listIterator(0);
             for (int j = 0; j < getVertexesAmount(); j++) {
-                for (int k = 0; k < adjMatrix.get(i).get(j); k++) {
+                int edgesAmount = it.next();
+                for (int k = 0; k < edgesAmount; k++) {
                     edges.add(Pair.of(indexToId.get(i), indexToId.get(j)));
                 }
             }
