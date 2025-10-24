@@ -61,7 +61,7 @@ public class SimpleGraphParser<T> implements GraphParser<T> {
                 T fromId = labelParser.apply(splited[0]);
                 T toId = labelParser.apply(splited[1]);
 
-                graph.addEdgeBetween(fromId, toId);
+                graph.addEdge(fromId, toId);
             }
         }
     }
