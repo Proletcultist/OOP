@@ -9,11 +9,11 @@ import ru.nsu.zenin.graph.exception.IdCollisionException;
 import ru.nsu.zenin.graph.exception.NoSuchEdgeException;
 import ru.nsu.zenin.graph.exception.NoSuchVertexException;
 
-class AdjMatrixGraphTest {
+class AdjListsGraphTest {
 
     @Test
     void neighboursTest() throws IdCollisionException, NoSuchVertexException {
-        Graph<Integer> g = new AdjMatrixGraph<Integer>();
+        Graph<Integer> g = new AdjListsGraph<Integer>();
 
         g.addVertex(1);
         g.addVertex(2);
@@ -30,7 +30,7 @@ class AdjMatrixGraphTest {
 
     @Test
     void removingTest() throws IdCollisionException, NoSuchEdgeException, NoSuchVertexException {
-        Graph<String> g = new AdjMatrixGraph<String>();
+        Graph<String> g = new AdjListsGraph<String>();
 
         g.addVertex("first");
         g.addVertex("second");
@@ -75,7 +75,7 @@ class AdjMatrixGraphTest {
 
     @Test
     void removingTest2() throws IdCollisionException, NoSuchEdgeException, NoSuchVertexException {
-        Graph<String> g = new AdjMatrixGraph<String>();
+        Graph<String> g = new AdjListsGraph<String>();
 
         g.addVertex("first");
         g.addVertex("second");
@@ -116,7 +116,7 @@ class AdjMatrixGraphTest {
 
     @Test
     void idClashingTest() throws IdCollisionException {
-        Graph<Character> g = new AdjMatrixGraph<Character>();
+        Graph<Character> g = new AdjListsGraph<Character>();
 
         g.addVertex('A');
 
@@ -129,7 +129,7 @@ class AdjMatrixGraphTest {
 
     @Test
     void invalidEdgeAddingTest() throws IdCollisionException, NoSuchEdgeException {
-        Graph<Character> g = new AdjMatrixGraph<Character>();
+        Graph<Character> g = new AdjListsGraph<Character>();
 
         g.addVertex('A');
 
@@ -148,7 +148,7 @@ class AdjMatrixGraphTest {
 
     @Test
     void unexistingVertexNeighbTest() {
-        Graph<Character> g = new AdjMatrixGraph<Character>();
+        Graph<Character> g = new AdjListsGraph<Character>();
 
         Assertions.assertThrows(
                 NoSuchVertexException.class,
