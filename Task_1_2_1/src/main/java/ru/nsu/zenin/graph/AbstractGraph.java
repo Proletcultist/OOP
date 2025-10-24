@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import org.apache.commons.lang3.tuple.Pair;
 import ru.nsu.zenin.graph.exception.IdCollisionException;
@@ -39,9 +41,29 @@ public abstract class AbstractGraph<T> implements Graph<T> {
 
         for (T id : thisVertexes) {
             try {
-                if (!this.getVertexNeighbours(id).equals(other.getVertexNeighbours(id))) {
+                TreeMap<T, AtomicInteger> freq = new TreeMap<T, AtomicInteger>();
+                for (T v : this.getVertexNeighbours(id)) {
+                    AtomicInteger f = freq.get(v);
+                    if (f == null) {
+                        freq.put(v, new AtomicInteger(1));
+                    } else {
+                        f.incrementAndGet();
+                    }
+                }
+                for (T v : other.getVertexNeighbours(id)) {
+                    AtomicInteger f = freq.get(v);
+                    if (f == null) {
+                        return false;
+                    } else {
+                        if (f.decrementAndGet() == 0) {
+                            freq.remove(v);
+                        }
+                    }
+                }
+                if (freq.size() != 0) {
                     return false;
                 }
+
             } catch (NoSuchVertexException e) {
                 return false;
             }
@@ -84,4 +106,7 @@ public abstract class AbstractGraph<T> implements Graph<T> {
 
         return strBld.toString();
     }
+
+    @Override
+    public abstract Graph<T> clone();
 }
