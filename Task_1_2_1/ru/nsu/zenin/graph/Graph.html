@@ -19,7 +19,7 @@
 <script type="text/javascript" src="../../../../script-dir/jquery-ui.js"></script>
 </head>
 <body class="class-declaration">
-<script type="text/javascript">var data = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":6,"i5":6,"i6":6,"i7":6,"i8":6};
+<script type="text/javascript">var data = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":6,"i5":6,"i6":6,"i7":6,"i8":6,"i9":6};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -89,7 +89,7 @@ loadScripts(document, 'script');</script>
 <section class="description">
 <dl>
 <dt>All Known Implementing Classes:</dt>
-<dd><code><a href="AbstractGraph.html" title="class in ru.nsu.zenin.graph">AbstractGraph</a></code>, <code><a href="AdjMatrixGraph.html" title="class in ru.nsu.zenin.graph">AdjMatrixGraph</a></code></dd>
+<dd><code><a href="AbstractGraph.html" title="class in ru.nsu.zenin.graph">AbstractGraph</a></code>, <code><a href="AdjListsGraph.html" title="class in ru.nsu.zenin.graph">AdjListsGraph</a></code>, <code><a href="AdjMatrixGraph.html" title="class in ru.nsu.zenin.graph">AdjMatrixGraph</a></code>, <code><a href="IncMatrixGraph.html" title="class in ru.nsu.zenin.graph">IncMatrixGraph</a></code></dd>
 </dl>
 <hr>
 <pre>public interface <span class="typeNameLabel">Graph&lt;T&gt;</span></pre>
@@ -116,7 +116,7 @@ loadScripts(document, 'script');</script>
 <tbody>
 <tr class="altColor" id="i0">
 <td class="colFirst"><code>void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#addEdgeBetween(T,T)">addEdgeBetween</a></span>&#8203;(<a href="Graph.html" title="type parameter in Graph">T</a>&nbsp;from,
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#addEdge(T,T)">addEdge</a></span>&#8203;(<a href="Graph.html" title="type parameter in Graph">T</a>&nbsp;from,
 <a href="Graph.html" title="type parameter in Graph">T</a>&nbsp;to)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
@@ -133,34 +133,39 @@ java.util.function.Function&lt;java.lang.String,&#8203;<a href="Graph.html" titl
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr class="rowColor" id="i3">
+<td class="colFirst"><code><a href="Graph.html" title="interface in ru.nsu.zenin.graph">Graph</a></code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#clone()">clone</a></span>()</code></th>
+<td class="colLast">&nbsp;</td>
+</tr>
+<tr class="altColor" id="i4">
 <td class="colFirst"><code>java.util.List&lt;org.apache.commons.lang3.tuple.Pair&lt;<a href="Graph.html" title="type parameter in Graph">T</a>,&#8203;<a href="Graph.html" title="type parameter in Graph">T</a>&gt;&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getEdges()">getEdges</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="altColor" id="i4">
+<tr class="rowColor" id="i5">
 <td class="colFirst"><code>java.util.Set&lt;<a href="Graph.html" title="type parameter in Graph">T</a>&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getVertexes()">getVertexes</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor" id="i5">
+<tr class="altColor" id="i6">
 <td class="colFirst"><code>int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getVertexesAmount()">getVertexesAmount</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="altColor" id="i6">
+<tr class="rowColor" id="i7">
 <td class="colFirst"><code>java.util.List&lt;<a href="Graph.html" title="type parameter in Graph">T</a>&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getVertexNeighbours(T)">getVertexNeighbours</a></span>&#8203;(<a href="Graph.html" title="type parameter in Graph">T</a>&nbsp;id)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor" id="i7">
+<tr class="altColor" id="i8">
 <td class="colFirst"><code>void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#removeEdgeBetween(T,T)">removeEdgeBetween</a></span>&#8203;(<a href="Graph.html" title="type parameter in Graph">T</a>&nbsp;from,
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#removeEdge(T,T)">removeEdge</a></span>&#8203;(<a href="Graph.html" title="type parameter in Graph">T</a>&nbsp;from,
 <a href="Graph.html" title="type parameter in Graph">T</a>&nbsp;to)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="altColor" id="i8">
+<tr class="rowColor" id="i9">
 <td class="colFirst"><code>void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#removeVertexById(T)">removeVertexById</a></span>&#8203;(<a href="Graph.html" title="type parameter in Graph">T</a>&nbsp;id)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#removeVertex(T)">removeVertex</a></span>&#8203;(<a href="Graph.html" title="type parameter in Graph">T</a>&nbsp;id)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 </tbody>
@@ -195,11 +200,11 @@ java.util.function.Function&lt;java.lang.String,&#8203;<a href="Graph.html" titl
 </li>
 <li class="blockList">
 <section class="detail">
-<h3><a id="removeVertexById(java.lang.Object)">
+<h3><a id="removeVertex(java.lang.Object)">
 <!--   -->
-</a><a id="removeVertexById(T)">removeVertexById</a></h3>
-<div class="memberSignature"><span class="returnType">void</span>&nbsp;<span class="memberName">removeVertexById</span>&#8203;(<span class="arguments"><a href="Graph.html" title="type parameter in Graph">T</a>&nbsp;id)</span>
-               throws <span class="exceptions"><a href="exception/NoSuchVertexException.html" title="class in ru.nsu.zenin.graph.exception">NoSuchVertexException</a></span></div>
+</a><a id="removeVertex(T)">removeVertex</a></h3>
+<div class="memberSignature"><span class="returnType">void</span>&nbsp;<span class="memberName">removeVertex</span>&#8203;(<span class="arguments"><a href="Graph.html" title="type parameter in Graph">T</a>&nbsp;id)</span>
+           throws <span class="exceptions"><a href="exception/NoSuchVertexException.html" title="class in ru.nsu.zenin.graph.exception">NoSuchVertexException</a></span></div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="exception/NoSuchVertexException.html" title="class in ru.nsu.zenin.graph.exception">NoSuchVertexException</a></code></dd>
@@ -208,12 +213,12 @@ java.util.function.Function&lt;java.lang.String,&#8203;<a href="Graph.html" titl
 </li>
 <li class="blockList">
 <section class="detail">
-<h3><a id="addEdgeBetween(java.lang.Object,java.lang.Object)">
+<h3><a id="addEdge(java.lang.Object,java.lang.Object)">
 <!--   -->
-</a><a id="addEdgeBetween(T,T)">addEdgeBetween</a></h3>
-<div class="memberSignature"><span class="returnType">void</span>&nbsp;<span class="memberName">addEdgeBetween</span>&#8203;(<span class="arguments"><a href="Graph.html" title="type parameter in Graph">T</a>&nbsp;from,
+</a><a id="addEdge(T,T)">addEdge</a></h3>
+<div class="memberSignature"><span class="returnType">void</span>&nbsp;<span class="memberName">addEdge</span>&#8203;(<span class="arguments"><a href="Graph.html" title="type parameter in Graph">T</a>&nbsp;from,
 <a href="Graph.html" title="type parameter in Graph">T</a>&nbsp;to)</span>
-             throws <span class="exceptions"><a href="exception/NoSuchVertexException.html" title="class in ru.nsu.zenin.graph.exception">NoSuchVertexException</a></span></div>
+      throws <span class="exceptions"><a href="exception/NoSuchVertexException.html" title="class in ru.nsu.zenin.graph.exception">NoSuchVertexException</a></span></div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="exception/NoSuchVertexException.html" title="class in ru.nsu.zenin.graph.exception">NoSuchVertexException</a></code></dd>
@@ -222,12 +227,12 @@ java.util.function.Function&lt;java.lang.String,&#8203;<a href="Graph.html" titl
 </li>
 <li class="blockList">
 <section class="detail">
-<h3><a id="removeEdgeBetween(java.lang.Object,java.lang.Object)">
+<h3><a id="removeEdge(java.lang.Object,java.lang.Object)">
 <!--   -->
-</a><a id="removeEdgeBetween(T,T)">removeEdgeBetween</a></h3>
-<div class="memberSignature"><span class="returnType">void</span>&nbsp;<span class="memberName">removeEdgeBetween</span>&#8203;(<span class="arguments"><a href="Graph.html" title="type parameter in Graph">T</a>&nbsp;from,
+</a><a id="removeEdge(T,T)">removeEdge</a></h3>
+<div class="memberSignature"><span class="returnType">void</span>&nbsp;<span class="memberName">removeEdge</span>&#8203;(<span class="arguments"><a href="Graph.html" title="type parameter in Graph">T</a>&nbsp;from,
 <a href="Graph.html" title="type parameter in Graph">T</a>&nbsp;to)</span>
-                throws <span class="exceptions"><a href="exception/NoSuchVertexException.html" title="class in ru.nsu.zenin.graph.exception">NoSuchVertexException</a>,
+         throws <span class="exceptions"><a href="exception/NoSuchVertexException.html" title="class in ru.nsu.zenin.graph.exception">NoSuchVertexException</a>,
 <a href="exception/NoSuchEdgeException.html" title="class in ru.nsu.zenin.graph.exception">NoSuchEdgeException</a></span></div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
@@ -282,6 +287,12 @@ java.util.function.Function&lt;java.lang.String,&#8203;<a href="Graph.html" titl
 <section class="detail">
 <h3><a id="getEdges()">getEdges</a></h3>
 <div class="memberSignature"><span class="returnType">java.util.List&lt;org.apache.commons.lang3.tuple.Pair&lt;<a href="Graph.html" title="type parameter in Graph">T</a>,&#8203;<a href="Graph.html" title="type parameter in Graph">T</a>&gt;&gt;</span>&nbsp;<span class="memberName">getEdges</span>()</div>
+</section>
+</li>
+<li class="blockList">
+<section class="detail">
+<h3><a id="clone()">clone</a></h3>
+<div class="memberSignature"><span class="returnType"><a href="Graph.html" title="interface in ru.nsu.zenin.graph">Graph</a></span>&nbsp;<span class="memberName">clone</span>()</div>
 </section>
 </li>
 </ul>

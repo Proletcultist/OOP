@@ -1,1 +1,1 @@
-packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"ru.nsu.zenin.graph"},{"l":"ru.nsu.zenin.graph.exception"},{"l":"ru.nsu.zenin.graph.parser"}]
+packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"ru.nsu.zenin.graph"},{"l":"ru.nsu.zenin.graph.exception"},{"l":"ru.nsu.zenin.graph.parser"},{"l":"ru.nsu.zenin.graph.sorting"},{"l":"ru.nsu.zenin.graph.util"}]
