@@ -32,4 +32,6 @@ public interface Graph<T> {
     Set<T> getVertexes();
 
     List<Pair<T, T>> getEdges();
+
+    public Graph clone();
 }
