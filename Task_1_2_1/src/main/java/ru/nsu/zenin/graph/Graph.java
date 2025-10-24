@@ -14,11 +14,11 @@ import ru.nsu.zenin.graph.parser.GraphParser;
 public interface Graph<T> {
     void addVertex(T id) throws IdCollisionException;
 
-    void removeVertexById(T id) throws NoSuchVertexException;
+    void removeVertex(T id) throws NoSuchVertexException;
 
-    void addEdgeBetween(T from, T to) throws NoSuchVertexException;
+    void addEdge(T from, T to) throws NoSuchVertexException;
 
-    void removeEdgeBetween(T from, T to) throws NoSuchVertexException, NoSuchEdgeException;
+    void removeEdge(T from, T to) throws NoSuchVertexException, NoSuchEdgeException;
 
     List<T> getVertexNeighbours(T id) throws NoSuchVertexException;
 
