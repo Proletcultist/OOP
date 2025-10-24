@@ -84,4 +84,24 @@ public class AdjListsGraph<T> extends AbstractGraph<T> {
                 });
         return out;
     }
+
+    public Graph<T> clone() {
+        Graph<T> New = new AdjListsGraph<T>();
+
+        try {
+            for (T v : this.getVertexes()) {
+                New.addVertex(v);
+            }
+
+            for (Pair<T, T> e : this.getEdges()) {
+                New.addEdge(e.getLeft(), e.getRight());
+            }
+        } catch (IdCollisionException e) {
+            throw new RuntimeException("Unexpected exception occured", e);
+        } catch (NoSuchVertexException e) {
+            throw new RuntimeException("Unexpected exception occured", e);
+        }
+
+        return New;
+    }
 }

@@ -19,7 +19,7 @@ public class IncMatrixGraph<T> extends AbstractGraph<T> {
 
     private LinkedList<LinkedList<Incidence>> incMatrix = new LinkedList<LinkedList<Incidence>>();
     private Map<T, Integer> idToIndex = new TreeMap<T, Integer>();
-    private TreeMap<Integer, T> indexToId = new TreeMap<Integer, T>();
+    private List<T> indexToId = new LinkedList<T>();
 
     int edgesAmount = 0;
 
@@ -28,7 +28,7 @@ public class IncMatrixGraph<T> extends AbstractGraph<T> {
             throw new IdCollisionException("Vertex with such id already exists");
         }
         idToIndex.put(id, incMatrix.size());
-        indexToId.put(incMatrix.size(), id);
+        indexToId.add(id);
 
         incMatrix.add(new LinkedList<Incidence>());
 
@@ -70,16 +70,9 @@ public class IncMatrixGraph<T> extends AbstractGraph<T> {
         idToIndex.forEach(
                 (K, V) -> {
                     if (V > index) {
-                        V--;
+                        idToIndex.put(K, V - 1);
                     }
                 });
-
-        indexToId
-                .tailMap(index, false)
-                .forEach(
-                        (K, V) -> {
-                            K--;
-                        });
     }
 
     public void addEdge(T from, T to) throws NoSuchVertexException {
@@ -204,6 +197,26 @@ public class IncMatrixGraph<T> extends AbstractGraph<T> {
         }
 
         return out;
+    }
+
+    public Graph<T> clone() {
+        Graph<T> New = new IncMatrixGraph<T>();
+
+        try {
+            for (T v : this.getVertexes()) {
+                New.addVertex(v);
+            }
+
+            for (Pair<T, T> e : this.getEdges()) {
+                New.addEdge(e.getLeft(), e.getRight());
+            }
+        } catch (IdCollisionException e) {
+            throw new RuntimeException("Unexpected exception occured", e);
+        } catch (NoSuchVertexException e) {
+            throw new RuntimeException("Unexpected exception occured", e);
+        }
+
+        return New;
     }
 
     private enum Incidence {

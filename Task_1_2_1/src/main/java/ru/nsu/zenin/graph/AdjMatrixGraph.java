@@ -17,14 +17,14 @@ public class AdjMatrixGraph<T> extends AbstractGraph<T> {
 
     private LinkedList<LinkedList<Integer>> adjMatrix = new LinkedList<LinkedList<Integer>>();
     private Map<T, Integer> idToIndex = new TreeMap<T, Integer>();
-    private TreeMap<Integer, T> indexToId = new TreeMap<Integer, T>();
+    private LinkedList<T> indexToId = new LinkedList<T>();
 
     public void addVertex(T id) throws IdCollisionException {
         if (idToIndex.containsKey(id)) {
             throw new IdCollisionException("Vertex with such id already exists");
         }
         idToIndex.put(id, adjMatrix.size());
-        indexToId.put(adjMatrix.size(), id);
+        indexToId.add(id);
 
         for (LinkedList row : adjMatrix) {
             row.add(0);
@@ -33,7 +33,7 @@ public class AdjMatrixGraph<T> extends AbstractGraph<T> {
         adjMatrix.add(new LinkedList<Integer>());
 
         for (int i = 0; i < getVertexesAmount(); i++) {
-            adjMatrix.get(adjMatrix.size() - 1).add(0);
+            adjMatrix.get(getVertexesAmount() - 1).add(0);
         }
     }
 
@@ -55,16 +55,9 @@ public class AdjMatrixGraph<T> extends AbstractGraph<T> {
         idToIndex.forEach(
                 (K, V) -> {
                     if (V > index) {
-                        V--;
+                        idToIndex.put(K, V - 1);
                     }
                 });
-
-        indexToId
-                .tailMap(index, false)
-                .forEach(
-                        (K, V) -> {
-                            K--;
-                        });
     }
 
     public void addEdge(T from, T to) throws NoSuchVertexException {
@@ -145,5 +138,25 @@ public class AdjMatrixGraph<T> extends AbstractGraph<T> {
         }
 
         return edges;
+    }
+
+    public Graph<T> clone() {
+        Graph<T> New = new AdjMatrixGraph<T>();
+
+        try {
+            for (T v : this.getVertexes()) {
+                New.addVertex(v);
+            }
+
+            for (Pair<T, T> e : this.getEdges()) {
+                New.addEdge(e.getLeft(), e.getRight());
+            }
+        } catch (IdCollisionException e) {
+            throw new RuntimeException("Unexpected exception occured", e);
+        } catch (NoSuchVertexException e) {
+            throw new RuntimeException("Unexpected exception occured", e);
+        }
+
+        return New;
     }
 }
