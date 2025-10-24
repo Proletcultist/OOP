@@ -1,13 +1,24 @@
 package ru.nsu.zenin.graph;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
 import org.apache.commons.lang3.tuple.Pair;
+import ru.nsu.zenin.graph.exception.IdCollisionException;
 import ru.nsu.zenin.graph.exception.NoSuchVertexException;
+import ru.nsu.zenin.graph.parser.GraphParser;
 
 public abstract class AbstractGraph<T> implements Graph<T> {
+    public void addSubgraphFromFile(
+            Path file, GraphParser<T> parser, Function<String, T> labelParser)
+            throws IOException, IdCollisionException, NoSuchVertexException {
+        parser.addSubgraphFromFile(file, this, labelParser);
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj == this) {
