@@ -44,7 +44,7 @@ public class SimpleGraphParser<T> implements GraphParser<T> {
         try (BufferedReader br = Files.newBufferedReader(file, StandardCharsets.UTF_8)) {
 
             List<T> vertexes =
-                    Arrays.stream(br.readLine().split("\\w+"))
+                    Arrays.stream(br.readLine().split("\\s+"))
                             .map(str -> labelParser.apply(str))
                             .collect(Collectors.toList());
 
@@ -53,7 +53,7 @@ public class SimpleGraphParser<T> implements GraphParser<T> {
             }
 
             while (br.ready()) {
-                String[] splited = br.readLine().split("\\w+");
+                String[] splited = br.readLine().split("\\s+");
                 if (splited.length != 2) {
                     throw new InputMismatchException("Invalid edge format");
                 }
