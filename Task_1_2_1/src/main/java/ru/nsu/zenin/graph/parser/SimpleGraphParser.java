@@ -27,10 +27,8 @@ import ru.nsu.zenin.graph.exception.NoSuchVertexException;
  * <p>Here:
  *
  * <ul>
- *   <li>{@code <amount_of_vertexes>} - positive int
- *   <li>{@code <edge>} - pair of indexes of vertexes, separated with witespace. Indexes start from
- *       0
- *   <li>{@code <vertex>} - integer
+ *   <li>{@code <edge>} - pair of vertexes identificators, separated with witespace
+ *   <li>{@code <vertex>} - identeficator of vertex
  * </ul>
  *
  * <p>The only allowed encoding for the file is UTF-8.
