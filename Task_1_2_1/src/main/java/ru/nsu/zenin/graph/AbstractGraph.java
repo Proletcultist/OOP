@@ -1,6 +1,5 @@
 package ru.nsu.zenin.graph;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,14 +7,11 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import org.apache.commons.lang3.tuple.Pair;
-import ru.nsu.zenin.graph.exception.IdCollisionException;
-import ru.nsu.zenin.graph.exception.NoSuchVertexException;
 import ru.nsu.zenin.graph.parser.GraphParser;
 
 public abstract class AbstractGraph<T extends Comparable<T>> implements Graph<T> {
     public void addSubgraphFromFile(
-            Path file, GraphParser<T> parser, Function<String, T> labelParser)
-            throws IOException, IdCollisionException, NoSuchVertexException {
+            Path file, GraphParser<T> parser, Function<String, T> labelParser) throws Exception {
         parser.addSubgraphFromFile(file, this, labelParser);
     }
 
@@ -55,7 +51,7 @@ public abstract class AbstractGraph<T extends Comparable<T>> implements Graph<T>
                     return false;
                 }
 
-            } catch (NoSuchVertexException e) {
+            } catch (Exception e) {
                 return false;
             }
         }
@@ -72,7 +68,7 @@ public abstract class AbstractGraph<T extends Comparable<T>> implements Graph<T>
             for (T id : vertexes) {
                 neighbours.add(this.getVertexNeighbours(id));
             }
-        } catch (NoSuchVertexException e) {
+        } catch (Exception e) {
             throw new RuntimeException("Unexpected exception", e);
         }
 

@@ -2,13 +2,11 @@ package ru.nsu.zenin.graph;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import ru.nsu.zenin.graph.exception.IdCollisionException;
-import ru.nsu.zenin.graph.exception.NoSuchVertexException;
 
 class AbstractGraphTest {
 
     @Test
-    void equalsTest() throws IdCollisionException, NoSuchVertexException {
+    void equalsTest() throws Exception {
         Graph<Integer> g1 = new AdjMatrixGraph<Integer>();
         Graph<Integer> g2 = new AdjListsGraph<Integer>();
         Graph<Integer> g3 = new AdjListsGraph<Integer>();
@@ -44,7 +42,7 @@ class AbstractGraphTest {
     }
 
     @Test
-    void hashTest() throws IdCollisionException, NoSuchVertexException {
+    void hashTest() throws Exception {
         Graph<Integer> g1 = new AdjMatrixGraph<Integer>();
         Graph<Integer> g2 = new AdjListsGraph<Integer>();
         Graph<Integer> g3 = new AdjListsGraph<Integer>();

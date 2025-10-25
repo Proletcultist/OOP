@@ -1,7 +1,5 @@
 package ru.nsu.zenin.graph;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.TreeSet;
@@ -16,7 +14,7 @@ import ru.nsu.zenin.graph.parser.SimpleGraphParser;
 class AdjMatrixGraphTest {
 
     @Test
-    void neighboursTest() throws IdCollisionException, NoSuchVertexException {
+    void neighboursTest() throws Exception {
         Graph<Integer> g = new AdjMatrixGraph<Integer>();
 
         g.addVertex(1);
@@ -33,7 +31,7 @@ class AdjMatrixGraphTest {
     }
 
     @Test
-    void removingTest() throws IdCollisionException, NoSuchEdgeException, NoSuchVertexException {
+    void removingTest() throws Exception {
         Graph<String> g = new AdjMatrixGraph<String>();
 
         g.addVertex("first");
@@ -78,7 +76,7 @@ class AdjMatrixGraphTest {
     }
 
     @Test
-    void removingTest2() throws IdCollisionException, NoSuchEdgeException, NoSuchVertexException {
+    void removingTest2() throws Exception {
         Graph<String> g = new AdjMatrixGraph<String>();
 
         g.addVertex("first");
@@ -119,7 +117,7 @@ class AdjMatrixGraphTest {
     }
 
     @Test
-    void idClashingTest() throws IdCollisionException {
+    void idClashingTest() throws Exception {
         Graph<Character> g = new AdjMatrixGraph<Character>();
 
         g.addVertex('A');
@@ -132,7 +130,7 @@ class AdjMatrixGraphTest {
     }
 
     @Test
-    void invalidEdgeAddingTest() throws IdCollisionException, NoSuchEdgeException {
+    void invalidEdgeAddingTest() throws Exception {
         Graph<Character> g = new AdjMatrixGraph<Character>();
 
         g.addVertex('A');
@@ -162,8 +160,7 @@ class AdjMatrixGraphTest {
     }
 
     @Test
-    void parsingTest()
-            throws IOException, URISyntaxException, IdCollisionException, NoSuchVertexException {
+    void parsingTest() throws Exception {
         Graph<String> g = new AdjMatrixGraph<String>();
 
         g.addSubgraphFromFile(

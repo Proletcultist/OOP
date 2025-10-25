@@ -1,29 +1,25 @@
 package ru.nsu.zenin.graph;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 import org.apache.commons.lang3.tuple.Pair;
-import ru.nsu.zenin.graph.exception.IdCollisionException;
-import ru.nsu.zenin.graph.exception.NoSuchEdgeException;
-import ru.nsu.zenin.graph.exception.NoSuchVertexException;
 import ru.nsu.zenin.graph.parser.GraphParser;
 
 public interface Graph<T extends Comparable<T>> {
-    void addVertex(T id) throws IdCollisionException;
+    void addVertex(T id) throws Exception;
 
-    void removeVertex(T id) throws NoSuchVertexException;
+    void removeVertex(T id) throws Exception;
 
-    void addEdge(T from, T to) throws NoSuchVertexException;
+    void addEdge(T from, T to) throws Exception;
 
-    void removeEdge(T from, T to) throws NoSuchVertexException, NoSuchEdgeException;
+    void removeEdge(T from, T to) throws Exception;
 
-    List<T> getVertexNeighbours(T id) throws NoSuchVertexException;
+    List<T> getVertexNeighbours(T id) throws Exception;
 
     void addSubgraphFromFile(Path file, GraphParser<T> parser, Function<String, T> labelParser)
-            throws IOException, IdCollisionException, NoSuchVertexException;
+            throws Exception;
 
     int getVertexesAmount();
 

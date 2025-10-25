@@ -8,13 +8,11 @@ import ru.nsu.zenin.graph.AdjListsGraph;
 import ru.nsu.zenin.graph.AdjMatrixGraph;
 import ru.nsu.zenin.graph.Graph;
 import ru.nsu.zenin.graph.IncMatrixGraph;
-import ru.nsu.zenin.graph.exception.IdCollisionException;
-import ru.nsu.zenin.graph.exception.NoSuchVertexException;
 
 class TopoSorterTest {
 
     @Test
-    void test1() throws IdCollisionException, NoSuchVertexException {
+    void test1() throws Exception {
         Graph<Integer> g = new AdjMatrixGraph<Integer>();
 
         g.addVertex(1);
@@ -34,7 +32,7 @@ class TopoSorterTest {
     }
 
     @Test
-    void test2() throws IdCollisionException, NoSuchVertexException {
+    void test2() throws Exception {
         Graph<Integer> g = new AdjListsGraph<Integer>();
 
         g.addVertex(1);
@@ -54,7 +52,7 @@ class TopoSorterTest {
     }
 
     @Test
-    void test3() throws IdCollisionException, NoSuchVertexException {
+    void test3() throws Exception {
         Graph<Integer> g = new IncMatrixGraph<Integer>();
 
         g.addVertex(1);

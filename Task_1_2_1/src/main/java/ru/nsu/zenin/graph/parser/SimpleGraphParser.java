@@ -1,7 +1,6 @@
 package ru.nsu.zenin.graph.parser;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -11,8 +10,6 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import ru.nsu.zenin.graph.Graph;
-import ru.nsu.zenin.graph.exception.IdCollisionException;
-import ru.nsu.zenin.graph.exception.NoSuchVertexException;
 
 /**
  * Parser for simple format of graph description. Format is following:
@@ -38,7 +35,7 @@ public class SimpleGraphParser<T extends Comparable<T>> implements GraphParser<T
     // labelParser should assume, what string representation of label cannot contain whitespaces
     // inside
     public void addSubgraphFromFile(Path file, Graph<T> graph, Function<String, T> labelParser)
-            throws IOException, IdCollisionException, NoSuchVertexException {
+            throws Exception {
         try (BufferedReader br = Files.newBufferedReader(file, StandardCharsets.UTF_8)) {
 
             List<T> vertexes =
