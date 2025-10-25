@@ -6,15 +6,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.TreeMap;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import org.apache.commons.lang3.tuple.Pair;
 import ru.nsu.zenin.graph.exception.IdCollisionException;
 import ru.nsu.zenin.graph.exception.NoSuchVertexException;
 import ru.nsu.zenin.graph.parser.GraphParser;
 
-public abstract class AbstractGraph<T> implements Graph<T> {
+public abstract class AbstractGraph<T extends Comparable<T>> implements Graph<T> {
     public void addSubgraphFromFile(
             Path file, GraphParser<T> parser, Function<String, T> labelParser)
             throws IOException, IdCollisionException, NoSuchVertexException {
@@ -41,26 +39,19 @@ public abstract class AbstractGraph<T> implements Graph<T> {
 
         for (T id : thisVertexes) {
             try {
-                TreeMap<T, AtomicInteger> freq = new TreeMap<T, AtomicInteger>();
-                for (T v : this.getVertexNeighbours(id)) {
-                    AtomicInteger f = freq.get(v);
-                    if (f == null) {
-                        freq.put(v, new AtomicInteger(1));
-                    } else {
-                        f.incrementAndGet();
-                    }
-                }
-                for (T v : other.getVertexNeighbours(id)) {
-                    AtomicInteger f = freq.get(v);
-                    if (f == null) {
-                        return false;
-                    } else {
-                        if (f.decrementAndGet() == 0) {
-                            freq.remove(v);
-                        }
-                    }
-                }
-                if (freq.size() != 0) {
+                List<T> thisIdNeighbours = this.getVertexNeighbours(id);
+                List<T> otherIdNeighbours = other.getVertexNeighbours(id);
+
+                thisIdNeighbours.sort(
+                        (L, R) -> {
+                            return ((Comparable<T>) L).compareTo(R);
+                        });
+                otherIdNeighbours.sort(
+                        (L, R) -> {
+                            return ((Comparable<T>) L).compareTo(R);
+                        });
+
+                if (!thisIdNeighbours.equals(otherIdNeighbours)) {
                     return false;
                 }
 
@@ -76,6 +67,13 @@ public abstract class AbstractGraph<T> implements Graph<T> {
     public int hashCode() {
         Set<T> vertexes = this.getVertexes();
         ArrayList<List<T>> neighbours = new ArrayList<List<T>>();
+        neighbours.forEach(
+                Li -> {
+                    Li.sort(
+                            (L, R) -> {
+                                return ((Comparable<T>) L).compareTo(R);
+                            });
+                });
 
         try {
             for (T id : vertexes) {
