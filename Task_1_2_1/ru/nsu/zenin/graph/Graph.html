@@ -83,7 +83,7 @@ loadScripts(document, 'script');</script>
 <!-- ======== START OF CLASS DATA ======== -->
 <div class="header">
 <div class="subTitle"><span class="packageLabelInType">Package</span>&nbsp;<a href="package-summary.html">ru.nsu.zenin.graph</a></div>
-<h1 title="Interface Graph" class="title">Interface Graph&lt;T&gt;</h1>
+<h1 title="Interface Graph" class="title">Interface Graph&lt;T extends java.lang.Comparable&lt;T&gt;&gt;</h1>
 </div>
 <div class="contentContainer">
 <section class="description">
@@ -92,7 +92,7 @@ loadScripts(document, 'script');</script>
 <dd><code><a href="AbstractGraph.html" title="class in ru.nsu.zenin.graph">AbstractGraph</a></code>, <code><a href="AdjListsGraph.html" title="class in ru.nsu.zenin.graph">AdjListsGraph</a></code>, <code><a href="AdjMatrixGraph.html" title="class in ru.nsu.zenin.graph">AdjMatrixGraph</a></code>, <code><a href="IncMatrixGraph.html" title="class in ru.nsu.zenin.graph">IncMatrixGraph</a></code></dd>
 </dl>
 <hr>
-<pre>public interface <span class="typeNameLabel">Graph&lt;T&gt;</span></pre>
+<pre>public interface <span class="typeNameLabel">Graph&lt;T extends java.lang.Comparable&lt;T&gt;&gt;</span></pre>
 </section>
 <section class="summary">
 <ul class="blockList">
@@ -189,7 +189,7 @@ java.util.function.Function&lt;java.lang.String,&#8203;<a href="Graph.html" titl
 <ul class="blockList">
 <li class="blockList">
 <section class="detail">
-<h3><a id="addVertex(java.lang.Object)">
+<h3><a id="addVertex(java.lang.Comparable)">
 <!--   -->
 </a><a id="addVertex(T)">addVertex</a></h3>
 <div class="memberSignature"><span class="returnType">void</span>&nbsp;<span class="memberName">addVertex</span>&#8203;(<span class="arguments"><a href="Graph.html" title="type parameter in Graph">T</a>&nbsp;id)</span>
@@ -202,7 +202,7 @@ java.util.function.Function&lt;java.lang.String,&#8203;<a href="Graph.html" titl
 </li>
 <li class="blockList">
 <section class="detail">
-<h3><a id="removeVertex(java.lang.Object)">
+<h3><a id="removeVertex(java.lang.Comparable)">
 <!--   -->
 </a><a id="removeVertex(T)">removeVertex</a></h3>
 <div class="memberSignature"><span class="returnType">void</span>&nbsp;<span class="memberName">removeVertex</span>&#8203;(<span class="arguments"><a href="Graph.html" title="type parameter in Graph">T</a>&nbsp;id)</span>
@@ -215,7 +215,7 @@ java.util.function.Function&lt;java.lang.String,&#8203;<a href="Graph.html" titl
 </li>
 <li class="blockList">
 <section class="detail">
-<h3><a id="addEdge(java.lang.Object,java.lang.Object)">
+<h3><a id="addEdge(java.lang.Comparable,java.lang.Comparable)">
 <!--   -->
 </a><a id="addEdge(T,T)">addEdge</a></h3>
 <div class="memberSignature"><span class="returnType">void</span>&nbsp;<span class="memberName">addEdge</span>&#8203;(<span class="arguments"><a href="Graph.html" title="type parameter in Graph">T</a>&nbsp;from,
@@ -229,7 +229,7 @@ java.util.function.Function&lt;java.lang.String,&#8203;<a href="Graph.html" titl
 </li>
 <li class="blockList">
 <section class="detail">
-<h3><a id="removeEdge(java.lang.Object,java.lang.Object)">
+<h3><a id="removeEdge(java.lang.Comparable,java.lang.Comparable)">
 <!--   -->
 </a><a id="removeEdge(T,T)">removeEdge</a></h3>
 <div class="memberSignature"><span class="returnType">void</span>&nbsp;<span class="memberName">removeEdge</span>&#8203;(<span class="arguments"><a href="Graph.html" title="type parameter in Graph">T</a>&nbsp;from,
@@ -245,7 +245,7 @@ java.util.function.Function&lt;java.lang.String,&#8203;<a href="Graph.html" titl
 </li>
 <li class="blockList">
 <section class="detail">
-<h3><a id="getVertexNeighbours(java.lang.Object)">
+<h3><a id="getVertexNeighbours(java.lang.Comparable)">
 <!--   -->
 </a><a id="getVertexNeighbours(T)">getVertexNeighbours</a></h3>
 <div class="memberSignature"><span class="returnType">java.util.List&lt;<a href="Graph.html" title="type parameter in Graph">T</a>&gt;</span>&nbsp;<span class="memberName">getVertexNeighbours</span>&#8203;(<span class="arguments"><a href="Graph.html" title="type parameter in Graph">T</a>&nbsp;id)</span>

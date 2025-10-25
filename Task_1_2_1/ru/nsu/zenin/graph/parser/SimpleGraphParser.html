@@ -83,7 +83,7 @@ loadScripts(document, 'script');</script>
 <!-- ======== START OF CLASS DATA ======== -->
 <div class="header">
 <div class="subTitle"><span class="packageLabelInType">Package</span>&nbsp;<a href="package-summary.html">ru.nsu.zenin.graph.parser</a></div>
-<h1 title="Class SimpleGraphParser" class="title">Class SimpleGraphParser&lt;T&gt;</h1>
+<h1 title="Class SimpleGraphParser" class="title">Class SimpleGraphParser&lt;T extends java.lang.Comparable&lt;T&gt;&gt;</h1>
 </div>
 <div class="contentContainer">
 <div class="inheritance" title="Inheritance Tree">java.lang.Object
@@ -95,7 +95,7 @@ loadScripts(document, 'script');</script>
 <dd><code><a href="GraphParser.html" title="interface in ru.nsu.zenin.graph.parser">GraphParser</a>&lt;T&gt;</code></dd>
 </dl>
 <hr>
-<pre>public class <span class="typeNameLabel">SimpleGraphParser&lt;T&gt;</span>
+<pre>public class <span class="typeNameLabel">SimpleGraphParser&lt;T extends java.lang.Comparable&lt;T&gt;&gt;</span>
 extends java.lang.Object
 implements <a href="GraphParser.html" title="interface in ru.nsu.zenin.graph.parser">GraphParser</a>&lt;T&gt;</pre>
 <div class="block">Parser for simple format of graph description. Format is following:
@@ -219,7 +219,7 @@ java.util.function.Function&lt;java.lang.String,&#8203;<a href="SimpleGraphParse
 <a href="../exception/NoSuchVertexException.html" title="class in ru.nsu.zenin.graph.exception">NoSuchVertexException</a></span></div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="GraphParser.html#addSubgraphFromFile(java.nio.file.Path,ru.nsu.zenin.graph.Graph,java.util.function.Function)">addSubgraphFromFile</a></code>&nbsp;in interface&nbsp;<code><a href="GraphParser.html" title="interface in ru.nsu.zenin.graph.parser">GraphParser</a>&lt;<a href="SimpleGraphParser.html" title="type parameter in SimpleGraphParser">T</a>&gt;</code></dd>
+<dd><code><a href="GraphParser.html#addSubgraphFromFile(java.nio.file.Path,ru.nsu.zenin.graph.Graph,java.util.function.Function)">addSubgraphFromFile</a></code>&nbsp;in interface&nbsp;<code><a href="GraphParser.html" title="interface in ru.nsu.zenin.graph.parser">GraphParser</a>&lt;<a href="SimpleGraphParser.html" title="type parameter in SimpleGraphParser">T</a> extends java.lang.Comparable&lt;<a href="SimpleGraphParser.html" title="type parameter in SimpleGraphParser">T</a>&gt;&gt;</code></dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.io.IOException</code></dd>
 <dd><code><a href="../exception/IdCollisionException.html" title="class in ru.nsu.zenin.graph.exception">IdCollisionException</a></code></dd>

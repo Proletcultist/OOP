@@ -115,7 +115,7 @@ extends java.lang.Object</pre>
 </thead>
 <tbody>
 <tr class="altColor" id="i0">
-<td class="colFirst"><code>static &lt;T&gt;&nbsp;java.util.List&lt;T&gt;</code></td>
+<td class="colFirst"><code>static &lt;T extends java.lang.Comparable&lt;T&gt;&gt;<br>java.util.List&lt;T&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#sort(ru.nsu.zenin.graph.Graph)">sort</a></span>&#8203;(<a href="../Graph.html" title="interface in ru.nsu.zenin.graph">Graph</a>&lt;T&gt;&nbsp;g)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
@@ -144,7 +144,8 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <section class="detail">
 <h3><a id="sort(ru.nsu.zenin.graph.Graph)">sort</a></h3>
-<div class="memberSignature"><span class="modifiers">public static</span>&nbsp;<span class="typeParameters">&lt;T&gt;</span>&nbsp;<span class="returnType">java.util.List&lt;T&gt;</span>&nbsp;<span class="memberName">sort</span>&#8203;(<span class="arguments"><a href="../Graph.html" title="interface in ru.nsu.zenin.graph">Graph</a>&lt;T&gt;&nbsp;g)</span></div>
+<div class="memberSignature"><span class="modifiers">public static</span>&nbsp;<span class="typeParameters">&lt;T extends java.lang.Comparable&lt;T&gt;&gt;</span>
+<span class="returnType">java.util.List&lt;T&gt;</span>&nbsp;<span class="memberName">sort</span>&#8203;(<span class="arguments"><a href="../Graph.html" title="interface in ru.nsu.zenin.graph">Graph</a>&lt;T&gt;&nbsp;g)</span></div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>null if graph cannot be toposorted</dd>
