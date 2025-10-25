@@ -27,11 +27,13 @@ class AbstractGraphTest {
 
         g1.addEdge(1, 2);
         g1.addEdge(2, 3);
+        g1.addEdge(2, 1);
         g1.addEdge(3, 1);
 
-        g2.addEdge(1, 2);
-        g2.addEdge(2, 3);
         g2.addEdge(3, 1);
+        g2.addEdge(2, 1);
+        g2.addEdge(2, 3);
+        g2.addEdge(1, 2);
 
         g3.addEdge(1, 2);
         g3.addEdge(2, 3);
@@ -61,11 +63,13 @@ class AbstractGraphTest {
 
         g1.addEdge(1, 2);
         g1.addEdge(2, 3);
+        g1.addEdge(2, 1);
         g1.addEdge(3, 1);
 
-        g2.addEdge(1, 2);
-        g2.addEdge(2, 3);
         g2.addEdge(3, 1);
+        g2.addEdge(1, 2);
+        g2.addEdge(2, 1);
+        g2.addEdge(2, 3);
 
         g3.addEdge(1, 2);
         g3.addEdge(2, 3);
