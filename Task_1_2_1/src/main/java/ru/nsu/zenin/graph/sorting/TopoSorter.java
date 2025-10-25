@@ -16,7 +16,7 @@ public class TopoSorter {
     /**
      * @return null if graph cannot be toposorted
      */
-    public static <T> List<T> sort(Graph<T> g) {
+    public static <T extends Comparable<T>> List<T> sort(Graph<T> g) {
         List<T> out = new ArrayList<T>();
         Graph<T> cloned = (Graph<T>) g.clone();
 

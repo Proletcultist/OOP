@@ -7,7 +7,7 @@ import ru.nsu.zenin.graph.Graph;
 import ru.nsu.zenin.graph.exception.IdCollisionException;
 import ru.nsu.zenin.graph.exception.NoSuchVertexException;
 
-public interface GraphParser<T> {
+public interface GraphParser<T extends Comparable<T>> {
     void addSubgraphFromFile(Path file, Graph<T> graph, Function<String, T> labelParser)
             throws IOException, IdCollisionException, NoSuchVertexException;
 }

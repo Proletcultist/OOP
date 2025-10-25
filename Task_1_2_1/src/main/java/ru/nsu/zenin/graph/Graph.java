@@ -11,7 +11,7 @@ import ru.nsu.zenin.graph.exception.NoSuchEdgeException;
 import ru.nsu.zenin.graph.exception.NoSuchVertexException;
 import ru.nsu.zenin.graph.parser.GraphParser;
 
-public interface Graph<T> {
+public interface Graph<T extends Comparable<T>> {
     void addVertex(T id) throws IdCollisionException;
 
     void removeVertex(T id) throws NoSuchVertexException;
