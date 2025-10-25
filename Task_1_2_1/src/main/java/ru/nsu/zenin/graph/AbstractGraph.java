@@ -67,13 +67,6 @@ public abstract class AbstractGraph<T extends Comparable<T>> implements Graph<T>
     public int hashCode() {
         Set<T> vertexes = this.getVertexes();
         ArrayList<List<T>> neighbours = new ArrayList<List<T>>();
-        neighbours.forEach(
-                Li -> {
-                    Li.sort(
-                            (L, R) -> {
-                                return ((Comparable<T>) L).compareTo(R);
-                            });
-                });
 
         try {
             for (T id : vertexes) {
@@ -82,6 +75,14 @@ public abstract class AbstractGraph<T extends Comparable<T>> implements Graph<T>
         } catch (NoSuchVertexException e) {
             throw new RuntimeException("Unexpected exception", e);
         }
+
+        neighbours.forEach(
+                Li -> {
+                    Li.sort(
+                            (L, R) -> {
+                                return ((Comparable<T>) L).compareTo(R);
+                            });
+                });
 
         return Objects.hash(vertexes, neighbours);
     }
