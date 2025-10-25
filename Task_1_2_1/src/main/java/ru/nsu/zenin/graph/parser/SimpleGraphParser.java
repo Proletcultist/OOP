@@ -35,7 +35,7 @@ import ru.nsu.zenin.graph.exception.NoSuchVertexException;
  *
  * <p>The only allowed encoding for the file is UTF-8.
  */
-public class SimpleGraphParser<T> implements GraphParser<T> {
+public class SimpleGraphParser<T extends Comparable<T>> implements GraphParser<T> {
 
     // labelParser should assume, what string representation of label cannot contain whitespaces
     // inside
