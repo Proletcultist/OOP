@@ -15,7 +15,7 @@ import ru.nsu.zenin.graph.exception.NoSuchEdgeException;
 import ru.nsu.zenin.graph.exception.NoSuchVertexException;
 import ru.nsu.zenin.graph.util.LinkedListMatrixColumnIterator;
 
-public class IncMatrixGraph<T> extends AbstractGraph<T> {
+public class IncMatrixGraph<T extends Comparable<T>> extends AbstractGraph<T> {
 
     private LinkedList<LinkedList<Incidence>> incMatrix = new LinkedList<LinkedList<Incidence>>();
     private Map<T, Integer> idToIndex = new TreeMap<T, Integer>();

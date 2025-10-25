@@ -12,7 +12,7 @@ import ru.nsu.zenin.graph.exception.IdCollisionException;
 import ru.nsu.zenin.graph.exception.NoSuchEdgeException;
 import ru.nsu.zenin.graph.exception.NoSuchVertexException;
 
-public class AdjListsGraph<T> extends AbstractGraph<T> {
+public class AdjListsGraph<T extends Comparable<T>> extends AbstractGraph<T> {
 
     private Map<T, LinkedList<T>> vertexesNeighbours = new TreeMap<T, LinkedList<T>>();
 

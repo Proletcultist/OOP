@@ -13,7 +13,7 @@ import ru.nsu.zenin.graph.exception.IdCollisionException;
 import ru.nsu.zenin.graph.exception.NoSuchEdgeException;
 import ru.nsu.zenin.graph.exception.NoSuchVertexException;
 
-public class AdjMatrixGraph<T> extends AbstractGraph<T> {
+public class AdjMatrixGraph<T extends Comparable<T>> extends AbstractGraph<T> {
 
     private LinkedList<LinkedList<Integer>> adjMatrix = new LinkedList<LinkedList<Integer>>();
     private Map<T, Integer> idToIndex = new TreeMap<T, Integer>();
