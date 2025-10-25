@@ -27,7 +27,7 @@ public interface Graph<T> {
 
     int getVertexesAmount();
 
-    /* Return sorted set of existing vertexes' ids.
+    /** Return sorted set of existing vertexes' ids.
      */
     Set<T> getVertexes();
 
