@@ -62,7 +62,7 @@ public abstract class AbstractGraph<T extends Comparable<T>> implements Graph<T>
     @Override
     public int hashCode() {
         Set<T> vertexes = this.getVertexes();
-        ArrayList<List<T>> neighbours = new ArrayList<List<T>>();
+        List<List<T>> neighbours = new ArrayList<List<T>>();
 
         try {
             for (T id : vertexes) {

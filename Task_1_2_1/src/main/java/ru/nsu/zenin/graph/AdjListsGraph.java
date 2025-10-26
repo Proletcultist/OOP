@@ -14,7 +14,7 @@ import ru.nsu.zenin.graph.exception.NoSuchVertexException;
 
 public class AdjListsGraph<T extends Comparable<T>> extends AbstractGraph<T> {
 
-    private Map<T, LinkedList<T>> vertexesNeighbours = new TreeMap<T, LinkedList<T>>();
+    private Map<T, List<T>> vertexesNeighbours = new TreeMap<T, List<T>>();
 
     public void addVertex(T id) throws Exception {
         if (vertexesNeighbours.containsKey(id)) {
@@ -60,7 +60,7 @@ public class AdjListsGraph<T extends Comparable<T>> extends AbstractGraph<T> {
             throw new NoSuchVertexException("No vertex with such id in graph");
         }
 
-        return (List<T>) vertexesNeighbours.get(id).clone();
+        return vertexesNeighbours.get(id).stream().collect(Collectors.toList());
     }
 
     public int getVertexesAmount() {
