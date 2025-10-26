@@ -196,4 +196,19 @@ class AdjMatrixGraphTest {
                             str -> str);
                 });
     }
+
+    @Test
+    void toStringTest() throws Exception {
+        Graph<Integer> g = new AdjMatrixGraph<Integer>();
+
+        g.addVertex(1);
+        g.addVertex(2);
+        g.addVertex(3);
+
+        g.addEdge(1, 2);
+        g.addEdge(2, 3);
+        g.addEdge(2, 3);
+
+        Assertions.assertEquals(g.toString(), "Vertexes: [1, 2, 3]\nEdges: [(1,2), (2,3), (2,3)]");
+    }
 }
