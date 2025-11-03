@@ -193,10 +193,10 @@ java.util.function.Function&lt;java.lang.String,&#8203;<a href="Graph.html" titl
 <!--   -->
 </a><a id="addVertex(T)">addVertex</a></h3>
 <div class="memberSignature"><span class="returnType">void</span>&nbsp;<span class="memberName">addVertex</span>&#8203;(<span class="arguments"><a href="Graph.html" title="type parameter in Graph">T</a>&nbsp;id)</span>
-        throws <span class="exceptions"><a href="exception/IdCollisionException.html" title="class in ru.nsu.zenin.graph.exception">IdCollisionException</a></span></div>
+        throws <span class="exceptions">java.lang.Exception</span></div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="exception/IdCollisionException.html" title="class in ru.nsu.zenin.graph.exception">IdCollisionException</a></code></dd>
+<dd><code>java.lang.Exception</code></dd>
 </dl>
 </section>
 </li>
@@ -206,10 +206,10 @@ java.util.function.Function&lt;java.lang.String,&#8203;<a href="Graph.html" titl
 <!--   -->
 </a><a id="removeVertex(T)">removeVertex</a></h3>
 <div class="memberSignature"><span class="returnType">void</span>&nbsp;<span class="memberName">removeVertex</span>&#8203;(<span class="arguments"><a href="Graph.html" title="type parameter in Graph">T</a>&nbsp;id)</span>
-           throws <span class="exceptions"><a href="exception/NoSuchVertexException.html" title="class in ru.nsu.zenin.graph.exception">NoSuchVertexException</a></span></div>
+           throws <span class="exceptions">java.lang.Exception</span></div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="exception/NoSuchVertexException.html" title="class in ru.nsu.zenin.graph.exception">NoSuchVertexException</a></code></dd>
+<dd><code>java.lang.Exception</code></dd>
 </dl>
 </section>
 </li>
@@ -220,10 +220,10 @@ java.util.function.Function&lt;java.lang.String,&#8203;<a href="Graph.html" titl
 </a><a id="addEdge(T,T)">addEdge</a></h3>
 <div class="memberSignature"><span class="returnType">void</span>&nbsp;<span class="memberName">addEdge</span>&#8203;(<span class="arguments"><a href="Graph.html" title="type parameter in Graph">T</a>&nbsp;from,
 <a href="Graph.html" title="type parameter in Graph">T</a>&nbsp;to)</span>
-      throws <span class="exceptions"><a href="exception/NoSuchVertexException.html" title="class in ru.nsu.zenin.graph.exception">NoSuchVertexException</a></span></div>
+      throws <span class="exceptions">java.lang.Exception</span></div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="exception/NoSuchVertexException.html" title="class in ru.nsu.zenin.graph.exception">NoSuchVertexException</a></code></dd>
+<dd><code>java.lang.Exception</code></dd>
 </dl>
 </section>
 </li>
@@ -234,12 +234,10 @@ java.util.function.Function&lt;java.lang.String,&#8203;<a href="Graph.html" titl
 </a><a id="removeEdge(T,T)">removeEdge</a></h3>
 <div class="memberSignature"><span class="returnType">void</span>&nbsp;<span class="memberName">removeEdge</span>&#8203;(<span class="arguments"><a href="Graph.html" title="type parameter in Graph">T</a>&nbsp;from,
 <a href="Graph.html" title="type parameter in Graph">T</a>&nbsp;to)</span>
-         throws <span class="exceptions"><a href="exception/NoSuchVertexException.html" title="class in ru.nsu.zenin.graph.exception">NoSuchVertexException</a>,
-<a href="exception/NoSuchEdgeException.html" title="class in ru.nsu.zenin.graph.exception">NoSuchEdgeException</a></span></div>
+         throws <span class="exceptions">java.lang.Exception</span></div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="exception/NoSuchVertexException.html" title="class in ru.nsu.zenin.graph.exception">NoSuchVertexException</a></code></dd>
-<dd><code><a href="exception/NoSuchEdgeException.html" title="class in ru.nsu.zenin.graph.exception">NoSuchEdgeException</a></code></dd>
+<dd><code>java.lang.Exception</code></dd>
 </dl>
 </section>
 </li>
@@ -249,10 +247,10 @@ java.util.function.Function&lt;java.lang.String,&#8203;<a href="Graph.html" titl
 <!--   -->
 </a><a id="getVertexNeighbours(T)">getVertexNeighbours</a></h3>
 <div class="memberSignature"><span class="returnType">java.util.List&lt;<a href="Graph.html" title="type parameter in Graph">T</a>&gt;</span>&nbsp;<span class="memberName">getVertexNeighbours</span>&#8203;(<span class="arguments"><a href="Graph.html" title="type parameter in Graph">T</a>&nbsp;id)</span>
-                               throws <span class="exceptions"><a href="exception/NoSuchVertexException.html" title="class in ru.nsu.zenin.graph.exception">NoSuchVertexException</a></span></div>
+                               throws <span class="exceptions">java.lang.Exception</span></div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="exception/NoSuchVertexException.html" title="class in ru.nsu.zenin.graph.exception">NoSuchVertexException</a></code></dd>
+<dd><code>java.lang.Exception</code></dd>
 </dl>
 </section>
 </li>
@@ -262,14 +260,10 @@ java.util.function.Function&lt;java.lang.String,&#8203;<a href="Graph.html" titl
 <div class="memberSignature"><span class="returnType">void</span>&nbsp;<span class="memberName">addSubgraphFromFile</span>&#8203;(<span class="arguments">java.nio.file.Path&nbsp;file,
 <a href="parser/GraphParser.html" title="interface in ru.nsu.zenin.graph.parser">GraphParser</a>&lt;<a href="Graph.html" title="type parameter in Graph">T</a>&gt;&nbsp;parser,
 java.util.function.Function&lt;java.lang.String,&#8203;<a href="Graph.html" title="type parameter in Graph">T</a>&gt;&nbsp;labelParser)</span>
-                  throws <span class="exceptions">java.io.IOException,
-<a href="exception/IdCollisionException.html" title="class in ru.nsu.zenin.graph.exception">IdCollisionException</a>,
-<a href="exception/NoSuchVertexException.html" title="class in ru.nsu.zenin.graph.exception">NoSuchVertexException</a></span></div>
+                  throws <span class="exceptions">java.lang.Exception</span></div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>java.io.IOException</code></dd>
-<dd><code><a href="exception/IdCollisionException.html" title="class in ru.nsu.zenin.graph.exception">IdCollisionException</a></code></dd>
-<dd><code><a href="exception/NoSuchVertexException.html" title="class in ru.nsu.zenin.graph.exception">NoSuchVertexException</a></code></dd>
+<dd><code>java.lang.Exception</code></dd>
 </dl>
 </section>
 </li>
