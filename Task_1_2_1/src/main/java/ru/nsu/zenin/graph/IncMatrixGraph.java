@@ -17,7 +17,7 @@ import ru.nsu.zenin.graph.util.LinkedListMatrixColumnIterator;
 
 public class IncMatrixGraph<T extends Comparable<T>> extends AbstractGraph<T> {
 
-    private LinkedList<LinkedList<Incidence>> incMatrix = new LinkedList<LinkedList<Incidence>>();
+    private List<LinkedList<Incidence>> incMatrix = new LinkedList<LinkedList<Incidence>>();
     private Map<T, Integer> idToIndex = new TreeMap<T, Integer>();
     private List<T> indexToId = new LinkedList<T>();
 
