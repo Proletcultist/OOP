@@ -2,14 +2,15 @@ package ru.nsu.zenin.graph.util;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.ListIterator;
 import java.util.function.BiConsumer;
 
 public class LinkedListMatrixColumnIterator<T> {
 
-    private final ArrayList<ListIterator<T>> iterators;
+    private final List<ListIterator<T>> iterators;
 
-    public LinkedListMatrixColumnIterator(LinkedList<LinkedList<T>> mtx) {
+    public LinkedListMatrixColumnIterator(List<LinkedList<T>> mtx) {
         iterators = new ArrayList<ListIterator<T>>(mtx.size());
 
         for (int i = 0; i < mtx.size(); i++) {

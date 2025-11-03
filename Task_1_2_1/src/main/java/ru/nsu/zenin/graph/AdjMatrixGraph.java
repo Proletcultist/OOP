@@ -15,9 +15,9 @@ import ru.nsu.zenin.graph.exception.NoSuchVertexException;
 
 public class AdjMatrixGraph<T extends Comparable<T>> extends AbstractGraph<T> {
 
-    private LinkedList<LinkedList<Integer>> adjMatrix = new LinkedList<LinkedList<Integer>>();
+    private List<List<Integer>> adjMatrix = new LinkedList<List<Integer>>();
     private Map<T, Integer> idToIndex = new TreeMap<T, Integer>();
-    private LinkedList<T> indexToId = new LinkedList<T>();
+    private List<T> indexToId = new LinkedList<T>();
 
     public void addVertex(T id) throws IdCollisionException {
         if (idToIndex.containsKey(id)) {
@@ -26,7 +26,7 @@ public class AdjMatrixGraph<T extends Comparable<T>> extends AbstractGraph<T> {
         idToIndex.put(id, adjMatrix.size());
         indexToId.add(id);
 
-        for (LinkedList row : adjMatrix) {
+        for (List<Integer> row : adjMatrix) {
             row.add(0);
         }
 
@@ -45,7 +45,7 @@ public class AdjMatrixGraph<T extends Comparable<T>> extends AbstractGraph<T> {
             throw new NoSuchVertexException("No vertex with such id in graph", e);
         }
 
-        for (LinkedList row : adjMatrix) {
+        for (List<Integer> row : adjMatrix) {
             row.remove(index);
         }
 
@@ -126,7 +126,7 @@ public class AdjMatrixGraph<T extends Comparable<T>> extends AbstractGraph<T> {
     public List<Pair<T, T>> getEdges() {
         List<Pair<T, T>> edges = new ArrayList<Pair<T, T>>();
 
-        ListIterator<LinkedList<Integer>> rowIt = adjMatrix.listIterator(0);
+        ListIterator<List<Integer>> rowIt = adjMatrix.listIterator(0);
         for (int i = 0; i < getVertexesAmount(); i++) {
             ListIterator<Integer> it = rowIt.next().listIterator(0);
             for (int j = 0; j < getVertexesAmount(); j++) {
