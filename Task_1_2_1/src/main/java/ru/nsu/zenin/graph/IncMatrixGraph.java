@@ -13,11 +13,11 @@ import org.apache.commons.lang3.tuple.Pair;
 import ru.nsu.zenin.graph.exception.IdCollisionException;
 import ru.nsu.zenin.graph.exception.NoSuchEdgeException;
 import ru.nsu.zenin.graph.exception.NoSuchVertexException;
-import ru.nsu.zenin.graph.util.LinkedListMatrixColumnIterator;
+import ru.nsu.zenin.graph.util.ListMatrixColumnIterator;
 
 public class IncMatrixGraph<T extends Comparable<T>> extends AbstractGraph<T> {
 
-    private List<LinkedList<Incidence>> incMatrix = new LinkedList<LinkedList<Incidence>>();
+    private List<List<Incidence>> incMatrix = new LinkedList<List<Incidence>>();
     private Map<T, Integer> idToIndex = new TreeMap<T, Integer>();
     private List<T> indexToId = new LinkedList<T>();
 
@@ -45,8 +45,8 @@ public class IncMatrixGraph<T extends Comparable<T>> extends AbstractGraph<T> {
             throw new NoSuchVertexException("No vertex with such id in graph", e);
         }
 
-        LinkedListMatrixColumnIterator<Incidence> columnIt =
-                new LinkedListMatrixColumnIterator<Incidence>(incMatrix);
+        ListMatrixColumnIterator<Incidence> columnIt =
+                new ListMatrixColumnIterator<Incidence>(incMatrix);
 
         while (columnIt.hasNext()) {
             AtomicBoolean remove = new AtomicBoolean(false);
@@ -85,7 +85,7 @@ public class IncMatrixGraph<T extends Comparable<T>> extends AbstractGraph<T> {
             throw new NoSuchVertexException("No vertex with such id in graph", e);
         }
 
-        for (LinkedList<Incidence> inc : incMatrix) {
+        for (List<Incidence> inc : incMatrix) {
             inc.add(Incidence.NOT_INCIDENT);
         }
 
@@ -105,8 +105,8 @@ public class IncMatrixGraph<T extends Comparable<T>> extends AbstractGraph<T> {
             throw new NoSuchVertexException("No vertex with such id in graph", e);
         }
 
-        LinkedListMatrixColumnIterator<Incidence> columnIt =
-                new LinkedListMatrixColumnIterator<Incidence>(incMatrix);
+        ListMatrixColumnIterator<Incidence> columnIt =
+                new ListMatrixColumnIterator<Incidence>(incMatrix);
 
         while (columnIt.hasNext()) {
             AtomicBoolean startAtFrom = new AtomicBoolean(false),
@@ -139,8 +139,8 @@ public class IncMatrixGraph<T extends Comparable<T>> extends AbstractGraph<T> {
         }
 
         List<T> out = new ArrayList<T>();
-        LinkedListMatrixColumnIterator<Incidence> columnIt =
-                new LinkedListMatrixColumnIterator<Incidence>(incMatrix);
+        ListMatrixColumnIterator<Incidence> columnIt =
+                new ListMatrixColumnIterator<Incidence>(incMatrix);
 
         while (columnIt.hasNext()) {
             AtomicBoolean startsAtIndex = new AtomicBoolean(false);
@@ -179,8 +179,8 @@ public class IncMatrixGraph<T extends Comparable<T>> extends AbstractGraph<T> {
 
     public List<Pair<T, T>> getEdges() {
         List<Pair<T, T>> out = new ArrayList<Pair<T, T>>();
-        LinkedListMatrixColumnIterator<Incidence> columnIt =
-                new LinkedListMatrixColumnIterator<Incidence>(incMatrix);
+        ListMatrixColumnIterator<Incidence> columnIt =
+                new ListMatrixColumnIterator<Incidence>(incMatrix);
 
         while (columnIt.hasNext()) {
             AtomicInteger start = new AtomicInteger(0), end = new AtomicInteger(0);
