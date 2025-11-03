@@ -16,7 +16,7 @@ public class AdjListsGraph<T extends Comparable<T>> extends AbstractGraph<T> {
 
     private Map<T, LinkedList<T>> vertexesNeighbours = new TreeMap<T, LinkedList<T>>();
 
-    public void addVertex(T id) throws IdCollisionException {
+    public void addVertex(T id) throws Exception {
         if (vertexesNeighbours.containsKey(id)) {
             throw new IdCollisionException("Vertex with such id already exists");
         }
@@ -24,7 +24,7 @@ public class AdjListsGraph<T extends Comparable<T>> extends AbstractGraph<T> {
         vertexesNeighbours.put(id, new LinkedList<T>());
     }
 
-    public void removeVertex(T id) throws NoSuchVertexException {
+    public void removeVertex(T id) throws Exception {
         if (!vertexesNeighbours.containsKey(id)) {
             throw new NoSuchVertexException("No vertex with such id in graph");
         }
@@ -37,7 +37,7 @@ public class AdjListsGraph<T extends Comparable<T>> extends AbstractGraph<T> {
         vertexesNeighbours.remove(id);
     }
 
-    public void addEdge(T from, T to) throws NoSuchVertexException {
+    public void addEdge(T from, T to) throws Exception {
         if (!vertexesNeighbours.containsKey(from) || !vertexesNeighbours.containsKey(to)) {
             throw new NoSuchVertexException("No vertex with such id in graph");
         }
@@ -45,7 +45,7 @@ public class AdjListsGraph<T extends Comparable<T>> extends AbstractGraph<T> {
         vertexesNeighbours.get(from).add(to);
     }
 
-    public void removeEdge(T from, T to) throws NoSuchVertexException, NoSuchEdgeException {
+    public void removeEdge(T from, T to) throws Exception {
         if (!vertexesNeighbours.containsKey(from) || !vertexesNeighbours.containsKey(to)) {
             throw new NoSuchVertexException("No vertex with such id in graph");
         }
@@ -55,7 +55,7 @@ public class AdjListsGraph<T extends Comparable<T>> extends AbstractGraph<T> {
         }
     }
 
-    public List<T> getVertexNeighbours(T id) throws NoSuchVertexException {
+    public List<T> getVertexNeighbours(T id) throws Exception {
         if (!vertexesNeighbours.containsKey(id)) {
             throw new NoSuchVertexException("No vertex with such id in graph");
         }
@@ -96,12 +96,9 @@ public class AdjListsGraph<T extends Comparable<T>> extends AbstractGraph<T> {
             for (Pair<T, T> e : this.getEdges()) {
                 New.addEdge(e.getLeft(), e.getRight());
             }
-        } catch (IdCollisionException e) {
-            throw new RuntimeException("Unexpected exception occured", e);
-        } catch (NoSuchVertexException e) {
+        } catch (Exception e) {
             throw new RuntimeException("Unexpected exception occured", e);
         }
-
         return New;
     }
 }
