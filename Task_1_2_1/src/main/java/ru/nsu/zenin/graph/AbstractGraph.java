@@ -97,7 +97,7 @@ public abstract class AbstractGraph<T extends Comparable<T>> implements Graph<T>
 
         List<Pair<T, T>> edges = this.getEdges();
 
-        strBld.append(edges.toString() + "\n");
+        strBld.append(edges.toString());
 
         return strBld.toString();
     }
