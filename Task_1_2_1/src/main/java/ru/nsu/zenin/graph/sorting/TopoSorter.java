@@ -8,7 +8,6 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.concurrent.atomic.AtomicInteger;
 import ru.nsu.zenin.graph.Graph;
-import ru.nsu.zenin.graph.exception.NoSuchVertexException;
 
 public class TopoSorter {
     private TopoSorter() {}
@@ -59,7 +58,7 @@ public class TopoSorter {
             } else {
                 return out;
             }
-        } catch (NoSuchVertexException e) {
+        } catch (Exception e) {
             throw new RuntimeException("Unexpected exception occured", e);
         }
     }

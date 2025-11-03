@@ -23,7 +23,7 @@ public class IncMatrixGraph<T extends Comparable<T>> extends AbstractGraph<T> {
 
     int edgesAmount = 0;
 
-    public void addVertex(T id) throws IdCollisionException {
+    public void addVertex(T id) throws Exception {
         if (idToIndex.containsKey(id)) {
             throw new IdCollisionException("Vertex with such id already exists");
         }
@@ -37,7 +37,7 @@ public class IncMatrixGraph<T extends Comparable<T>> extends AbstractGraph<T> {
         }
     }
 
-    public void removeVertex(T id) throws NoSuchVertexException {
+    public void removeVertex(T id) throws Exception {
         int index;
         try {
             index = idToIndex.get(id);
@@ -75,7 +75,7 @@ public class IncMatrixGraph<T extends Comparable<T>> extends AbstractGraph<T> {
                 });
     }
 
-    public void addEdge(T from, T to) throws NoSuchVertexException {
+    public void addEdge(T from, T to) throws Exception {
         int fromIndex, toIndex;
 
         try {
@@ -95,7 +95,7 @@ public class IncMatrixGraph<T extends Comparable<T>> extends AbstractGraph<T> {
         incMatrix.get(toIndex).set(edgesAmount - 1, Incidence.INCIDENT_AS_END);
     }
 
-    public void removeEdge(T from, T to) throws NoSuchVertexException, NoSuchEdgeException {
+    public void removeEdge(T from, T to) throws Exception {
         int fromIndex, toIndex;
 
         try {
@@ -130,7 +130,7 @@ public class IncMatrixGraph<T extends Comparable<T>> extends AbstractGraph<T> {
         throw new NoSuchEdgeException("No such edge in graph");
     }
 
-    public List<T> getVertexNeighbours(T id) throws NoSuchVertexException {
+    public List<T> getVertexNeighbours(T id) throws Exception {
         int index;
         try {
             index = idToIndex.get(id);
@@ -210,12 +210,9 @@ public class IncMatrixGraph<T extends Comparable<T>> extends AbstractGraph<T> {
             for (Pair<T, T> e : this.getEdges()) {
                 New.addEdge(e.getLeft(), e.getRight());
             }
-        } catch (IdCollisionException e) {
-            throw new RuntimeException("Unexpected exception occured", e);
-        } catch (NoSuchVertexException e) {
+        } catch (Exception e) {
             throw new RuntimeException("Unexpected exception occured", e);
         }
-
         return New;
     }
 
