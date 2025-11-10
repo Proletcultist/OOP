@@ -1,31 +1,33 @@
 package ru.nsu.zenin.hashtable;
 
 import java.util.ConcurrentModificationException;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.function.BiConsumer;
 import ru.nsu.zenin.util.PrimeIntGenerator;
 
-public class HashTable<K, V> {
+public class HashTable<K, V> implements Iterable<HashTable.Entry<K, V>> {
 
     private static final int INIT_TABLE_SIZE = 13;
     private static final int EXTENSION = 2;
     private static final double MAX_LOAD_FACTOR = 0.9;
 
-    private Entry<K, V>[] arr;
+    private Node<K, V>[] arr;
     private int elemsAmount;
 
     private int modCounter = 0;
 
     public HashTable() {
-        arr = (Entry<K, V>[]) new Entry[INIT_TABLE_SIZE];
+        arr = (Node<K, V>[]) new Node[INIT_TABLE_SIZE];
         elemsAmount = 0;
     }
 
     public void put(K key, V value) {
         checkLoadFactor();
 
-        Entry<K, V>[] tab = arr;
+        Node<K, V>[] tab = arr;
 
-        Entry<K, V> neww = new Entry<K, V>(key, value, key.hashCode(), false);
+        Node<K, V> neww = new Node<K, V>(key, value, key.hashCode(), false);
         elemsAmount++;
 
         int pos = neww.getHash() % tab.length;
@@ -56,7 +58,7 @@ public class HashTable<K, V> {
                 }
 
                 // Swap and find new place for swaped elem
-                Entry<K, V> tmp = tab[pos];
+                Node<K, V> tmp = tab[pos];
                 tab[pos] = neww;
                 neww = tmp;
 
@@ -71,7 +73,7 @@ public class HashTable<K, V> {
     }
 
     public V remove(K key) {
-        Entry<K, V> elem = find(key);
+        Node<K, V> elem = find(key);
 
         if (elem == null) {
             return null;
@@ -85,7 +87,7 @@ public class HashTable<K, V> {
     }
 
     public V get(K key) {
-        Entry<K, V> elem = find(key);
+        Node<K, V> elem = find(key);
 
         if (elem == null) {
             return null;
@@ -95,7 +97,7 @@ public class HashTable<K, V> {
     }
 
     public void update(K key, V value) {
-        Entry<K, V> elem = find(key);
+        Node<K, V> elem = find(key);
 
         if (elem == null) {
             put(key, value);
@@ -107,7 +109,7 @@ public class HashTable<K, V> {
     }
 
     public boolean containsKey(K key) {
-        Entry<K, V> elem = find(key);
+        Node<K, V> elem = find(key);
 
         if (elem == null) {
             return false;
@@ -117,7 +119,7 @@ public class HashTable<K, V> {
     }
 
     public void forEach(BiConsumer<K, V> consumer) {
-        Entry<K, V>[] tab = arr;
+        Node<K, V>[] tab = arr;
         int initialMod = modCounter;
 
         for (int i = 0; i < tab.length; i++) {
@@ -141,7 +143,7 @@ public class HashTable<K, V> {
         }
 
         HashTable other = (HashTable) obj;
-        Entry<K, V>[] tab = arr;
+        Node<K, V>[] tab = arr;
 
         for (int i = 0; i < tab.length; i++) {
             if (tab[i] != null && !tab[i].isTombstone()) {
@@ -160,7 +162,7 @@ public class HashTable<K, V> {
 
         out.append('{');
 
-        Entry<K, V>[] tab = arr;
+        Node<K, V>[] tab = arr;
         boolean first = true;
 
         for (int i = 0; i < tab.length; i++) {
@@ -179,18 +181,22 @@ public class HashTable<K, V> {
         return out.toString();
     }
 
+    public Iterator<Entry<K, V>> iterator() {
+        return new HashIterator();
+    }
+
     private int getProbeDist(int hash, int index) {
         int size = arr.length;
         int desired = hash % size;
         return desired <= index ? index - desired : size - (desired - index);
     }
 
-    private Entry<K, V> find(K key) {
+    private Node<K, V> find(K key) {
         if (elemsAmount == 0) {
             return null;
         }
 
-        Entry<K, V>[] tab = arr;
+        Node<K, V>[] tab = arr;
 
         int hash = key.hashCode();
         int pos = hash % tab.length;
@@ -214,7 +220,7 @@ public class HashTable<K, V> {
 
     private void checkLoadFactor() {
         if ((double) elemsAmount / (double) arr.length > MAX_LOAD_FACTOR) {
-            Entry<K, V>[] old = arr;
+            Node<K, V>[] old = arr;
 
             int nextSize = PrimeIntGenerator.nextPrime(old.length * EXTENSION);
 
@@ -222,7 +228,7 @@ public class HashTable<K, V> {
                 throw new RuntimeException("Max int value for table size exceeded");
             }
 
-            arr = (Entry<K, V>[]) new Entry[nextSize];
+            arr = (Node<K, V>[]) new Node[nextSize];
             elemsAmount = 0;
 
             for (int i = 0; i < old.length; i++) {
@@ -233,13 +239,21 @@ public class HashTable<K, V> {
         }
     }
 
-    private class Entry<K, V> {
+    public interface Entry<K, V> {
+        K getKey();
+
+        V getValue();
+
+        void setValue(V value);
+    }
+
+    private class Node<K, V> implements Entry<K, V> {
         private K key;
         private V value;
         private final int hash;
         private boolean tombstone;
 
-        public Entry(K key, V value, int hash, boolean tombstone) {
+        public Node(K key, V value, int hash, boolean tombstone) {
             this.key = key;
             this.value = value;
             this.hash = hash;
@@ -270,6 +284,45 @@ public class HashTable<K, V> {
             this.key = null;
             this.value = null;
             tombstone = true;
+        }
+    }
+
+    private class HashIterator implements Iterator<Entry<K, V>> {
+        private int index = -1;
+        private Node<K, V>[] tab = arr;
+
+        public boolean hasNext() {
+            return tryReachNextEntry();
+        }
+
+        public Entry<K, V> next() {
+            if (!tryReachNextEntry()) {
+                throw new NoSuchElementException();
+            }
+
+            return tab[++index];
+        }
+
+        public void remove() {
+            if (index == -1) {
+                throw new IllegalStateException();
+            }
+            tab[index].makeTombstone();
+            elemsAmount--;
+        }
+
+        /**
+         * Increments index 'till tab[index+1] is existing entry and returns true or returns false
+         */
+        private boolean tryReachNextEntry() {
+            while (index + 1 < tab.length) {
+                if (tab[index + 1] != null && !tab[index + 1].isTombstone()) {
+                    return true;
+                }
+                index++;
+            }
+
+            return false;
         }
     }
 }

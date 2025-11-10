@@ -1,6 +1,8 @@
 package ru.nsu.zenin.hashtable;
 
 import java.util.ConcurrentModificationException;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -132,6 +134,21 @@ class HashTableTest {
     }
 
     @Test
+    void removeTest() {
+        HashTable<Integer, String> table = new HashTable<Integer, String>();
+
+        table.put(0, "a");
+        table.put(1, "b");
+        table.put(12, "c");
+
+        table.remove(1);
+
+        Assertions.assertEquals(table.get(0), "a");
+        Assertions.assertNull(table.get(1));
+        Assertions.assertEquals(table.get(12), "c");
+    }
+
+    @Test
     void updateTest() {
         HashTable<Integer, String> table = new HashTable<Integer, String>();
 
@@ -220,5 +237,135 @@ class HashTableTest {
         Assertions.assertEquals(table1, table2);
         Assertions.assertNotEquals(table1, table3);
         Assertions.assertNotEquals(table2, table3);
+    }
+
+    @Test
+    void iterationTest() {
+        HashTable<Integer, String> table = new HashTable<Integer, String>();
+
+        table.put(0, "a");
+        table.put(1, "b");
+        table.put(12, "c");
+
+        for (var entry : table) {
+            switch (entry.getKey()) {
+                case 0:
+                    Assertions.assertEquals(entry.getValue(), "a");
+                    break;
+                case 1:
+                    Assertions.assertEquals(entry.getValue(), "b");
+                    break;
+                case 12:
+                    Assertions.assertEquals(entry.getValue(), "c");
+                    break;
+                default:
+                    Assertions.fail("Unexpected key in forEach");
+            }
+        }
+    }
+
+    @Test
+    void iteratorRemoveTest() {
+        HashTable<Integer, String> table = new HashTable<Integer, String>();
+
+        table.put(0, "a");
+        table.put(1, "b");
+        table.put(12, "c");
+
+        Iterator<HashTable.Entry<Integer, String>> it = table.iterator();
+
+        while (it.hasNext()) {
+            if (it.next().getKey().equals(1)) {
+                it.remove();
+            }
+        }
+
+        Assertions.assertEquals(table.get(0), "a");
+        Assertions.assertNull(table.get(1));
+        Assertions.assertEquals(table.get(12), "c");
+    }
+
+    @Test
+    void iteratorValueModTest() {
+        HashTable<Integer, String> table = new HashTable<Integer, String>();
+
+        table.put(0, "a");
+        table.put(1, "b");
+        table.put(12, "c");
+
+        Iterator<HashTable.Entry<Integer, String>> it = table.iterator();
+
+        while (it.hasNext()) {
+            HashTable.Entry<Integer, String> ent = it.next();
+            if (ent.getKey().equals(1)) {
+                ent.setValue("e");
+            }
+        }
+
+        Assertions.assertEquals(table.get(0), "a");
+        Assertions.assertEquals(table.get(1), "e");
+        Assertions.assertEquals(table.get(12), "c");
+    }
+
+    @Test
+    void iteratorElemsExceededTest() {
+        HashTable<Integer, String> table = new HashTable<Integer, String>();
+
+        table.put(0, "a");
+        table.put(1, "b");
+        table.put(12, "c");
+
+        Iterator<HashTable.Entry<Integer, String>> it = table.iterator();
+
+        while (it.hasNext()) {
+            it.next();
+        }
+
+        Assertions.assertThrows(
+                NoSuchElementException.class,
+                () -> {
+                    it.next();
+                });
+    }
+
+    @Test
+    void iteratorIllegalRemovingTest() {
+        HashTable<Integer, String> table = new HashTable<Integer, String>();
+
+        table.put(0, "a");
+        table.put(1, "b");
+        table.put(12, "c");
+
+        Iterator<HashTable.Entry<Integer, String>> it = table.iterator();
+
+        Assertions.assertThrows(
+                IllegalStateException.class,
+                () -> {
+                    it.remove();
+                });
+    }
+
+    @Test
+    void iteratorWithRemovedTest() {
+        HashTable<Integer, String> table = new HashTable<Integer, String>();
+
+        table.put(0, "a");
+        table.put(1, "b");
+        table.put(12, "c");
+
+        table.remove(1);
+
+        for (var entry : table) {
+            switch (entry.getKey()) {
+                case 0:
+                    Assertions.assertEquals(entry.getValue(), "a");
+                    break;
+                case 12:
+                    Assertions.assertEquals(entry.getValue(), "c");
+                    break;
+                default:
+                    Assertions.fail("Unexpected key in forEach");
+            }
+        }
     }
 }
