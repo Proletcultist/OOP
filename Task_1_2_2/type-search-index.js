@@ -1,1 +1,1 @@
-typeSearchIndex = [{"l":"All Classes and Interfaces","u":"allclasses-index.html"},{"p":"ru.nsu.zenin.hashtable","l":"HashTable"},{"p":"ru.nsu.zenin.util","l":"PrimeIntGenerator"}];updateSearchResults();
+typeSearchIndex = [{"l":"All Classes and Interfaces","u":"allclasses-index.html"},{"p":"ru.nsu.zenin.hashtable","l":"HashTable.Entry"},{"p":"ru.nsu.zenin.hashtable","l":"HashTable"},{"p":"ru.nsu.zenin.util","l":"PrimeIntGenerator"}];updateSearchResults();
