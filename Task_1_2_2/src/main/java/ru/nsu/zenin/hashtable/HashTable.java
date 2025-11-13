@@ -289,7 +289,7 @@ public class HashTable<K, V> implements Iterable<HashTable.Entry<K, V>> {
 
     private class HashIterator implements Iterator<Entry<K, V>> {
         private int index = -1;
-        private Node<K, V>[] tab = arr;
+        private int mods = modCounter;
 
         public boolean hasNext() {
             return tryReachNextEntry();
@@ -300,23 +300,33 @@ public class HashTable<K, V> implements Iterable<HashTable.Entry<K, V>> {
                 throw new NoSuchElementException();
             }
 
-            return tab[++index];
+            return arr[++index];
         }
 
         public void remove() {
+            if (modCounter != mods) {
+                throw new ConcurrentModificationException();
+            }
             if (index == -1) {
                 throw new IllegalStateException();
             }
-            tab[index].makeTombstone();
+
+            arr[index].makeTombstone();
             elemsAmount--;
+            modCounter++;
+            mods++;
         }
 
         /**
-         * Increments index 'till tab[index+1] is existing entry and returns true or returns false
+         * Increments index 'till arr[index+1] is existing entry and returns true or returns false
          */
         private boolean tryReachNextEntry() {
-            while (index + 1 < tab.length) {
-                if (tab[index + 1] != null && !tab[index + 1].isTombstone()) {
+            if (modCounter != mods) {
+                throw new ConcurrentModificationException();
+            }
+
+            while (index + 1 < arr.length) {
+                if (arr[index + 1] != null && !arr[index + 1].isTombstone()) {
                     return true;
                 }
                 index++;
