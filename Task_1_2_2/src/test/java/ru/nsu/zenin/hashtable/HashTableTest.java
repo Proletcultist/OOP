@@ -368,4 +368,69 @@ class HashTableTest {
             }
         }
     }
+
+    @Test
+    void iteratorInvalidationTest() {
+        HashTable<Integer, String> table = new HashTable<Integer, String>();
+
+        table.put(0, "a");
+        table.put(1, "b");
+        table.put(12, "c");
+
+        Iterator<HashTable.Entry<Integer, String>> it = table.iterator();
+
+        it.next();
+
+        table.put(2, "aaa");
+
+        Assertions.assertThrows(
+                ConcurrentModificationException.class,
+                () -> {
+                    it.next();
+                });
+    }
+
+    @Test
+    void iteratorInvalidationTest2() {
+        HashTable<Integer, String> table = new HashTable<Integer, String>();
+
+        table.put(0, "a");
+        table.put(1, "b");
+        table.put(12, "c");
+
+        Iterator<HashTable.Entry<Integer, String>> it = table.iterator();
+        Iterator<HashTable.Entry<Integer, String>> it2 = table.iterator();
+
+        it.next();
+        it2.next();
+        it2.remove();
+
+        Assertions.assertThrows(
+                ConcurrentModificationException.class,
+                () -> {
+                    it.next();
+                });
+    }
+
+    @Test
+    void iteratorInvalidationTest3() {
+        HashTable<Integer, String> table = new HashTable<Integer, String>();
+
+        table.put(0, "a");
+        table.put(1, "b");
+        table.put(12, "c");
+
+        Iterator<HashTable.Entry<Integer, String>> it = table.iterator();
+        Iterator<HashTable.Entry<Integer, String>> it2 = table.iterator();
+
+        it.next();
+        it2.next();
+        it2.remove();
+
+        Assertions.assertThrows(
+                ConcurrentModificationException.class,
+                () -> {
+                    it.remove();
+                });
+    }
 }
