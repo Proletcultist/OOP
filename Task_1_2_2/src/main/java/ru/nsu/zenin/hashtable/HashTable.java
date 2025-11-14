@@ -143,14 +143,24 @@ public class HashTable<K, V> implements Iterable<HashTable.Entry<K, V>> {
         }
 
         HashTable other = (HashTable) obj;
-        Node<K, V>[] tab = arr;
 
-        for (int i = 0; i < tab.length; i++) {
-            if (tab[i] != null && !tab[i].isTombstone()) {
-                if (!other.containsKey(tab[i].getKey())) {
+        try {
+            for (HashTable.Entry entry : this) {
+                V val = (V) other.get(entry.getKey());
+                if (val == null || !val.equals(entry.getValue())) {
                     return false;
                 }
             }
+
+            for (Object entry : other) {
+                HashTable.Entry<K, V> realEntry = (HashTable.Entry<K, V>) entry;
+                V val = this.get(realEntry.getKey());
+                if (val == null || !val.equals(realEntry.getValue())) {
+                    return false;
+                }
+            }
+        } catch (ClassCastException e) {
+            return false;
         }
 
         return true;
