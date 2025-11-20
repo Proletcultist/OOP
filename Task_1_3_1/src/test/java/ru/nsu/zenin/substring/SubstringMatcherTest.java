@@ -52,4 +52,15 @@ class SubstringMatcherTest {
             Assertions.assertEquals(matcher.nextMatch(), Optional.empty());
         }
     }
+
+    @Test
+    void test5() throws IOException {
+        SubstringPattern patt = SubstringPattern.compile("ッシヅ");
+        try (SubstringMatcher matcher =
+                patt.matcher(new StringReader("ッシッシ🤣😀🤣ッシヅ😂🤣😂😂ッ🤣ッシヅ😂"))) {
+            Assertions.assertEquals(matcher.nextMatch(), Optional.of(7));
+            Assertions.assertEquals(matcher.nextMatch(), Optional.of(16));
+            Assertions.assertEquals(matcher.nextMatch(), Optional.empty());
+        }
+    }
 }

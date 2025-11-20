@@ -12,6 +12,7 @@ public class SubstringMatcher implements AutoCloseable {
 
     private int index = -1;
     private int k = 0;
+    private int surrogatePairsPassed = 0;
 
     SubstringMatcher(SubstringPattern pattern, Reader reader) {
         this.pattern = pattern;
@@ -28,6 +29,10 @@ public class SubstringMatcher implements AutoCloseable {
                 break;
             }
 
+            if (Character.isLowSurrogate((char) ch)) {
+                surrogatePairsPassed++;
+            }
+
             // Try current char as continuation of previous prefix-suffix
             // Or try get next smaller prefix-suffix and try again
             while (k > 0 && (char) ch != pattern.getString().charAt(k)) {
@@ -42,7 +47,9 @@ public class SubstringMatcher implements AutoCloseable {
 
             if (k == pattern.getString().length()) {
                 k = pattern.getPrefixFunctionValue(k - 1);
-                return Optional.of(index + 1 - pattern.getString().length());
+                return Optional.of(
+                        (index + 1 - pattern.getString().length())
+                                - (surrogatePairsPassed - pattern.getSurrogatePairsAmount()));
             }
         }
 
