@@ -1,0 +1,1 @@
+typeSearchIndex = [{"l":"All Classes","url":"allclasses-index.html"},{"p":"ru.nsu.zenin.file","l":"FileSubstringMatcher"},{"p":"ru.nsu.zenin.substring","l":"SubstringMatcher"},{"p":"ru.nsu.zenin.substring","l":"SubstringPattern"}]
