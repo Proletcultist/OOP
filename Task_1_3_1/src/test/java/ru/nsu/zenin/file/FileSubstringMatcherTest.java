@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 class FileSubstringMatcherTest {
 
     static final int BIG_TEST_SIZE = 100000;
+    static final int VERY_BIG_TEST_SIZE = 2100000000;
 
     @Test
     void test1() throws Exception {
@@ -88,6 +89,20 @@ class FileSubstringMatcherTest {
         }
     }
 
+    @Test
+    void testVeryBig() throws Exception {
+        Path test =
+                Paths.get(
+                        FileSubstringMatcherTest.class
+                                .getResource("/testfile/testVeryBig")
+                                .toURI());
+
+        List<Integer> result = FileSubstringMatcher.find(test.toString(), "ab");
+
+        Assertions.assertEquals(result.size(), 1);
+        Assertions.assertEquals(result.get(0), 0);
+    }
+
     @BeforeAll
     static void initTestFiles() throws Exception {
         Path testsDir =
@@ -104,6 +119,7 @@ class FileSubstringMatcherTest {
         Path test4 = testsDir.resolve("test4");
         Path test5 = testsDir.resolve("test5");
         Path testBig = testsDir.resolve("testBig");
+        Path testVeryBig = testsDir.resolve("testVeryBig");
 
         writeFileIfNotExists(test1, "cab");
         writeFileIfNotExists(test2, "osoabcdabcdabcabcdabcdab");
@@ -121,6 +137,20 @@ class FileSubstringMatcherTest {
                         } catch (Exception e) {
                             throw new RuntimeException();
                         }
+                    }
+                });
+
+        writeFileIfNotExists(
+                testVeryBig,
+                (writer) -> {
+                    try {
+                        writer.write("ab");
+                        for (int i = 0; i < VERY_BIG_TEST_SIZE; i++) {
+
+                            writer.write("a");
+                        }
+                    } catch (Exception e) {
+                        throw new RuntimeException();
                     }
                 });
     }
