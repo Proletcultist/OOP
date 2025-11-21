@@ -17,6 +17,10 @@ public class FileSubstringMatcher {
 
     private FileSubstringMatcher() {}
 
+    public static List<Integer> find(String file, String pattern) throws IOException {
+        return find(file, pattern, StandardCharsets.UTF_8);
+    }
+
     public static List<Integer> find(String file, String pattern, Charset charset)
             throws IOException {
         Path path = Paths.get(file);
@@ -30,9 +34,5 @@ public class FileSubstringMatcher {
                                         charset))) {
             return matcher.matchAll();
         }
-    }
-
-    public static List<Integer> find(String file, String pattern) throws IOException {
-        return find(file, pattern, StandardCharsets.UTF_8);
     }
 }

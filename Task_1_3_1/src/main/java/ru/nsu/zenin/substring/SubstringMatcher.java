@@ -19,6 +19,18 @@ public class SubstringMatcher implements AutoCloseable {
         this.reader = reader;
     }
 
+    public List<Integer> matchAll() throws IOException {
+        List<Integer> out = new ArrayList<Integer>();
+
+        Optional<Integer> next = nextMatch();
+        while (next.isPresent()) {
+            out.add(next.get());
+            next = nextMatch();
+        }
+
+        return out;
+    }
+
     public Optional<Integer> nextMatch() throws IOException {
         while (true) {
             int ch = reader.read();
@@ -54,18 +66,6 @@ public class SubstringMatcher implements AutoCloseable {
         }
 
         return Optional.empty();
-    }
-
-    public List<Integer> matchAll() throws IOException {
-        List<Integer> out = new ArrayList<Integer>();
-
-        Optional<Integer> next = nextMatch();
-        while (next.isPresent()) {
-            out.add(next.get());
-            next = nextMatch();
-        }
-
-        return out;
     }
 
     public void close() throws IOException {
