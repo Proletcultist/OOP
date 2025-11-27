@@ -31,6 +31,9 @@ dependencies {
 
     // https://mvnrepository.com/artifact/org.apache.commons/commons-collections4
     implementation("org.apache.commons:commons-collections4:4.5.0")
+
+    compileOnly("org.projectlombok:lombok:1.18.42")
+    annotationProcessor("org.projectlombok:lombok:1.18.42")
 }
 
 // Apply a specific Java toolchain to ease working on different environments.

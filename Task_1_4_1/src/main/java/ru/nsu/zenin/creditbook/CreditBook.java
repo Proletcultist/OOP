@@ -8,6 +8,7 @@ import java.util.Spliterators;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+import lombok.Setter;
 import org.apache.commons.collections4.iterators.ReverseListIterator;
 import ru.nsu.zenin.creditbook.grade.Grade;
 import ru.nsu.zenin.creditbook.grade.NumericalGrade;
@@ -16,7 +17,7 @@ public class CreditBook {
 
     private static final double EXCELLENT_PRECENTAGE_FOR_RED_DIPLOMA = 0.75;
 
-    private FinancingType financingType;
+    @Setter private FinancingType financingType;
     private Optional<NumericalGrade> qualificationWorkGrade;
     private final List<List<Entry>> entriesPerSemester = new ArrayList<List<Entry>>();
 
@@ -30,8 +31,8 @@ public class CreditBook {
         entriesPerSemester.add(new ArrayList<Entry>());
     }
 
-    public void setFinancingType(FinancingType financingType) {
-        this.financingType = financingType;
+    public void setQualificationWorkGrade(NumericalGrade grade) {
+        qualificationWorkGrade = Optional.of(grade);
     }
 
     public void addEntry(Subject subj, ControlType controlType, Grade grade) {
@@ -40,10 +41,6 @@ public class CreditBook {
 
     public void addEntry(Subject subj, ControlType controlType, Grade grade, int semester) {
         entriesPerSemester.get(semester).add(new Entry(subj, controlType, grade));
-    }
-
-    public void setQualificationWorkGrade(NumericalGrade grade) {
-        qualificationWorkGrade = Optional.of(grade);
     }
 
     public double getAverageGrade() {
