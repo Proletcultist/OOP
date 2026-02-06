@@ -1,1 +1,1 @@
-typeSearchIndex = [{"l":"All Classes","url":"allclasses-index.html"},{"p":"ru.nsu.zenin.primenumbers","l":"PrimesListChecker"}]
+typeSearchIndex = [{"l":"All Classes","url":"allclasses-index.html"},{"p":"ru.nsu.zenin.primenumbers","l":"PrimesListChecker"},{"p":"ru.nsu.zenin.primenumbers","l":"PrimesListCheckerMT"},{"p":"ru.nsu.zenin.primenumbers","l":"PrimesListCheckerPS"},{"p":"ru.nsu.zenin.primenumbers","l":"PrimesListCheckerSequential"}]
