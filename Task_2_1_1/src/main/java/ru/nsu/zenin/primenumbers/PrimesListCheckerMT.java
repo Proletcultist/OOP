@@ -5,6 +5,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 
 public class PrimesListCheckerMT implements PrimesListChecker {
+
+    public boolean isAnyCompoundInList(List<Integer> list) {
+        return isAnyCompoundInList(list, Runtime.getRuntime().availableProcessors());
+    }
+
     public boolean isAnyCompoundInList(List<Integer> list, int threadsAmount) {
         int quotion = list.size() / threadsAmount;
         int remainder = list.size() % threadsAmount;
@@ -51,9 +56,5 @@ public class PrimesListCheckerMT implements PrimesListChecker {
         }
 
         return result.get();
-    }
-
-    public boolean isAnyCompoundInList(List<Integer> list) {
-        return isAnyCompoundInList(list, Runtime.getRuntime().availableProcessors());
     }
 }
