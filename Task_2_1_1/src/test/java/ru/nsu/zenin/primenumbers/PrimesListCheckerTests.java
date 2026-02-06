@@ -32,7 +32,8 @@ class PrimesListCheckerTests {
         list.add(2);
         list.add(3);
 
-        Assertions.assertFalse(PrimesListChecker.isAnyCompoundInListSequentially(list));
+        PrimesListChecker checker = new PrimesListCheckerSequential();
+        Assertions.assertFalse(checker.isAnyCompoundInList(list));
     }
 
     @Test
@@ -43,7 +44,8 @@ class PrimesListCheckerTests {
         list.add(666);
         list.add(3);
 
-        Assertions.assertTrue(PrimesListChecker.isAnyCompoundInListSequentially(list));
+        PrimesListChecker checker = new PrimesListCheckerSequential();
+        Assertions.assertTrue(checker.isAnyCompoundInList(list));
     }
 
     @Test
@@ -54,7 +56,8 @@ class PrimesListCheckerTests {
         list.add(3);
         list.add(256);
 
-        Assertions.assertTrue(PrimesListChecker.isAnyCompoundInListSequentially(list));
+        PrimesListChecker checker = new PrimesListCheckerSequential();
+        Assertions.assertTrue(checker.isAnyCompoundInList(list));
     }
 
     @Test
@@ -64,7 +67,8 @@ class PrimesListCheckerTests {
         list.add(2);
         list.add(3);
 
-        Assertions.assertFalse(PrimesListChecker.isAnyCompoundInListMT(list));
+        PrimesListChecker checker = new PrimesListCheckerMT();
+        Assertions.assertFalse(checker.isAnyCompoundInList(list));
     }
 
     @Test
@@ -75,7 +79,8 @@ class PrimesListCheckerTests {
         list.add(666);
         list.add(3);
 
-        Assertions.assertTrue(PrimesListChecker.isAnyCompoundInListMT(list));
+        PrimesListChecker checker = new PrimesListCheckerMT();
+        Assertions.assertTrue(checker.isAnyCompoundInList(list));
     }
 
     @Test
@@ -86,7 +91,8 @@ class PrimesListCheckerTests {
         list.add(3);
         list.add(256);
 
-        Assertions.assertTrue(PrimesListChecker.isAnyCompoundInListMT(list));
+        PrimesListChecker checker = new PrimesListCheckerMT();
+        Assertions.assertTrue(checker.isAnyCompoundInList(list));
     }
 
     @Test
@@ -96,7 +102,8 @@ class PrimesListCheckerTests {
         list.add(2);
         list.add(3);
 
-        Assertions.assertFalse(PrimesListChecker.isAnyCompoundInListPS(list));
+        PrimesListChecker checker = new PrimesListCheckerPS();
+        Assertions.assertFalse(checker.isAnyCompoundInList(list));
     }
 
     @Test
@@ -107,7 +114,8 @@ class PrimesListCheckerTests {
         list.add(666);
         list.add(3);
 
-        Assertions.assertTrue(PrimesListChecker.isAnyCompoundInListPS(list));
+        PrimesListChecker checker = new PrimesListCheckerPS();
+        Assertions.assertTrue(checker.isAnyCompoundInList(list));
     }
 
     @Test
@@ -118,12 +126,14 @@ class PrimesListCheckerTests {
         list.add(3);
         list.add(256);
 
-        Assertions.assertTrue(PrimesListChecker.isAnyCompoundInListPS(list));
+        PrimesListChecker checker = new PrimesListCheckerPS();
+        Assertions.assertTrue(checker.isAnyCompoundInList(list));
     }
 
     @Test
     void bigTestSeq() {
-        Assertions.assertTrue(PrimesListChecker.isAnyCompoundInListSequentially(bigList));
+        PrimesListChecker checker = new PrimesListCheckerSequential();
+        Assertions.assertTrue(checker.isAnyCompoundInList(bigList));
     }
 
     @TestFactory
@@ -135,8 +145,8 @@ class PrimesListCheckerTests {
                     DynamicTest.dynamicTest(
                             "MT Test with " + Integer.toString(i) + " threads",
                             () -> {
-                                Assertions.assertTrue(
-                                        PrimesListChecker.isAnyCompoundInListMT(bigList, testI));
+                                PrimesListCheckerMT checker = new PrimesListCheckerMT();
+                                Assertions.assertTrue(checker.isAnyCompoundInList(bigList, testI));
                             }));
         }
         return tests;
@@ -144,7 +154,8 @@ class PrimesListCheckerTests {
 
     @Test
     void bigTestPS() {
-        Assertions.assertTrue(PrimesListChecker.isAnyCompoundInListPS(bigList));
+        PrimesListChecker checker = new PrimesListCheckerPS();
+        Assertions.assertTrue(checker.isAnyCompoundInList(bigList));
     }
 
     private static boolean isPrime(int n) {
