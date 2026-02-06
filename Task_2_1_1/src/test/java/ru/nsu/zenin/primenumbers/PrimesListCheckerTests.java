@@ -121,6 +121,11 @@ class PrimesListCheckerTests {
         Assertions.assertTrue(PrimesListChecker.isAnyCompoundInListPS(list));
     }
 
+    @Test
+    void bigTestSeq() {
+        Assertions.assertTrue(PrimesListChecker.isAnyCompoundInListSequentially(bigList));
+    }
+
     @TestFactory
     Collection<DynamicTest> bigTestsMT() {
         ArrayList<DynamicTest> tests = new ArrayList<DynamicTest>();
@@ -135,6 +140,11 @@ class PrimesListCheckerTests {
                             }));
         }
         return tests;
+    }
+
+    @Test
+    void bigTestPS() {
+        Assertions.assertTrue(PrimesListChecker.isAnyCompoundInListPS(bigList));
     }
 
     private static boolean isPrime(int n) {
