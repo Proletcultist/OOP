@@ -11,17 +11,20 @@ public class PrimesListCheckerMT implements PrimesListChecker {
     }
 
     public boolean isAnyCompoundInList(List<Integer> list, int threadsAmount) {
+        if (threadsAmount <= 0) {
+            throw new IllegalArgumentException("Threads amount cannot be less or equal zero");
+        }
         int quotion = list.size() / threadsAmount;
         int remainder = list.size() % threadsAmount;
 
         MutableBoolean result = new MutableBoolean();
-        AtomicInteger aliveThreads = new AtomicInteger(threadsAmount);
+        AtomicInteger aliveThreads = new AtomicInteger(quotion == 0 ? remainder : threadsAmount);
 
         synchronized (result) {
             ThreadGroup workers = new ThreadGroup("workers");
 
             int lastEnd = 0;
-            for (int i = 0; i < threadsAmount; i++) {
+            for (int i = 0; i < threadsAmount && lastEnd < list.size(); i++) {
                 List<Integer> threadSublist =
                         list.subList(lastEnd, lastEnd + quotion + (i < remainder ? 1 : 0));
                 Thread thread =
