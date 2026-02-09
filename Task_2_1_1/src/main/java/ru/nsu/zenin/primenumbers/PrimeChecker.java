@@ -1,6 +1,8 @@
 package ru.nsu.zenin.primenumbers;
 
 class PrimeChecker {
+    private PrimeChecker() {}
+
     static boolean isPrime(int n) {
         for (int i = 2; i * i <= n; i++) {
             if (n % i == 0) {
