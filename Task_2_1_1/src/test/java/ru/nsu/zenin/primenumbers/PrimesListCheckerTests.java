@@ -6,8 +6,9 @@ import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DynamicTest;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class PrimesListCheckerTests {
 
@@ -25,114 +26,63 @@ class PrimesListCheckerTests {
         bigList.add(4);
     }
 
-    @Test
-    void testFalse() {
+    @ParameterizedTest
+    @ValueSource(
+            classes = {
+                PrimesListCheckerSequential.class,
+                PrimesListCheckerMT.class,
+                PrimesListCheckerPS.class
+            })
+    <T extends PrimesListChecker> void testFalse(Class<T> checkerClass) throws Exception {
         List<Integer> list = new ArrayList<Integer>();
         list.add(1);
         list.add(2);
         list.add(3);
 
-        PrimesListChecker checker = new PrimesListCheckerSequential();
+        PrimesListChecker checker = checkerClass.newInstance();
         Assertions.assertFalse(checker.isAnyCompoundInList(list));
     }
 
-    @Test
-    void testTrue() {
+    @ParameterizedTest
+    @ValueSource(
+            classes = {
+                PrimesListCheckerSequential.class,
+                PrimesListCheckerMT.class,
+                PrimesListCheckerPS.class
+            })
+    <T extends PrimesListChecker> void testTrue(Class<T> checkerClass) throws Exception {
         List<Integer> list = new ArrayList<Integer>();
         list.add(1);
         list.add(2);
         list.add(666);
         list.add(3);
 
-        PrimesListChecker checker = new PrimesListCheckerSequential();
+        PrimesListChecker checker = checkerClass.newInstance();
         Assertions.assertTrue(checker.isAnyCompoundInList(list));
     }
 
-    @Test
-    void testTrueSquared() {
+    @ParameterizedTest
+    @ValueSource(
+            classes = {
+                PrimesListCheckerSequential.class,
+                PrimesListCheckerMT.class,
+                PrimesListCheckerPS.class
+            })
+    <T extends PrimesListChecker> void testTrueSquared(Class<T> checkerClass) throws Exception {
         List<Integer> list = new ArrayList<Integer>();
         list.add(1);
         list.add(2);
         list.add(3);
         list.add(256);
 
-        PrimesListChecker checker = new PrimesListCheckerSequential();
+        PrimesListChecker checker = checkerClass.newInstance();
         Assertions.assertTrue(checker.isAnyCompoundInList(list));
     }
 
-    @Test
-    void testFalseMT() {
-        List<Integer> list = new ArrayList<Integer>();
-        list.add(1);
-        list.add(2);
-        list.add(3);
-
-        PrimesListChecker checker = new PrimesListCheckerMT();
-        Assertions.assertFalse(checker.isAnyCompoundInList(list));
-    }
-
-    @Test
-    void testTrueMT() {
-        List<Integer> list = new ArrayList<Integer>();
-        list.add(1);
-        list.add(2);
-        list.add(666);
-        list.add(3);
-
-        PrimesListChecker checker = new PrimesListCheckerMT();
-        Assertions.assertTrue(checker.isAnyCompoundInList(list));
-    }
-
-    @Test
-    void testTrueSquaredMT() {
-        List<Integer> list = new ArrayList<Integer>();
-        list.add(1);
-        list.add(2);
-        list.add(3);
-        list.add(256);
-
-        PrimesListChecker checker = new PrimesListCheckerMT();
-        Assertions.assertTrue(checker.isAnyCompoundInList(list));
-    }
-
-    @Test
-    void testFalsePS() {
-        List<Integer> list = new ArrayList<Integer>();
-        list.add(1);
-        list.add(2);
-        list.add(3);
-
-        PrimesListChecker checker = new PrimesListCheckerPS();
-        Assertions.assertFalse(checker.isAnyCompoundInList(list));
-    }
-
-    @Test
-    void testTruePS() {
-        List<Integer> list = new ArrayList<Integer>();
-        list.add(1);
-        list.add(2);
-        list.add(666);
-        list.add(3);
-
-        PrimesListChecker checker = new PrimesListCheckerPS();
-        Assertions.assertTrue(checker.isAnyCompoundInList(list));
-    }
-
-    @Test
-    void testTrueSquaredPS() {
-        List<Integer> list = new ArrayList<Integer>();
-        list.add(1);
-        list.add(2);
-        list.add(3);
-        list.add(256);
-
-        PrimesListChecker checker = new PrimesListCheckerPS();
-        Assertions.assertTrue(checker.isAnyCompoundInList(list));
-    }
-
-    @Test
-    void bigTestSeq() {
-        PrimesListChecker checker = new PrimesListCheckerSequential();
+    @ParameterizedTest
+    @ValueSource(classes = {PrimesListCheckerSequential.class, PrimesListCheckerPS.class})
+    <T extends PrimesListChecker> void bigTest(Class<T> checkerClass) throws Exception {
+        PrimesListChecker checker = checkerClass.newInstance();
         Assertions.assertTrue(checker.isAnyCompoundInList(bigList));
     }
 
@@ -150,12 +100,6 @@ class PrimesListCheckerTests {
                             }));
         }
         return tests;
-    }
-
-    @Test
-    void bigTestPS() {
-        PrimesListChecker checker = new PrimesListCheckerPS();
-        Assertions.assertTrue(checker.isAnyCompoundInList(bigList));
     }
 
     private static boolean isPrime(int n) {
