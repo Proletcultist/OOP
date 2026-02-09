@@ -6,6 +6,7 @@ import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -77,6 +78,35 @@ class PrimesListCheckerTests {
 
         PrimesListChecker checker = checkerClass.newInstance();
         Assertions.assertTrue(checker.isAnyCompoundInList(list));
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {-100, -1, 0})
+    void testMTIllegalArgument(int threadsAmount) {
+        List<Integer> list = new ArrayList<Integer>();
+        list.add(1);
+        list.add(2);
+        list.add(3);
+        list.add(256);
+
+        PrimesListCheckerMT checker = new PrimesListCheckerMT();
+        Assertions.assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    checker.isAnyCompoundInList(list, threadsAmount);
+                });
+    }
+
+    @Test
+    void testMTListSizeLessThanThreadsAmount() {
+        List<Integer> list = new ArrayList<Integer>();
+        list.add(1);
+        list.add(2);
+        list.add(3);
+        list.add(256);
+
+        PrimesListCheckerMT checker = new PrimesListCheckerMT();
+        Assertions.assertTrue(checker.isAnyCompoundInList(list, 10));
     }
 
     @ParameterizedTest
