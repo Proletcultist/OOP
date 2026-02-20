@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"ru.nsu.zenin"},{"l":"ru.nsu.zenin.collections"},{"l":"ru.nsu.zenin.pizzeria.dto"},{"l":"ru.nsu.zenin.pizzeria.mapper"},{"l":"ru.nsu.zenin.pizzeria.model"}];updateSearchResults();
