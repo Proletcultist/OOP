@@ -1,12 +1,12 @@
-package ru.nsu.zenin.collections;
+package ru.nsu.zenin.collection;
 
 import org.apache.commons.lang3.mutable.MutableInt;
 
-public class SyncCircularBuffer<T> {
+public class BlockingCircularBuffer<T> implements BlockingQueue<T> {
     private T[] buffer;
     private MutableInt write_index = new MutableInt(0), read_index = new MutableInt(0);
 
-    public SyncCircularBuffer(int capacity) {
+    public BlockingCircularBuffer(int capacity) {
         if (capacity <= 0) {
             throw new IllegalArgumentException("Buffer capacity cannot be non-positive");
         }

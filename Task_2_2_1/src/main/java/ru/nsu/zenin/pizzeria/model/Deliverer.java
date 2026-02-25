@@ -7,8 +7,4 @@ public class Deliverer extends PizzeriaWorker {
     private final int trunkCapacity;
 
     public void run() {}
-
-    public String toString() {
-        return "Deliverer" + trunkCapacity;
-    }
 }
