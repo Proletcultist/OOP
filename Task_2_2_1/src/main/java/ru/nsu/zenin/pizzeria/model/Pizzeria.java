@@ -1,20 +1,20 @@
 package ru.nsu.zenin.pizzeria.model;
 
-import java.util.ArrayDeque;
 import java.util.List;
-import java.util.Queue;
 import lombok.AccessLevel;
 import lombok.Getter;
-import ru.nsu.zenin.collections.SyncCircularBuffer;
+import ru.nsu.zenin.collection.BlockingCircularBuffer;
+import ru.nsu.zenin.collection.BlockingLinkedList;
+import ru.nsu.zenin.collection.BlockingQueue;
 
 public class Pizzeria {
     private final List<PizzeriaWorker> workers;
 
     @Getter(AccessLevel.PACKAGE)
-    private final SyncCircularBuffer<Integer> warehouse;
+    private final BlockingQueue<Order> warehouse;
 
     @Getter(AccessLevel.PACKAGE)
-    private final Queue<Integer> orders;
+    private final BlockingQueue<Order> orders;
 
     @Getter(AccessLevel.PACKAGE)
     private final long virtualHourValue;
@@ -22,17 +22,12 @@ public class Pizzeria {
     public Pizzeria(long virtualHourValue, int warehouseCapacity, List<PizzeriaWorker> workers) {
         this.workers = workers;
         this.virtualHourValue = virtualHourValue;
-        this.warehouse = new SyncCircularBuffer<Integer>(warehouseCapacity);
-        this.orders = new ArrayDeque<Integer>();
+        this.warehouse = new BlockingCircularBuffer<Order>(warehouseCapacity);
+        this.orders = new BlockingLinkedList<Order>();
     }
 
     public void employ(PizzeriaWorker worker) {
         worker.setPizzeria(this);
         workers.add(worker);
-    }
-
-    @Override
-    public String toString() {
-        return "Workers: " + workers.toString();
     }
 }

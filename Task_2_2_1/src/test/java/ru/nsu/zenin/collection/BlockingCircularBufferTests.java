@@ -1,14 +1,14 @@
-package ru.nsu.zenin.collections;
+package ru.nsu.zenin.collection;
 
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-class SyncCircularBufferTest {
+class BlockingCircularBufferTest {
     @Test
     void fillUpBuffer() throws Exception {
-        SyncCircularBuffer<Integer> buff = new SyncCircularBuffer<Integer>(3);
+        BlockingCircularBuffer<Integer> buff = new BlockingCircularBuffer<Integer>(3);
 
         Thread writer =
                 new Thread(
