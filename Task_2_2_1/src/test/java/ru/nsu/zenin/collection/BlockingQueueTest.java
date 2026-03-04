@@ -121,52 +121,6 @@ class BlockingQueueTest {
         Assertions.assertEquals(queue.poll(), 10);
     }
 
-    @ParameterizedTest
-    @MethodSource("queuesSource")
-    void testBlockUntilEmpty(BlockingQueue<Integer> queue) throws Exception {
-        queue.put(10);
-
-        Thread writer =
-                new Thread(
-                        () -> {
-                            try {
-                                queue.blockUntilEmpty();
-                                queue.put(100);
-                            } catch (InterruptedException e) {
-                                Thread.currentThread().interrupt();
-                            }
-                        });
-
-        writer.start();
-
-        List<Integer> readen = new ArrayList<Integer>();
-
-        Thread reader =
-                new Thread(
-                        () -> {
-                            try {
-                                readen.add(queue.take());
-                                readen.add(queue.take());
-                            } catch (InterruptedException e) {
-                                Thread.currentThread().interrupt();
-                            }
-                            synchronized (readen) {
-                                readen.notify();
-                            }
-                        });
-
-        synchronized (readen) {
-            reader.start();
-            readen.wait();
-        }
-
-        List<Integer> expected = new ArrayList<Integer>(3);
-        expected.add(10);
-        expected.add(100);
-
-        Assertions.assertEquals(readen, expected);
-    }
-
     static List<BlockingQueue> queuesSource() {
         List<BlockingQueue> out = new ArrayList<BlockingQueue>(2);
         out.add(new BlockingCircularBuffer<Integer>(100));

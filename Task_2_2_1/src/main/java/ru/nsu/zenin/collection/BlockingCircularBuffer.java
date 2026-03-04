@@ -50,14 +50,6 @@ public class BlockingCircularBuffer<T> implements BlockingQueue<T> {
         return ret;
     }
 
-    public void blockUntilEmpty() throws InterruptedException {
-        synchronized (write_index) {
-            while (!read_index.equals(write_index)) {
-                write_index.wait();
-            }
-        }
-    }
-
     public T poll() {
         T ret;
 

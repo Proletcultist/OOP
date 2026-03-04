@@ -52,20 +52,7 @@ public class BlockingLinkedList<T> implements BlockingQueue<T> {
                 thisNext.setPrev(thisPrev);
                 thisPrev.setNext(thisNext);
 
-                // If it was the very last object in queue
-                if (thisNext == thisPrev) {
-                    TakeLock.notify();
-                }
-
                 return ret;
-            }
-        }
-    }
-
-    public void blockUntilEmpty() throws InterruptedException {
-        synchronized (TakeLock) {
-            while (supplementary.getNext() != supplementary) {
-                TakeLock.wait();
             }
         }
     }
