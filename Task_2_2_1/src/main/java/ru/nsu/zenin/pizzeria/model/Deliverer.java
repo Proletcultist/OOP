@@ -14,10 +14,17 @@ public class Deliverer extends PizzeriaWorker {
     private final int trunkCapacity;
 
     public void run() {
+        boolean stopToWork = false;
         while (true) {
             try {
                 List<Order> taken = new ArrayList<Order>();
-                Order fst = pizzeria.getWarehouse().take();
+
+                Order fst = pizzeria.getWarehouse().poll();
+                if (fst == null && stopToWork) {
+                    return;
+                } else if (fst == null) {
+                    fst = pizzeria.getWarehouse().take();
+                }
                 fst.setStatus(Order.OrderStatus.IN_DELIVERY);
                 taken.add(fst);
 
@@ -43,7 +50,7 @@ public class Deliverer extends PizzeriaWorker {
                 }
 
             } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
+                stopToWork = true;
             }
         }
     }
