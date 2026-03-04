@@ -1,5 +1,6 @@
 package ru.nsu.zenin.pizzeria.model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,7 +14,8 @@ import ru.nsu.zenin.pizzeria.exception.NoSuchOrderException;
 
 public class Pizzeria {
     private final List<PizzeriaWorker> workers;
-    private ThreadGroup workerThreads = null;
+    private final List<Thread> workerThreads = new ArrayList<Thread>();
+    private boolean open = false;
 
     @Getter(AccessLevel.PACKAGE)
     private final BlockingQueue<Order> warehouse;
@@ -35,34 +37,40 @@ public class Pizzeria {
     }
 
     public synchronized void start() throws IllegalPizzeriaStateException {
-        if (workerThreads != null) {
+        if (open) {
             throw new IllegalPizzeriaStateException("Starting already started pizzeria");
         }
-        nextOrderId = 0;
-        orderById.clear();
-        workerThreads = new ThreadGroup("workers");
         for (PizzeriaWorker worker : workers) {
-            Thread thread = new Thread(workerThreads, worker);
+            Thread thread = new Thread(worker);
+            workerThreads.add(thread);
             thread.start();
         }
+        open = true;
     }
 
     public synchronized void stop() throws IllegalPizzeriaStateException {
-        if (workerThreads == null) {
+        if (!open) {
             throw new IllegalPizzeriaStateException("Stopping already stopped pizzeria");
         }
+        for (Thread t : workerThreads) {
+            t.interrupt();
+        }
         try {
-            pendingOrders.blockUntilEmpty();
+            for (Thread t : workerThreads) {
+                t.join();
+            }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         } finally {
-            workerThreads.interrupt();
-            workerThreads = null;
+            nextOrderId = 0;
+            orderById.clear();
+            workerThreads.clear();
+            open = false;
         }
     }
 
     public synchronized int makeOrder(Pizza pizza) throws IllegalPizzeriaStateException {
-        if (workerThreads == null) {
+        if (!open) {
             throw new IllegalPizzeriaStateException("Cannot make order in closed pizzeria");
         }
         try {
