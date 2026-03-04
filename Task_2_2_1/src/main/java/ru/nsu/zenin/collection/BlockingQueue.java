@@ -5,7 +5,5 @@ public interface BlockingQueue<T> {
 
     T take() throws InterruptedException;
 
-    void blockUntilEmpty() throws InterruptedException;
-
     T poll();
 }
