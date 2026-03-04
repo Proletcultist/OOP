@@ -39,6 +39,7 @@ public class Pizzeria {
             throw new IllegalPizzeriaStateException("Starting already started pizzeria");
         }
         nextOrderId = 0;
+        orderById.clear();
         workerThreads = new ThreadGroup("workers");
         for (PizzeriaWorker worker : workers) {
             Thread thread = new Thread(workerThreads, worker);
@@ -66,7 +67,9 @@ public class Pizzeria {
         }
         try {
             Order neww = new Order(nextOrderId, pizza);
-            orderById.put(nextOrderId, neww);
+            synchronized (orderById) {
+                orderById.put(nextOrderId, neww);
+            }
             pendingOrders.put(neww);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -76,10 +79,12 @@ public class Pizzeria {
     }
 
     public Order.OrderStatus getOrderStatus(int id) throws NoSuchOrderException {
-        if (!orderById.containsKey(id)) {
-            throw new NoSuchOrderException("No order with id " + id + " in pizzeria");
+        synchronized (orderById) {
+            if (!orderById.containsKey(id)) {
+                throw new NoSuchOrderException("No order with id " + id + " in pizzeria");
+            }
+            return orderById.get(id).getStatus();
         }
-        return orderById.get(id).getStatus();
     }
 
     public void employ(PizzeriaWorker worker) {
