@@ -1,7 +1,11 @@
 package ru.nsu.zenin.collection;
 
 public interface BlockingQueue<T> {
-    void put(T elem);
+    void put(T elem) throws InterruptedException;
 
-    T take();
+    T take() throws InterruptedException;
+
+    void blockUntilEmpty() throws InterruptedException;
+
+    T poll();
 }

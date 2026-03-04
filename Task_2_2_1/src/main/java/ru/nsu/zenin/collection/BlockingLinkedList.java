@@ -18,9 +18,9 @@ public class BlockingLinkedList<T> implements BlockingQueue<T> {
 
     public void put(T elem) {
         synchronized (PutLock) {
-            synchronized (supplementary.getNext()) {
-                Node<T> thisNext = supplementary.getNext();
-                Node<T> thisPrev = supplementary;
+            synchronized (supplementary.getPrev()) {
+                Node<T> thisNext = supplementary;
+                Node<T> thisPrev = supplementary.getPrev();
 
                 Node<T> neww = new Node<T>(elem);
                 neww.setNext(thisNext);
@@ -31,21 +31,50 @@ public class BlockingLinkedList<T> implements BlockingQueue<T> {
 
                 // If it was the very first object in queue - notify any waiting taker
                 if (thisNext == thisPrev) {
-                    supplementary.getNext().notify();
+                    thisPrev.notify();
                 }
             }
         }
     }
 
-    public T take() {
+    public T take() throws InterruptedException {
+        synchronized (TakeLock) {
+            synchronized (supplementary.getNext()) {
+                while (supplementary.getNext() == supplementary) {
+                    supplementary.getNext().wait();
+                }
+
+                Node<T> thisPrev = supplementary;
+                Node<T> thisNext = supplementary.getNext().getNext();
+
+                T ret = supplementary.getNext().getValue();
+
+                thisNext.setPrev(thisPrev);
+                thisPrev.setNext(thisNext);
+
+                // If it was the very last object in queue
+                if (thisNext == thisPrev) {
+                    TakeLock.notify();
+                }
+
+                return ret;
+            }
+        }
+    }
+
+    public void blockUntilEmpty() throws InterruptedException {
+        synchronized (TakeLock) {
+            while (supplementary.getNext() != supplementary) {
+                TakeLock.wait();
+            }
+        }
+    }
+
+    public T poll() {
         synchronized (TakeLock) {
             synchronized (supplementary.getPrev()) {
-                while (supplementary.getPrev() == supplementary) {
-                    try {
-                        supplementary.getPrev().wait();
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                    }
+                if (supplementary.getPrev() == supplementary) {
+                    return null;
                 }
 
                 Node<T> thisPrev = supplementary.getPrev().getPrev();
