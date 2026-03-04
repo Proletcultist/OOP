@@ -59,6 +59,11 @@ tasks.jacocoTestReport {
     reports {
         xml.required = true
     }
+    classDirectories.setFrom(files(classDirectories.files.map {
+        fileTree(it).matching {
+            exclude("ru/nsu/zenin/Main.*")
+        }
+    }))
 }
 
 tasks.named<Test>("test") {
