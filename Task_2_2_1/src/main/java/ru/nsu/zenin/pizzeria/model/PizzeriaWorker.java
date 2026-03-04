@@ -5,5 +5,5 @@ import lombok.Setter;
 
 public abstract class PizzeriaWorker implements Runnable {
     @Setter(AccessLevel.PACKAGE)
-    private Pizzeria pizzeria = null;
+    protected Pizzeria pizzeria = null;
 }
