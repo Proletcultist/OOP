@@ -9,6 +9,7 @@ import lombok.Getter;
 import ru.nsu.zenin.collection.BlockingCircularBuffer;
 import ru.nsu.zenin.collection.BlockingLinkedList;
 import ru.nsu.zenin.collection.BlockingQueue;
+import ru.nsu.zenin.logging.Logger;
 import ru.nsu.zenin.pizzeria.exception.IllegalPizzeriaStateException;
 import ru.nsu.zenin.pizzeria.exception.NoSuchOrderException;
 
@@ -106,7 +107,9 @@ public class Pizzeria {
             }
             orderById.get(id).setStatus(status);
             orderById.notify();
-            System.err.println("Order " + id + " changed status to: " + status);
+            if (Logger.isInitialized()) {
+                Logger.log(Logger.LogLevel.INFO, "Order " + id + " changed status to: " + status);
+            }
         }
     }
 
