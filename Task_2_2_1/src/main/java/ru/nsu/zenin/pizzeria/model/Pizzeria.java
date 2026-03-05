@@ -18,10 +18,10 @@ public class Pizzeria {
     private boolean open = false;
 
     @Getter(AccessLevel.PACKAGE)
-    private final BlockingQueue<Order> warehouse;
+    private final BlockingQueue<Integer> warehouse;
 
     @Getter(AccessLevel.PACKAGE)
-    private final BlockingQueue<Order> pendingOrders = new BlockingLinkedList<Order>();
+    private final BlockingQueue<Integer> pendingOrders = new BlockingLinkedList<Integer>();
 
     private final Map<Integer, Order> orderById = new HashMap<Integer, Order>();
 
@@ -33,7 +33,7 @@ public class Pizzeria {
     public Pizzeria(long virtualHourValue, int warehouseCapacity, List<PizzeriaWorker> workers) {
         this.workers = workers;
         this.virtualHourValue = virtualHourValue;
-        this.warehouse = new BlockingCircularBuffer<Order>(warehouseCapacity);
+        this.warehouse = new BlockingCircularBuffer<Integer>(warehouseCapacity);
     }
 
     public synchronized void start() throws IllegalPizzeriaStateException {
@@ -52,12 +52,16 @@ public class Pizzeria {
         if (!open) {
             throw new IllegalPizzeriaStateException("Stopping already stopped pizzeria");
         }
-        for (Thread t : workerThreads) {
-            t.interrupt();
-        }
         try {
+            synchronized (orderById) {
+                for (Order ord : orderById.values()) {
+                    if (ord.getStatus() != Order.OrderStatus.DELIVERED) {
+                        orderById.wait();
+                    }
+                }
+            }
             for (Thread t : workerThreads) {
-                t.join();
+                t.interrupt();
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -78,12 +82,23 @@ public class Pizzeria {
             synchronized (orderById) {
                 orderById.put(nextOrderId, neww);
             }
-            pendingOrders.put(neww);
+            pendingOrders.put(nextOrderId);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
         nextOrderId += 1;
         return nextOrderId - 1;
+    }
+
+    void setOrderStatus(int id, Order.OrderStatus status) throws NoSuchOrderException {
+        synchronized (orderById) {
+            if (!orderById.containsKey(id)) {
+                throw new NoSuchOrderException("No order with id " + id + " in pizzeria");
+            }
+            orderById.get(id).setStatus(status);
+            orderById.notify();
+            System.err.println("Order " + id + " changed status to: " + status);
+        }
     }
 
     public Order.OrderStatus getOrderStatus(int id) throws NoSuchOrderException {
