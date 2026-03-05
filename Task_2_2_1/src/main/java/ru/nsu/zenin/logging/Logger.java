@@ -33,7 +33,7 @@ public class Logger {
 
     @RequiredArgsConstructor
     public enum LogLevel {
-        INFO("[Info]"),
+        INFO("[\033[34mInfo\033[0m]"),
         WARNING("[\033[33mWarning\033[0m]"),
         ERROR("[\033[31mError\033[0m]");
 
