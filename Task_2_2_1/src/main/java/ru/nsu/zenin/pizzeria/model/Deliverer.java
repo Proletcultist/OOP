@@ -38,14 +38,12 @@ public class Deliverer extends PizzeriaWorker {
                     }
                 }
 
-                TimeUnit.MILLISECONDS.sleep(
-                        (long) taken.size()
-                                * ThreadLocalRandom.current()
-                                        .nextLong(MIN_DELIVERY_TIME, MAX_DELIVERY_TIME)
-                                * pizzeria.getVirtualHourValue()
-                                / 60);
-
                 for (int ord : taken) {
+                    TimeUnit.MILLISECONDS.sleep(
+                            ThreadLocalRandom.current()
+                                            .nextLong(MIN_DELIVERY_TIME, MAX_DELIVERY_TIME)
+                                    * pizzeria.getVirtualHourValue()
+                                    / 60);
                     pizzeria.setOrderStatus(ord, Order.OrderStatus.DELIVERED);
                 }
 
