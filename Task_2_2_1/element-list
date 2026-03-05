@@ -1,5 +1,7 @@
 ru.nsu.zenin
 ru.nsu.zenin.collection
+ru.nsu.zenin.logging
+ru.nsu.zenin.logging.exception
 ru.nsu.zenin.pizzeria.dto
 ru.nsu.zenin.pizzeria.exception
 ru.nsu.zenin.pizzeria.mapper
