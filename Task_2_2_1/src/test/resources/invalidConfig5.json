@@ -1,0 +1,14 @@
+{
+    "cookers": [
+        {
+            "timeToCook": 1
+        }
+    ],
+    "deliverers": [
+        {
+            "trunkCapacity": 2
+        }
+    ],
+    "virtualHourValue": 20,
+    "warehouseCapacity": -100
+}
