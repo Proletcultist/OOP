@@ -18,10 +18,10 @@ public class Logger {
     }
 
     public static void log(LogLevel level, String message) {
+        if (os == null) {
+            throw new IllegalLoggerStateException("Cannot log to uninitialized logger");
+        }
         synchronized (os) {
-            if (os == null) {
-                throw new IllegalLoggerStateException("Cannot log to uninitialized logger");
-            }
             os.println(level + " " + message);
         }
     }
@@ -30,7 +30,11 @@ public class Logger {
         if (os == null) {
             throw new IllegalLoggerStateException("Cannot close uninitialized logger");
         }
-        os.close();
+        synchronized (os) {
+            os.close();
+            os = null;
+            initialized = false;
+        }
     }
 
     @RequiredArgsConstructor
