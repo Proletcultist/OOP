@@ -10,6 +10,7 @@ plugins {
     application
     id("com.diffplug.spotless") version "8.0.0"
     jacoco
+    id("com.gradleup.shadow") version "9.3.2"
 }
 
 repositories {
