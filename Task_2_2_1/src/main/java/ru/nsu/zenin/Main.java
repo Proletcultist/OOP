@@ -3,6 +3,7 @@ package ru.nsu.zenin;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 import ru.nsu.zenin.logging.Logger;
@@ -51,6 +52,9 @@ public class Main {
                                                     "Unknown pizza: \"" + readen + "\"");
                                     }
                                 }
+                            } catch (NoSuchElementException e) {
+                                Logger.log(
+                                        Logger.LogLevel.INFO, "No more input from user available");
                             }
                         });
 
