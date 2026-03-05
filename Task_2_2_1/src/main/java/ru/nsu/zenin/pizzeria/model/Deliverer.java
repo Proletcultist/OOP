@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
+import ru.nsu.zenin.pizzeria.exception.NoSuchOrderException;
 
 @RequiredArgsConstructor
 public class Deliverer extends PizzeriaWorker {
@@ -14,26 +15,20 @@ public class Deliverer extends PizzeriaWorker {
     private final int trunkCapacity;
 
     public void run() {
-        boolean stopToWork = false;
         while (true) {
             try {
-                List<Order> taken = new ArrayList<Order>();
+                List<Integer> taken = new ArrayList<Integer>();
 
-                Order fst = pizzeria.getWarehouse().poll();
-                if (fst == null && stopToWork) {
-                    return;
-                } else if (fst == null) {
-                    fst = pizzeria.getWarehouse().take();
-                }
-                fst.setStatus(Order.OrderStatus.IN_DELIVERY);
+                int fst = pizzeria.getWarehouse().take();
+                pizzeria.setOrderStatus(fst, Order.OrderStatus.IN_DELIVERY);
                 taken.add(fst);
 
                 while (taken.size() < trunkCapacity) {
-                    Order ord = pizzeria.getWarehouse().poll();
+                    Integer ord = pizzeria.getWarehouse().poll();
                     if (ord == null) {
                         break;
                     } else {
-                        ord.setStatus(Order.OrderStatus.IN_DELIVERY);
+                        pizzeria.setOrderStatus(ord, Order.OrderStatus.IN_DELIVERY);
                         taken.add(ord);
                     }
                 }
@@ -45,12 +40,14 @@ public class Deliverer extends PizzeriaWorker {
                                 * pizzeria.getVirtualHourValue()
                                 / 60);
 
-                for (Order ord : taken) {
-                    ord.setStatus(Order.OrderStatus.DELIVERED);
+                for (int ord : taken) {
+                    pizzeria.setOrderStatus(ord, Order.OrderStatus.DELIVERED);
                 }
 
             } catch (InterruptedException e) {
-                stopToWork = true;
+                return;
+            } catch (NoSuchOrderException e) {
+                throw new RuntimeException("Unexpected exception occured", e);
             }
         }
     }
