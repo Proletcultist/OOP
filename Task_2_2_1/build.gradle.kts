@@ -11,6 +11,7 @@ plugins {
     id("com.diffplug.spotless") version "8.0.0"
     jacoco
     id("com.gradleup.shadow") version "9.3.2"
+    id("io.github.euledge.code-atlas") version "1.2.0"
 }
 
 repositories {
@@ -71,3 +72,4 @@ tasks.named<Test>("test") {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
 }
+
