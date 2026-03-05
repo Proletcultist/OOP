@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.nsu.zenin.pizzeria.exception.IllegalPizzeriaStateException;
+import ru.nsu.zenin.pizzeria.exception.NoSuchOrderException;
 
 class ModelTest {
 
@@ -60,5 +61,18 @@ class ModelTest {
                 });
 
         pizzeria.stop();
+    }
+
+    @Test
+    void noSuchOrderTest() throws Exception {
+        List<PizzeriaWorker> workers = new ArrayList<PizzeriaWorker>();
+
+        Pizzeria pizzeria = new Pizzeria(0, 100, workers);
+
+        Assertions.assertThrows(
+                NoSuchOrderException.class,
+                () -> {
+                    pizzeria.getOrderStatus(1337);
+                });
     }
 }
