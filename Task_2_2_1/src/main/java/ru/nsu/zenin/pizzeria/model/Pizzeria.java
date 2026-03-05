@@ -92,10 +92,14 @@ public class Pizzeria {
             synchronized (orderById) {
                 orderById.put(nextOrderId, neww);
             }
+            if (Logger.isInitialized()) {
+                Logger.log(Logger.LogLevel.INFO, "New order: " + nextOrderId);
+            }
             pendingOrders.put(nextOrderId);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
+
         nextOrderId += 1;
         return nextOrderId - 1;
     }
