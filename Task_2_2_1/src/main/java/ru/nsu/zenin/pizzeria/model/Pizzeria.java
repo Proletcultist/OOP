@@ -45,7 +45,7 @@ public class Pizzeria {
         this.warehouse = new BlockingCircularBuffer<Integer>(warehouseCapacity);
     }
 
-    public synchronized void start() throws IllegalPizzeriaStateException {
+    public synchronized void start() {
         if (open) {
             throw new IllegalPizzeriaStateException("Starting already started pizzeria");
         }
@@ -57,7 +57,7 @@ public class Pizzeria {
         open = true;
     }
 
-    public synchronized void stop() throws IllegalPizzeriaStateException {
+    public synchronized void stop() {
         if (!open) {
             throw new IllegalPizzeriaStateException("Stopping already stopped pizzeria");
         }
@@ -82,7 +82,7 @@ public class Pizzeria {
         }
     }
 
-    public synchronized int makeOrder(Pizza pizza) throws IllegalPizzeriaStateException {
+    public synchronized int makeOrder(Pizza pizza) {
         if (!open) {
             throw new IllegalPizzeriaStateException("Cannot make order in closed pizzeria");
         }
