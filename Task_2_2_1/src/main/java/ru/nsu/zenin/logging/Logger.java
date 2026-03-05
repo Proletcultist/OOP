@@ -1,27 +1,29 @@
 package ru.nsu.zenin.logging;
 
-import java.io.OutputStream;
-import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.Writer;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import ru.nsu.zenin.logging.exception.IllegalLoggerStateException;
 
 public class Logger {
-    private static PrintStream os = null;
+    private static PrintWriter os = null;
     @Getter private static boolean initialized = false;
 
     private Logger() {}
 
-    public static void init(OutputStream osArg) {
-        os = new PrintStream(osArg);
+    public static void init(Writer osArg) {
+        os = new PrintWriter(osArg, true);
         initialized = true;
     }
 
     public static void log(LogLevel level, String message) {
-        if (os == null) {
-            throw new IllegalLoggerStateException("Cannot log to uninitialized logger");
+        synchronized (os) {
+            if (os == null) {
+                throw new IllegalLoggerStateException("Cannot log to uninitialized logger");
+            }
+            os.println(level + " " + message);
         }
-        os.println(level + " " + message);
     }
 
     public static void close() throws IllegalLoggerStateException {

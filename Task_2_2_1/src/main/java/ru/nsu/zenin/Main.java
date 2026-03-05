@@ -1,8 +1,10 @@
 package ru.nsu.zenin;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
@@ -28,7 +30,7 @@ public class Main {
             return;
         }
 
-        Logger.init(System.err);
+        Logger.init(new BufferedWriter(new OutputStreamWriter(System.err)));
 
         Pizzeria pizzeria = PizzeriaMapper.INSTANCE.fromPizzeriaDTO(pizzeriaConfig);
         pizzeria.start();
