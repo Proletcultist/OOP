@@ -3,6 +3,7 @@ package ru.nsu.zenin.pizzeria.model;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 @RequiredArgsConstructor
 public class Order {
@@ -11,12 +12,8 @@ public class Order {
     private final Pizza pizza;
 
     @Getter(AccessLevel.PACKAGE)
+    @Setter(AccessLevel.PACKAGE)
     private OrderStatus status = OrderStatus.WAITING_FOR_COOKER;
-
-    void setStatus(Order.OrderStatus status) {
-        this.status = status;
-        System.err.println("Order " + this.id + " changed status to: " + this.status);
-    }
 
     @RequiredArgsConstructor
     public enum OrderStatus {
