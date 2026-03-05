@@ -31,7 +31,16 @@ public class Pizzeria {
     private final long virtualHourValue;
 
     public Pizzeria(long virtualHourValue, int warehouseCapacity, List<PizzeriaWorker> workers) {
-        this.workers = workers;
+        if (virtualHourValue < 0) {
+            throw new IllegalArgumentException("Virtual hour value cannot be negative");
+        }
+        if (warehouseCapacity <= 0) {
+            throw new IllegalArgumentException("Warehouse capacity cannot be negative or zero");
+        }
+        this.workers = new ArrayList<PizzeriaWorker>(workers.size());
+        for (PizzeriaWorker worker : workers) {
+            employ(worker);
+        }
         this.virtualHourValue = virtualHourValue;
         this.warehouse = new BlockingCircularBuffer<Integer>(warehouseCapacity);
     }

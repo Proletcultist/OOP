@@ -4,15 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
-import lombok.RequiredArgsConstructor;
 import ru.nsu.zenin.pizzeria.exception.NoSuchOrderException;
 
-@RequiredArgsConstructor
 public class Deliverer extends PizzeriaWorker {
     private static long MIN_DELIVERY_TIME = 15;
     private static long MAX_DELIVERY_TIME = 45;
 
     private final int trunkCapacity;
+
+    public Deliverer(int trunkCapacity) {
+        if (trunkCapacity < 0) {
+            throw new IllegalArgumentException("Trunk capacity cannot be negative or zero");
+        }
+        this.trunkCapacity = trunkCapacity;
+    }
 
     public void run() {
         while (true) {

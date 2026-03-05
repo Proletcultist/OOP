@@ -1,13 +1,18 @@
 package ru.nsu.zenin.pizzeria.model;
 
 import java.util.concurrent.TimeUnit;
-import lombok.RequiredArgsConstructor;
 import ru.nsu.zenin.pizzeria.exception.NoSuchOrderException;
 
-@RequiredArgsConstructor
 public class Cooker extends PizzeriaWorker {
 
     private final long timeToCook;
+
+    public Cooker(long timeToCook) {
+        if (timeToCook < 0) {
+            throw new IllegalArgumentException("Time to cook cannot be negative");
+        }
+        this.timeToCook = timeToCook;
+    }
 
     public void run() {
         while (true) {
