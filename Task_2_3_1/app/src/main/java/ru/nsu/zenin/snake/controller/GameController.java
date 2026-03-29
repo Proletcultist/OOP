@@ -8,14 +8,10 @@ import ru.nsu.zenin.snake.view.ObservableSnake;
 
 public class GameController {
 
-    @FXML
-    private ObservableList<ObservableSnake> snakes;
-    @FXML
-    private ObservableList<Point2D> apples;
-    @FXML
-    private IntegerProperty gridWidth;
-    @FXML
-    private IntegerProperty gridHeight;
+    @FXML private ObservableList<ObservableSnake> snakes;
+    @FXML private ObservableList<Point2D> apples;
+    @FXML private IntegerProperty gridWidth;
+    @FXML private IntegerProperty gridHeight;
 
     // Game game;
 
