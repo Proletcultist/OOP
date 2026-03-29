@@ -1,16 +1,9 @@
 <?xml version = "1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.layout.StackPane?>
+<?import ru.nsu.zenin.snake.view.GameField?>
 
-<GridPane xmlns:fx="http://javafx.com/fxml">
-    <fx:define>
-        <Rectangle fx:id="defaultTile" width="10" height="10" fill="AQUA"/>
-        <Rectangle fx:id="defaultTile2" width="10" height="10" fill="BLACK"/>
-    </fx:define>
+<StackPane>
+    <GameField prefWidth="100" prefHeight="100" gridWidth="10" gridHeight="2"/>
+</StackPane>
 
-    <children>
-        <fx:reference source = "defaultTile" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
-        <fx:reference source = "defaultTile2" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
-    </children>
-</GridPane>
