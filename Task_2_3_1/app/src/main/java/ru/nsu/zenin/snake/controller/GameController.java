@@ -3,19 +3,42 @@ package ru.nsu.zenin.snake.controller;
 import javafx.beans.property.IntegerProperty;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.paint.Color;
+import javafx.collections.FXCollections;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.util.Duration;
 import ru.nsu.zenin.collection.Point2D;
+import ru.nsu.zenin.snake.view.GameFieldView;
 import ru.nsu.zenin.snake.view.ObservableSnake;
+import ru.nsu.zenin.snake.model.Snake;
+import ru.nsu.zenin.snake.model.Game;
+import ru.nsu.zenin.snake.model.GameField;
 
 public class GameController {
 
-    @FXML private ObservableList<ObservableSnake> snakes;
-    @FXML private ObservableList<Point2D> apples;
-    @FXML private IntegerProperty gridWidth;
-    @FXML private IntegerProperty gridHeight;
+    @FXML private GameFieldView fieldView;
 
-    // Game game;
+    Game game;
 
     public void initialize() {
-        // game = new Game(gridWidth.getValue(), gridHeight.getValue(), );
+        GameField field = new GameField(fieldView.getGridWidth(), fieldView.getGridHeight());
+        game = new Game(field);
+
+        ObservableSnake snake = new ObservableSnake(Color.GREEN);
+        fieldView.getSnakes().add(snake);
+        snake.getSegments().add(new Point2D(0, 0));
+
+        Snake snakeModel = new Snake(snake.getSegments(), Snake.Direction.RIGHT, 20);
+
+        game.addSnake(snakeModel);
+
+        Timeline timeline = new Timeline(new KeyFrame(Duration.millis(50), event -> {
+            game.tick();
+        }));
+
+        timeline.setCycleCount(Timeline.INDEFINITE);
+
+        timeline.play();
     }
 }

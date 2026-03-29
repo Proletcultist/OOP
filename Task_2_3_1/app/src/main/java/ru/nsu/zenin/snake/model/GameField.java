@@ -10,22 +10,24 @@ public class GameField {
 
     private final int width, height;
 
-    TileState[] tiles;
-    Map<Class<? extends TileState>, List<Point2D>> pointsByState;
+    List<TileState> tiles;
+    Map<Class<? extends TileState>, List<Point2D>> pointsByState = new HashMap<>();
 
     public GameField(int width, int height) {
-        this(width, height, new HashMap<>());
+        this(width, height, new ArrayList<TileState>(width * height));
+        for (int i = 0; i < width * height; i++) {
+            tiles.add(new TileState.Free());   
+        }
     }
 
-    public GameField(int width, int height, Map<Class<? extends TileState>, List<Point2D>> pointsByState) {
+    public GameField(int width, int height, List<TileState> tiles) {
         this.width = width;
         this.height = height;
-        tiles = new TileState[width * height];
-        this.pointsByState = pointsByState;
+        this.tiles = tiles;
     }
 
     public void setTileState(Point2D coord, TileState state) {
-        tiles[coord.y() * width + coord.x()] = state;
+        tiles.set(coord.y() * width + coord.x(), state);
 
         if (!pointsByState.containsKey(state.getClass())) {
             pointsByState.put(state.getClass(), new ArrayList<Point2D>());

@@ -1,11 +1,11 @@
 package ru.nsu.zenin.snake.model;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
+import java.util.ArrayList;
+import java.util.List;
 import ru.nsu.zenin.collection.Point2D;
 
 public class Snake {
-    private final Deque<Point2D> segments;
+    private final List<Point2D> segments;
     private Integer targetSize;
     private Direction direction;
 
@@ -14,9 +14,19 @@ public class Snake {
     private Integer score = 0;
 
     public Snake(Point2D head, Direction direction, Integer ticksToMove) {
-        segments = new ArrayDeque<Point2D>();
-        segments.addFirst(head);
+        segments = new ArrayList<Point2D>();
+        segments.add(head);
         targetSize = 1;
+        this.direction = direction;
+        this.ticksToMove = ticksToMove;
+    }
+
+    public Snake(List<Point2D> segments, Direction direction, Integer ticksToMove) {
+        if (segments.isEmpty()) {
+            // TODO: Throw
+        }
+        this.segments = segments;
+        this.targetSize = segments.size();
         this.direction = direction;
         this.ticksToMove = ticksToMove;
     }
@@ -48,14 +58,7 @@ public class Snake {
 
     public void tick(GameField field) {
         if (counter >= ticksToMove) {
-            if (segments.size() == targetSize) {
-                field.setTileState(segments.pop(), new GameField.TileState.Free());
-            } else if (segments.size() > targetSize) {
-                field.setTileState(segments.pop(), new GameField.TileState.Free());
-                field.setTileState(segments.pop(), new GameField.TileState.Free());
-            }
-
-            Point2D currHead = segments.getFirst();
+            Point2D currHead = segments.get(0);
             Point2D nextHead =
                     switch (this.direction) {
                         case UP -> new Point2D(currHead.x(), currHead.y() - 1);
@@ -63,8 +66,14 @@ public class Snake {
                         case RIGHT -> new Point2D(currHead.x() + 1, currHead.y());
                         case LEFT -> new Point2D(currHead.x() - 1, currHead.y());
                     };
-            segments.addFirst(nextHead);
-            field.setTileState(nextHead, new GameField.TileState.OccupiedBySnake(this));
+            segments.add(0, nextHead);
+
+            if (segments.size() - 1 == targetSize) {
+                segments.remove(segments.size() - 1);
+            } else if (segments.size() - 1 > targetSize) {
+                segments.remove(segments.size() - 1);
+                segments.remove(segments.size() - 1);
+            }
 
             counter = 0;
         } else {
@@ -73,10 +82,10 @@ public class Snake {
     }
 
     public Point2D getHead() {
-        return segments.getFirst();
+        return segments.get(0);
     }
 
-    public Deque<Point2D> getSegments() {
+    public List<Point2D> getSegments() {
         return segments;
     }
 
