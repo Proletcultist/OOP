@@ -1,9 +1,8 @@
 <?xml version = "1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.layout.StackPane?>
-<?import ru.nsu.zenin.snake.view.GameField?>
 
-<StackPane>
-    <GameField prefWidth="100" prefHeight="100" gridWidth="10" gridHeight="2"/>
+<StackPane xmlns:fx="http://javafx.com/fxml">
+    <fx:include source="GameField.xml"/>
 </StackPane>
 

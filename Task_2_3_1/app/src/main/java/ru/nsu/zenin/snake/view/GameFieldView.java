@@ -13,7 +13,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import ru.nsu.zenin.collection.Point2D;
 
-public class GameField extends Region {
+public class GameFieldView extends Region {
 
     private final ObservableList<ObservableSnake> snakes = FXCollections.observableArrayList();
     private final ObservableList<Point2D> apples = FXCollections.observableArrayList();
@@ -26,7 +26,7 @@ public class GameField extends Region {
     private Double width;
     private Double height;
 
-    public GameField() {
+    public GameFieldView() {
         gridWidth =
                 new IntegerPropertyBase(1) {
                     @Override
@@ -36,7 +36,7 @@ public class GameField extends Region {
 
                     @Override
                     public Object getBean() {
-                        return GameField.this;
+                        return GameFieldView.this;
                     }
 
                     @Override
@@ -53,7 +53,7 @@ public class GameField extends Region {
 
                     @Override
                     public Object getBean() {
-                        return GameField.this;
+                        return GameFieldView.this;
                     }
 
                     @Override
@@ -70,7 +70,7 @@ public class GameField extends Region {
 
                     @Override
                     public Object getBean() {
-                        return GameField.this;
+                        return GameFieldView.this;
                     }
 
                     @Override
@@ -188,13 +188,10 @@ public class GameField extends Region {
         Double pWidth = widthProperty().getValue();
         Double pHeight = heightProperty().getValue();
 
-        if (gridHeight.getValue() > gridWidth.getValue()) {
-            height = pHeight;
-            width = height * gridWidth.getValue() / gridHeight.getValue();
-        } else {
-            width = pWidth;
-            height = width * gridHeight.getValue() / gridWidth.getValue();
-        }
+        Double factor = pWidth / gridWidth.getValue() > pHeight / gridHeight.getValue() ? pHeight / gridHeight.getValue() : pWidth / gridWidth.getValue();
+
+        height = gridHeight.getValue() * factor;
+        width = gridWidth.getValue() * factor;
 
         canvas.setWidth(width);
         canvas.setHeight(height);
@@ -207,12 +204,13 @@ public class GameField extends Region {
     private void redrawTile(Point2D coord, Color color) {
         Double tileWidth = width / gridWidth.getValue();
         Double tileHeight = height / gridHeight.getValue();
+
         ctx.setFill(color);
         ctx.fillRect(
                 coord.x() * tileWidth,
                 coord.y() * tileHeight,
-                (coord.x() + 1) * tileWidth,
-                (coord.y() + 1) * tileHeight);
+                tileWidth,
+                tileHeight);
     }
 
     private void redrawAll() {
