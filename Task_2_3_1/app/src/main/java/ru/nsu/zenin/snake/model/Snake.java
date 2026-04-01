@@ -56,7 +56,7 @@ public class Snake {
         }
     }
 
-    public void tick(GameField field) {
+    public void tick() {
         if (counter >= ticksToMove) {
             Point2D currHead = segments.get(0);
             Point2D nextHead =

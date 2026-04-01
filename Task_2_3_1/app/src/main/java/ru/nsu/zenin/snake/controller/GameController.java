@@ -13,7 +13,6 @@ import ru.nsu.zenin.snake.view.GameFieldView;
 import ru.nsu.zenin.snake.view.ObservableSnake;
 import ru.nsu.zenin.snake.model.Snake;
 import ru.nsu.zenin.snake.model.Game;
-import ru.nsu.zenin.snake.model.GameField;
 
 public class GameController {
 
@@ -22,16 +21,9 @@ public class GameController {
     Game game;
 
     public void initialize() {
-        GameField field = new GameField(fieldView.getGridWidth(), fieldView.getGridHeight());
-        game = new Game(field);
+        game = new Game(fieldView.getField());
 
-        ObservableSnake snake = new ObservableSnake(Color.GREEN);
-        fieldView.getSnakes().add(snake);
-        snake.getSegments().add(new Point2D(0, 0));
-
-        Snake snakeModel = new Snake(snake.getSegments(), Snake.Direction.RIGHT, 20);
-
-        game.addSnake(snakeModel);
+        game.createSnake(new Point2D(0,0), Snake.Direction.RIGHT, 20);
 
         Timeline timeline = new Timeline(new KeyFrame(Duration.millis(50), event -> {
             game.tick();
