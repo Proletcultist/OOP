@@ -12,12 +12,12 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import ru.nsu.zenin.collection.Point2D;
+import ru.nsu.zenin.collection.ObservableField;
+import ru.nsu.zenin.snake.model.TileState;
 
 public class GameFieldView extends Region {
 
-    private final ObservableList<ObservableSnake> snakes = FXCollections.observableArrayList();
-    private final ObservableList<Point2D> apples = FXCollections.observableArrayList();
-    private final ObjectProperty<Color> backgroundColor;
+    private final ObservableField<TileState> field;
     private final IntegerProperty gridWidth;
     private final IntegerProperty gridHeight;
 
@@ -31,7 +31,7 @@ public class GameFieldView extends Region {
                 new IntegerPropertyBase(1) {
                     @Override
                     protected void invalidated() {
-                        redrawAll();
+                        resizeGrid();
                     }
 
                     @Override
@@ -48,7 +48,7 @@ public class GameFieldView extends Region {
                 new IntegerPropertyBase(1) {
                     @Override
                     protected void invalidated() {
-                        redrawAll();
+                        resizeGrid();
                     }
 
                     @Override
@@ -61,23 +61,8 @@ public class GameFieldView extends Region {
                         return "gridHeight";
                     }
                 };
-        backgroundColor =
-                new ObjectPropertyBase<Color>(Color.BLACK) {
-                    @Override
-                    protected void invalidated() {
-                        redrawAll();
-                    }
 
-                    @Override
-                    public Object getBean() {
-                        return GameFieldView.this;
-                    }
-
-                    @Override
-                    public String getName() {
-                        return "backgroundColor";
-                    }
-                };
+        field = new ObservableField<TileState>(new TileState.Free(), gridWidth.getValue(), gridHeight.getValue());
 
         initGraphics();
         initListeners();
@@ -96,64 +81,15 @@ public class GameFieldView extends Region {
     private void initListeners() {
         widthProperty().addListener(o -> resize());
         heightProperty().addListener(o -> resize());
-
-        backgroundColor.addListener(p -> redrawAll());
-
-        snakes.addListener(
-                (ListChangeListener<ObservableSnake>)
-                        change -> {
-                            while (change.next()) {
-                                if (change.wasAdded()) {
-                                    for (ObservableSnake snake : change.getAddedSubList()) {
-                                        for (Point2D segment : snake.getSegments()) {
-                                            redrawTile(segment, snake.getColor());
-                                        }
-                                        snake.addListener(
-                                                (SnakeChangeListener)
-                                                        snakeChange -> {
-                                                            switch (snakeChange.act()) {
-                                                                case OCCUPIED ->
-                                                                        redrawTile(
-                                                                                snakeChange.point(),
-                                                                                snakeChange
-                                                                                        .snake()
-                                                                                        .getColor());
-                                                                case LEFT ->
-                                                                        redrawTile(
-                                                                                snakeChange.point(),
-                                                                                this.backgroundColor
-                                                                                        .getValue());
-                                                            }
-                                                        });
-                                    }
-                                } else if (change.wasRemoved()) {
-                                    for (ObservableSnake snake : change.getRemoved()) {
-                                        for (Point2D segment : snake.getSegments()) {
-                                            redrawTile(segment, this.backgroundColor.getValue());
-                                        }
-                                    }
-                                }
-                            }
-                        });
-        apples.addListener(
-                (ListChangeListener<Point2D>)
-                        change -> {
-                            while (change.next()) {
-                                if (change.wasAdded()) {
-                                    for (Point2D apple : change.getAddedSubList()) {
-                                        redrawTile(apple, Color.RED);
-                                    }
-                                } else if (change.wasRemoved()) {
-                                    for (Point2D apple : change.getRemoved()) {
-                                        redrawTile(apple, this.backgroundColor.getValue());
-                                    }
-                                }
-                            }
-                        });
-    }
-
-    public void setBackgroundColor(final Color color) {
-        this.backgroundColor.setValue(color);
+        
+        field.addListener(change -> {
+            switch (change.state()) {
+                case TileState.Free free -> redrawTile(change.point(), Color.BLACK);
+                case TileState.OccupiedBySnake occS -> redrawTile(change.point(), Color.GREEN);
+                case TileState.OccupiedByApple occS -> redrawTile(change.point(), Color.GREEN);
+                default -> throw new RuntimeException();
+            }
+        });
     }
 
     public void setGridWidth(final Integer value) {
@@ -164,24 +100,21 @@ public class GameFieldView extends Region {
         gridHeight.setValue(value);
     }
 
-    public ObservableList<ObservableSnake> getSnakes() {
-        return this.snakes;
-    }
-
-    public ObservableList<Point2D> getApples() {
-        return this.apples;
-    }
-
-    public Color getBackgroundColor() {
-        return this.backgroundColor.getValue();
-    }
-
     public Integer getGridWidth() {
         return this.gridWidth.getValue();
     }
 
     public Integer getGridHeight() {
         return this.gridHeight.getValue();
+    }
+
+    public ObservableField<TileState> getField() {
+        return field;
+    }
+
+    private void resizeGrid() {
+        field.resize(new TileState.Free(), gridWidth.getValue(), gridHeight.getValue());
+        redrawAll();
     }
 
     private void resize() {
@@ -214,16 +147,14 @@ public class GameFieldView extends Region {
     }
 
     private void redrawAll() {
-        ctx.setFill(backgroundColor.getValue());
-        ctx.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
-
-        for (Point2D apple : apples) {
-            redrawTile(apple, Color.GREEN);
-        }
-
-        for (ObservableSnake snake : snakes) {
-            for (Point2D segment : snake.getSegments()) {
-                redrawTile(segment, snake.getColor());
+        for (int i = 0; i < field.getWidth(); i++) {
+            for (int j = 0; j < field.getHeight(); j++) {
+                switch (field.get(i, j)) {
+                    case TileState.Free free -> redrawTile(new Point2D(i, j), Color.BLACK);
+                    case TileState.OccupiedBySnake occS -> redrawTile(new Point2D(i, j), Color.GREEN);
+                    case TileState.OccupiedByApple occS -> redrawTile(new Point2D(i, j), Color.GREEN);
+                    default -> throw new RuntimeException();
+                }
             }
         }
     }
