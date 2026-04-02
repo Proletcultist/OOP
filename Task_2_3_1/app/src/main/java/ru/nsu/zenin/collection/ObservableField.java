@@ -2,6 +2,7 @@ package ru.nsu.zenin.collection;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiConsumer;
 
 public class ObservableField<T> implements Field<T> {
     private final List<List<T>> state;
@@ -28,22 +29,14 @@ public class ObservableField<T> implements Field<T> {
     }
 
     public void set(Point2D point, T value) {
-        set(point.x(), point.y(), value);
-    }
-
-    public T get(Point2D point) {
-        return get(point.x(), point.y());
-    }
-
-    public void set(int x, int y, T value) {
-        state.get(y).set(x, value);
+        state.get(point.y()).set(point.x(), value);
         for (FieldChangeListener<T> l : listeners) {
-            l.onChange(new FieldChangeListener.Change<T>(new Point2D(x, y), value));
+            l.onChange(new FieldChangeListener.Change<T>(point, value));
         }
     }
 
-    public T get(int x, int y) {
-        return state.get(y).get(x);
+    public T get(Point2D point) {
+        return state.get(point.y()).get(point.x());
     }
 
     public boolean contains(Point2D p) {
@@ -76,6 +69,14 @@ public class ObservableField<T> implements Field<T> {
             }
             while (l.size() < this.width) {
                 l.add(fill);
+            }
+        }
+    }
+
+    public void forEach(BiConsumer<Point2D, T> action) {
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                action.accept(new Point2D(i, j), state.get(j).get(i));
             }
         }
     }

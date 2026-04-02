@@ -20,13 +20,11 @@ public class Game {
         this.field = field;
         this.available = new HashSet<Point2D>();
 
-        for (int i = 0; i < field.getWidth(); i++) {
-            for (int j = 0; j < field.getHeight(); j++) {
-                if (field.get(i, j) instanceof TileState.Free) {
-                    available.add(new Point2D(i, j));
-                }
+        field.forEach((point, state) -> {
+            if (state instanceof TileState.Free) {
+                available.add(point);
             }
-        }
+        });
     }
 
     public Snake createSnake(Point2D head, Snake.Direction dir, Integer ticksToMove) {
