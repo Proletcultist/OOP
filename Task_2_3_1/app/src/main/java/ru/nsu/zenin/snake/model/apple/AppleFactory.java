@@ -1,4 +1,4 @@
-package ru.nsu.zenin.snake.model;
+package ru.nsu.zenin.snake.model.apple;
 
 import java.util.Set;
 import ru.nsu.zenin.collection.Point2D;

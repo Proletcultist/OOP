@@ -59,6 +59,14 @@ public class Snake {
     public void tick() {
         if (counter >= ticksToMove) {
             Point2D currHead = segments.get(0);
+
+            if (segments.size() == targetSize) {
+                segments.remove(segments.size() - 1);
+            } else if (segments.size() > targetSize) {
+                segments.remove(segments.size() - 1);
+                segments.remove(segments.size() - 1);
+            }
+
             Point2D nextHead =
                     switch (this.direction) {
                         case UP -> new Point2D(currHead.x(), currHead.y() - 1);
@@ -66,14 +74,8 @@ public class Snake {
                         case RIGHT -> new Point2D(currHead.x() + 1, currHead.y());
                         case LEFT -> new Point2D(currHead.x() - 1, currHead.y());
                     };
-            segments.add(0, nextHead);
 
-            if (segments.size() - 1 == targetSize) {
-                segments.remove(segments.size() - 1);
-            } else if (segments.size() - 1 > targetSize) {
-                segments.remove(segments.size() - 1);
-                segments.remove(segments.size() - 1);
-            }
+            segments.add(0, nextHead);
 
             counter = 0;
         } else {
@@ -87,6 +89,10 @@ public class Snake {
 
     public List<Point2D> getSegments() {
         return segments;
+    }
+
+    public void addPoints(int points) {
+        score += points;
     }
 
     public enum Direction {
