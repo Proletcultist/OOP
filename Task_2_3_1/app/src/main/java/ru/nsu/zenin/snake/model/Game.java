@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -17,15 +19,23 @@ public class Game {
     private final Set<Point2D> available;
     private final AppleFactory appleFactory;
     private final List<Snake> snakes = new ArrayList<Snake>();
+    private final Function<Point2D, Point2D> pointsTranslator;
+    private final Predicate<Game> winPredicate;
     private State state;
 
     private int score = 0;
 
     public Game(Field<TileState> field, AppleFactory appleFactory, int applesAmount) {
+        this(field, appleFactory, applesAmount, p -> p.wrappedAround(field.getWidth(), field.getHeight()), g -> g.getScore() == 2);
+    }
+
+    public Game(Field<TileState> field, AppleFactory appleFactory, int applesAmount, Function<Point2D, Point2D> pointsTranslator, Predicate<Game> winPredicate) {
         this.field = field;
         this.appleFactory = appleFactory;
         this.available = new HashSet<Point2D>();
         this.state = State.RUNNING;
+        this.pointsTranslator = pointsTranslator;
+        this.winPredicate = winPredicate;
 
         field.forEach((point, state) -> {
             if (state instanceof TileState.Free) {
@@ -51,12 +61,7 @@ public class Game {
                             while (change.next()) {
                                 if (change.wasAdded()) {
                                     for (int i = change.getFrom(); i < change.getTo(); i++) {
-                                        Point2D segment =
-                                                change.getList()
-                                                        .get(i)
-                                                        .wrappedAround(
-                                                                field.getWidth(),
-                                                                field.getHeight());
+                                        Point2D segment = pointsTranslator.apply(change.getList().get(i));
 
                                         // Check for collision
                                         if (!available.contains(segment)) {
@@ -79,9 +84,7 @@ public class Game {
                                     }
                                 } else if (change.wasRemoved()) {
                                     for (Point2D segment : change.getRemoved()) {
-                                        segment =
-                                                segment.wrappedAround(
-                                                        field.getWidth(), field.getHeight());
+                                        segment = pointsTranslator.apply(segment);
                                         if (field.contains(segment)) {
                                             available.add(segment);
                                             field.set(segment, new TileState.Free());
@@ -117,6 +120,10 @@ public class Game {
             for (Snake snake : snakes) {
                 snake.tick();
             }
+        }
+
+        if (winPredicate.test(this)) {
+            state = State.WIN;
         }
     }
 
