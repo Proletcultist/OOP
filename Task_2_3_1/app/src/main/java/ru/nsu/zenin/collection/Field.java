@@ -5,6 +5,7 @@ public interface Field<T> {
     T get(Point2D point);
     void set(int x, int y, T value);
     T get(int x, int y);
+
     boolean contains(Point2D p);
     int getWidth();
     int getHeight();
