@@ -147,16 +147,17 @@ public class GameFieldView extends Region {
     }
 
     private void redrawAll() {
-        for (int i = 0; i < field.getWidth(); i++) {
-            for (int j = 0; j < field.getHeight(); j++) {
-                switch (field.get(i, j)) {
-                    case TileState.Free free -> redrawTile(new Point2D(i, j), Color.BLACK);
+        ctx.setFill(Color.BLACK);
+        ctx.fillRect(0, 0, canvas.getWidth(), getHeight());
+
+        field.forEach((point, state) -> {
+                switch (state) {
+                    case TileState.Free free -> {}
                     case TileState.OccupiedBySnake occS ->
-                            redrawTile(new Point2D(i, j), Color.GREEN);
+                            redrawTile(point, Color.GREEN);
                     case TileState.OccupiedByApple occS ->
-                            redrawTile(new Point2D(i, j), Color.GREEN);
+                            redrawTile(point, Color.GREEN);
                 }
-            }
-        }
+        });
     }
 }

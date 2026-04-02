@@ -1,13 +1,11 @@
 package ru.nsu.zenin.collection;
 
+import java.util.function.BiConsumer;
+
 public interface Field<T> {
     void set(Point2D point, T value);
 
     T get(Point2D point);
-
-    void set(int x, int y, T value);
-
-    T get(int x, int y);
 
     boolean contains(Point2D p);
 
@@ -16,4 +14,6 @@ public interface Field<T> {
     int getHeight();
 
     void resize(T fill, int width, int height);
+
+    void forEach(BiConsumer<Point2D, T> action);
 }
