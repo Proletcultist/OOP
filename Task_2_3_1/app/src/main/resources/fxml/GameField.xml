@@ -1,6 +1,0 @@
-<?xml version = "1.0" encoding="UTF-8"?>
-
-<?import ru.nsu.zenin.snake.view.GameFieldView?>
-<?import ru.nsu.zenin.snake.controller.GameController?>
-
-<GameFieldView xmlns:fx="http://javafx.com/fxml" prefWidth="100" prefHeight="100" gridWidth="10" gridHeight="10" fx:id="fieldView" fx:controller="ru.nsu.zenin.snake.controller.GameController"/>

@@ -11,7 +11,6 @@ public class Snake {
 
     private Integer ticksToMove;
     private Integer counter = 0;
-    private Integer score = 0;
 
     public Snake(Point2D head, Direction direction, Integer ticksToMove) {
         segments = new ArrayList<Point2D>();
@@ -89,10 +88,6 @@ public class Snake {
 
     public List<Point2D> getSegments() {
         return segments;
-    }
-
-    public void addPoints(int points) {
-        score += points;
     }
 
     public enum Direction {

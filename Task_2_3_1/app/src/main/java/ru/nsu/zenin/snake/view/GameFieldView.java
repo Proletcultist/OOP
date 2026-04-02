@@ -79,6 +79,7 @@ public class GameFieldView extends Region {
     private void initListeners() {
         widthProperty().addListener(o -> resize());
         heightProperty().addListener(o -> resize());
+        paddingProperty().addListener(o -> resize());
 
         field.addListener(
                 (FieldChangeListener<TileState>)
@@ -119,8 +120,8 @@ public class GameFieldView extends Region {
     }
 
     private void resize() {
-        Double pWidth = widthProperty().getValue();
-        Double pHeight = heightProperty().getValue();
+        Double pWidth  = getWidth() - getInsets().getLeft() - getInsets().getRight();
+        Double pHeight = getHeight() - getInsets().getTop() - getInsets().getBottom();
 
         Double factor =
                 pWidth / gridWidth.getValue() > pHeight / gridHeight.getValue()
@@ -133,7 +134,7 @@ public class GameFieldView extends Region {
         canvas.setWidth(width);
         canvas.setHeight(height);
 
-        canvas.relocate((pWidth - width) * 0.5, (pHeight - height) * 0.5);
+        canvas.relocate((getWidth() - width) * 0.5, (getHeight() - height) * 0.5);
 
         redrawAll();
     }
