@@ -1,7 +1,7 @@
 package ru.nsu.zenin.collection;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ObservableField<T> implements Field<T> {
     private final List<List<T>> state;
