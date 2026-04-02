@@ -10,7 +10,6 @@ import javafx.animation.Timeline;
 import javafx.util.Duration;
 import ru.nsu.zenin.collection.Point2D;
 import ru.nsu.zenin.snake.view.GameFieldView;
-import ru.nsu.zenin.snake.view.ObservableSnake;
 import ru.nsu.zenin.snake.model.Snake;
 import ru.nsu.zenin.snake.model.Game;
 
