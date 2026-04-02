@@ -13,6 +13,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import ru.nsu.zenin.collection.Point2D;
 import ru.nsu.zenin.collection.ObservableField;
+import ru.nsu.zenin.collection.FieldChangeListener;
 import ru.nsu.zenin.snake.model.TileState;
 
 public class GameFieldView extends Region {
@@ -82,12 +83,12 @@ public class GameFieldView extends Region {
         widthProperty().addListener(o -> resize());
         heightProperty().addListener(o -> resize());
         
-        field.addListener(change -> {
-            switch (change.state()) {
+        field.addListener((FieldChangeListener<TileState>)
+            change -> {
+            switch ((TileState) change.state()) {
                 case TileState.Free free -> redrawTile(change.point(), Color.BLACK);
                 case TileState.OccupiedBySnake occS -> redrawTile(change.point(), Color.GREEN);
-                case TileState.OccupiedByApple occS -> redrawTile(change.point(), Color.GREEN);
-                default -> throw new RuntimeException();
+                case TileState.OccupiedByApple occA -> redrawTile(change.point(), Color.GREEN);
             }
         });
     }
@@ -153,7 +154,6 @@ public class GameFieldView extends Region {
                     case TileState.Free free -> redrawTile(new Point2D(i, j), Color.BLACK);
                     case TileState.OccupiedBySnake occS -> redrawTile(new Point2D(i, j), Color.GREEN);
                     case TileState.OccupiedByApple occS -> redrawTile(new Point2D(i, j), Color.GREEN);
-                    default -> throw new RuntimeException();
                 }
             }
         }
