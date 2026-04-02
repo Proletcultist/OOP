@@ -51,6 +51,12 @@ public class ObservableField<T> implements Field<T> {
         return height;
     }
 
+    public void setAll(T value) {
+        forEach((point, state) -> {
+            set(point, value);
+        });
+    }
+
     public void resize(T fill, int width, int height) {
         while (height > this.height) {
             state.add(new ArrayList<T>(width));
