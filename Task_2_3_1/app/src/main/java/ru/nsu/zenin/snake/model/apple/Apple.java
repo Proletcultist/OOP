@@ -1,6 +1,7 @@
-package ru.nsu.zenin.snake.model;
+package ru.nsu.zenin.snake.model.apple;
 
 import ru.nsu.zenin.collection.Point2D;
+import ru.nsu.zenin.snake.model.Snake;
 
 public abstract class Apple {
     private final Point2D position;
