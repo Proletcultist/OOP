@@ -13,6 +13,8 @@ public interface Field<T> {
 
     int getHeight();
 
+    void setAll(T value);
+
     void resize(T fill, int width, int height);
 
     void forEach(BiConsumer<Point2D, T> action);
