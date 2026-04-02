@@ -17,6 +17,7 @@ import ru.nsu.zenin.snake.model.Game;
 import ru.nsu.zenin.snake.model.Snake;
 import ru.nsu.zenin.snake.view.GameFieldView;
 import ru.nsu.zenin.snake.model.apple.BasicAppleFactory;
+import ru.nsu.zenin.snake.model.TileState;
 
 public class GameController {
 
@@ -44,6 +45,7 @@ public class GameController {
     }
 
     private void startNewGame() {
+        fieldView.getField().setAll(new TileState.Free());
 
         game = new Game(fieldView.getField(), new BasicAppleFactory(), 1);
 
@@ -83,6 +85,10 @@ public class GameController {
                 case KeyCode.DOWN -> playerSnake.changeDirection(Snake.Direction.DOWN);
                 case KeyCode.LEFT -> playerSnake.changeDirection(Snake.Direction.LEFT);
                 case KeyCode.RIGHT -> playerSnake.changeDirection(Snake.Direction.RIGHT);
+                case KeyCode.R -> {
+                    timeline.stop();
+                    startNewGame();
+                }
                 default -> {}
             }
         });
