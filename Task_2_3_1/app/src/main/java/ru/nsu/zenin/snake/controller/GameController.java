@@ -10,6 +10,7 @@ import ru.nsu.zenin.collection.Point2D;
 import ru.nsu.zenin.snake.model.Game;
 import ru.nsu.zenin.snake.model.Snake;
 import ru.nsu.zenin.snake.view.GameFieldView;
+import ru.nsu.zenin.snake.model.apple.BasicAppleFactory;
 
 public class GameController {
 
@@ -18,14 +19,15 @@ public class GameController {
     Game game;
 
     public void initialize() {
-        game = new Game(fieldView.getField());
+
+        game = new Game(fieldView.getField(), new BasicAppleFactory(), 1);
 
         Snake playerSnake = game.createSnake(new Point2D(0, 0), Snake.Direction.RIGHT, 20);
 
         Timeline timeline =
                 new Timeline(
                         new KeyFrame(
-                                Duration.millis(50),
+                                Duration.millis(10),
                                 event -> {
                                     game.tick();
                                 }));

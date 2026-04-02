@@ -9,15 +9,18 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import ru.nsu.zenin.collection.Field;
 import ru.nsu.zenin.collection.Point2D;
+import ru.nsu.zenin.snake.model.apple.AppleFactory;
+import ru.nsu.zenin.snake.model.apple.Apple;
 
 public class Game {
     private final Field<TileState> field;
     private final Set<Point2D> available;
-    private AppleFactory appleFactory = null;
+    private final AppleFactory appleFactory;
     private final List<Snake> snakes = new ArrayList<Snake>();
 
-    public Game(Field<TileState> field) {
+    public Game(Field<TileState> field, AppleFactory appleFactory, int applesAmount) {
         this.field = field;
+        this.appleFactory = appleFactory;
         this.available = new HashSet<Point2D>();
 
         field.forEach((point, state) -> {
@@ -25,6 +28,10 @@ public class Game {
                 available.add(point);
             }
         });
+
+        for (int i = 0; i < applesAmount; i++) {
+            spawnNewApple();
+        }
     }
 
     public Snake createSnake(Point2D head, Snake.Direction dir, Integer ticksToMove) {
@@ -49,12 +56,15 @@ public class Game {
 
                                         // Check for collision
                                         if (!available.contains(segment)) {
-                                            if (field.get(segment)
-                                                    instanceof TileState.OccupiedBySnake) {
-                                                // TODO: Game over
-                                            } else if (field.get(segment)
-                                                    instanceof TileState.OccupiedByApple) {
-                                                // TODO: Eat apple
+                                            switch (field.get(segment)) {
+                                                case TileState.Free free -> {}
+                                                case TileState.OccupiedBySnake os -> {/* TODO: Game over*/}
+                                                case TileState.OccupiedByApple oa -> {
+                                                    oa.apple().apply(snake);
+                                                    field.set(
+                                                            segment, new TileState.OccupiedBySnake(snake));
+                                                    spawnNewApple();
+                                                }
                                             }
                                         } else {
                                             available.remove(segment);
@@ -83,8 +93,10 @@ public class Game {
         return snake;
     }
 
-    public void setAppleFactory(AppleFactory factory) {
-        this.appleFactory = factory;
+    private void spawnNewApple() {
+        Apple apple = appleFactory.create(available);
+        available.remove(apple.getPosition());
+        field.set(apple.getPosition(), new TileState.OccupiedByApple(apple));
     }
 
     public void tick() {
