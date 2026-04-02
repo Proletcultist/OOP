@@ -40,8 +40,19 @@ public class Game {
         segments.addListener((ListChangeListener<Point2D>) change -> {
             while (change.next()) {
                 if (change.wasAdded()) {
-                    for (Point2D segment : change.getAddedSubList()) {
-                        if (field.contains(segment)) {
+                    for (int i = change.getFrom(); i < change.getTo(); i++) {
+                        Point2D segment = change.getList().get(i).wrappedAround(field.getWidth(), field.getHeight());
+
+                        // Check for collision
+                        if (!available.contains(segment)) {
+                            if (field.get(segment) instanceof TileState.OccupiedBySnake) {
+                                // TODO: Game over
+                            }
+                            else if (field.get(segment) instanceof TileState.OccupiedByApple) {
+                                // TODO: Eat apple
+                            }
+                        }
+                        else {
                             available.remove(segment);
                             field.set(segment, new TileState.OccupiedBySnake(snake));
                         }
@@ -49,6 +60,7 @@ public class Game {
                 }
                 else if (change.wasRemoved()) {
                     for (Point2D segment : change.getRemoved()) {
+                        segment = segment.wrappedAround(field.getWidth(), field.getHeight());
                         if (field.contains(segment)) {
                             available.add(segment);
                             field.set(segment, new TileState.Free());
