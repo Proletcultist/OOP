@@ -17,11 +17,15 @@ public class Game {
     private final Set<Point2D> available;
     private final AppleFactory appleFactory;
     private final List<Snake> snakes = new ArrayList<Snake>();
+    private State state;
+
+    private int score = 0;
 
     public Game(Field<TileState> field, AppleFactory appleFactory, int applesAmount) {
         this.field = field;
         this.appleFactory = appleFactory;
         this.available = new HashSet<Point2D>();
+        this.state = State.RUNNING;
 
         field.forEach((point, state) -> {
             if (state instanceof TileState.Free) {
@@ -58,9 +62,10 @@ public class Game {
                                         if (!available.contains(segment)) {
                                             switch (field.get(segment)) {
                                                 case TileState.Free free -> {}
-                                                case TileState.OccupiedBySnake os -> {/* TODO: Game over*/}
+                                                case TileState.OccupiedBySnake os -> state = State.GAME_OVER;
                                                 case TileState.OccupiedByApple oa -> {
                                                     oa.apple().apply(snake);
+                                                    score++;
                                                     field.set(
                                                             segment, new TileState.OccupiedBySnake(snake));
                                                     spawnNewApple();
@@ -93,6 +98,14 @@ public class Game {
         return snake;
     }
 
+    public State getState() {
+        return state;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
     private void spawnNewApple() {
         Apple apple = appleFactory.create(available);
         available.remove(apple.getPosition());
@@ -100,8 +113,16 @@ public class Game {
     }
 
     public void tick() {
-        for (Snake snake : snakes) {
-            snake.tick();
+        if (state == State.RUNNING) {
+            for (Snake snake : snakes) {
+                snake.tick();
+            }
         }
+    }
+
+    public enum State {
+        RUNNING,
+        GAME_OVER,
+        WIN
     }
 }

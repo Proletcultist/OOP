@@ -9,7 +9,6 @@ public class BasicApple extends Apple {
     }
 
     public void apply(Snake snake) {
-        snake.addPoints(1);
         snake.grow();
     }
 }
