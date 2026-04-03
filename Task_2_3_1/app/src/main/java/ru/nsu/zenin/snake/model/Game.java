@@ -1,6 +1,7 @@
 package ru.nsu.zenin.snake.model;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -60,7 +61,7 @@ public class Game {
     }
 
     public Snake createSnake(Point2D head, Snake.Direction dir, Integer ticksToMove) {
-        ObservableList<Point2D> segments = FXCollections.observableArrayList();
+        ObservableList<Point2D> segments = FXCollections.observableList(new LinkedList<Point2D>());
         segments.add(head);
         Snake snake = new Snake(segments, dir, ticksToMove);
 
