@@ -108,8 +108,8 @@ public class GameController {
     }
 
     private void tryChangeSnakeDirection(Snake snake, Snake.Direction dir) {
-        if (snake.getDirection().getOpposite() != dir) {
-            snake.setDirection(dir);
+        if (snake.getLastMoveDirection().getOpposite() != dir) {
+            snake.setIntendDirection(dir);
         }
     }
 }

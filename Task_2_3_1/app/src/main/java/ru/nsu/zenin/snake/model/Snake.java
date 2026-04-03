@@ -7,7 +7,9 @@ import ru.nsu.zenin.collection.Point2D;
 public class Snake {
     private final List<Point2D> segments;
     private Integer targetSize;
-    private Direction direction;
+
+    private Direction lastMoveDirection;
+    private Direction intendDirection;
 
     private Integer ticksToMove;
     private Integer counter = 0;
@@ -16,7 +18,8 @@ public class Snake {
         segments = new ArrayList<Point2D>();
         segments.add(head);
         targetSize = 1;
-        this.direction = direction;
+        this.intendDirection = direction;
+        this.lastMoveDirection = direction;
         this.ticksToMove = ticksToMove;
     }
 
@@ -26,16 +29,17 @@ public class Snake {
         }
         this.segments = segments;
         this.targetSize = segments.size();
-        this.direction = direction;
+        this.lastMoveDirection = direction;
+        this.intendDirection = direction;
         this.ticksToMove = ticksToMove;
     }
 
-    public Direction getDirection() {
-        return direction;
+    public Direction getLastMoveDirection() {
+        return lastMoveDirection;
     }
 
-    public void setDirection(Direction direction) {
-        this.direction = direction;
+    public void setIntendDirection(Direction direction) {
+        this.intendDirection = direction;
     }
 
     public void setTicksToMove(Integer ticksToMove) {
@@ -68,7 +72,7 @@ public class Snake {
             }
 
             Point2D nextHead =
-                    switch (this.direction) {
+                    switch (this.intendDirection) {
                         case UP -> new Point2D(currHead.x(), currHead.y() - 1);
                         case DOWN -> new Point2D(currHead.x(), currHead.y() + 1);
                         case RIGHT -> new Point2D(currHead.x() + 1, currHead.y());
@@ -78,6 +82,7 @@ public class Snake {
             segments.add(0, nextHead);
 
             counter = 0;
+            lastMoveDirection = intendDirection;
         } else {
             counter++;
         }
