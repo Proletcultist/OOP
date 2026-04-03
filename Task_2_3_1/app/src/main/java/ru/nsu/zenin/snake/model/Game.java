@@ -31,7 +31,7 @@ public class Game {
                 appleFactory,
                 applesAmount,
                 p -> p.wrappedAround(field.getWidth(), field.getHeight()),
-                g -> g.getScore() == 2);
+                g -> g.getScore() == 12);
     }
 
     public Game(

@@ -12,10 +12,12 @@ import ru.nsu.zenin.collection.Point2D;
 import ru.nsu.zenin.snake.model.TileState;
 
 public class GameFieldView extends Region {
+    private static double TILE_BOARDER = 0.4;
 
     private final ObservableField<TileState> field;
     private final IntegerProperty gridWidth;
     private final IntegerProperty gridHeight;
+    private TileDrawer drawer;
 
     private Canvas canvas;
     private GraphicsContext ctx;
@@ -67,6 +69,15 @@ public class GameFieldView extends Region {
     }
 
     private void initGraphics() {
+        drawer = (ctx, tile, x, y, width, height) -> {
+            switch (tile) {
+                case TileState.Free free -> ctx.setFill(Color.BLACK);
+                case TileState.OccupiedBySnake occS ->  ctx.setFill(Color.GREEN);
+                case TileState.OccupiedByApple occA -> ctx.setFill(Color.GREEN);
+            }
+            ctx.fillRect(x, y, width, height);
+        };
+
         canvas = new Canvas(getPrefWidth(), getPrefHeight());
         ctx = canvas.getGraphicsContext2D();
 
@@ -84,13 +95,7 @@ public class GameFieldView extends Region {
         field.addListener(
                 (FieldChangeListener<TileState>)
                         change -> {
-                            switch ((TileState) change.state()) {
-                                case TileState.Free free -> redrawTile(change.point(), Color.BLACK);
-                                case TileState.OccupiedBySnake occS ->
-                                        redrawTile(change.point(), Color.GREEN);
-                                case TileState.OccupiedByApple occA ->
-                                        redrawTile(change.point(), Color.GREEN);
-                            }
+                            redrawTile(change.point(), change.state());
                         });
     }
 
@@ -128,36 +133,28 @@ public class GameFieldView extends Region {
                         ? pHeight / gridHeight.getValue()
                         : pWidth / gridWidth.getValue();
 
-        height = gridHeight.getValue() * factor;
-        width = gridWidth.getValue() * factor;
+        height = Math.rint(gridHeight.getValue() * factor);
+        width = Math.rint(gridWidth.getValue() * factor);
 
         canvas.setWidth(width);
         canvas.setHeight(height);
 
-        canvas.relocate((getWidth() - width) * 0.5, (getHeight() - height) * 0.5);
+        canvas.relocate(Math.rint((getWidth() - width) * 0.5), Math.rint((getHeight() - height) * 0.5));
 
         redrawAll();
     }
 
-    private void redrawTile(Point2D coord, Color color) {
+    private void redrawTile(Point2D coord, TileState state) {
         Double tileWidth = width / gridWidth.getValue();
         Double tileHeight = height / gridHeight.getValue();
 
-        ctx.setFill(color);
-        ctx.fillRect(coord.x() * tileWidth, coord.y() * tileHeight, tileWidth, tileHeight);
+        drawer.draw(ctx, state, Math.rint(coord.x() * tileWidth - TILE_BOARDER / 2), Math.rint(coord.y() * tileHeight - TILE_BOARDER / 2), Math.rint(tileWidth + TILE_BOARDER), Math.rint(tileHeight + TILE_BOARDER));
     }
 
     private void redrawAll() {
-        ctx.setFill(Color.BLACK);
-        ctx.fillRect(0, 0, canvas.getWidth(), getHeight());
-
         field.forEach(
                 (point, state) -> {
-                    switch (state) {
-                        case TileState.Free free -> {}
-                        case TileState.OccupiedBySnake occS -> redrawTile(point, Color.GREEN);
-                        case TileState.OccupiedByApple occS -> redrawTile(point, Color.GREEN);
-                    }
+                    redrawTile(point, state);
                 });
     }
 }
