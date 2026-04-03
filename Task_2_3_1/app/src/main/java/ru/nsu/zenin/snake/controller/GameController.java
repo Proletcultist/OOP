@@ -2,22 +2,19 @@ package ru.nsu.zenin.snake.controller;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.fxml.FXML;
-import javafx.util.Duration;
-import javafx.scene.input.KeyCode;
 import javafx.application.Platform;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
-import javafx.scene.text.Font;
 import javafx.beans.binding.Bindings;
+import javafx.fxml.FXML;
 import javafx.geometry.Insets;
+import javafx.scene.input.KeyCode;
+import javafx.scene.text.Text;
+import javafx.util.Duration;
 import ru.nsu.zenin.collection.Point2D;
 import ru.nsu.zenin.snake.model.Game;
 import ru.nsu.zenin.snake.model.Snake;
-import ru.nsu.zenin.snake.view.GameFieldView;
-import ru.nsu.zenin.snake.model.apple.BasicAppleFactory;
 import ru.nsu.zenin.snake.model.TileState;
+import ru.nsu.zenin.snake.model.apple.BasicAppleFactory;
+import ru.nsu.zenin.snake.view.GameFieldView;
 
 public class GameController {
 
@@ -35,13 +32,17 @@ public class GameController {
     }
 
     private void initGraphics() {
-         fieldView.paddingProperty().bind(
-                 Bindings.createObjectBinding(() -> {
-                     double paddingH = fieldView.getWidth() * 0.1;
-                     double paddingV = fieldView.getHeight() * 0.1;
-                     return new Insets(paddingV, paddingH, paddingV, paddingH);
-                 }, fieldView.widthProperty(), fieldView.heightProperty())
-         );
+        fieldView
+                .paddingProperty()
+                .bind(
+                        Bindings.createObjectBinding(
+                                () -> {
+                                    double paddingH = fieldView.getWidth() * 0.1;
+                                    double paddingV = fieldView.getHeight() * 0.1;
+                                    return new Insets(paddingV, paddingH, paddingV, paddingH);
+                                },
+                                fieldView.widthProperty(),
+                                fieldView.heightProperty()));
     }
 
     private void startNewGame() {
@@ -56,7 +57,8 @@ public class GameController {
 
         Timeline timeline = new Timeline();
 
-        timeline.getKeyFrames().add(
+        timeline.getKeyFrames()
+                .add(
                         new KeyFrame(
                                 Duration.millis(10),
                                 event -> {
@@ -69,30 +71,45 @@ public class GameController {
 
                                     if (game.getState() == Game.State.GAME_OVER) {
                                         timeline.stop();
-                                        statusBar.setText("Game Over! Your score: " + game.getScore() + " (Press R for restart)");
-                                    }
-                                    else if (game.getState() == Game.State.WIN) {
+                                        statusBar.setText(
+                                                "Game Over! Your score: "
+                                                        + game.getScore()
+                                                        + " (Press R for restart)");
+                                    } else if (game.getState() == Game.State.WIN) {
                                         timeline.stop();
-                                        statusBar.setText("You won! Your score: " + game.getScore() + " (Press R for restart)");
+                                        statusBar.setText(
+                                                "You won! Your score: "
+                                                        + game.getScore()
+                                                        + " (Press R for restart)");
                                     }
                                 }));
 
         timeline.setCycleCount(Timeline.INDEFINITE);
 
-        fieldView.setOnKeyPressed(e -> {
-            switch (e.getCode()) {
-                case KeyCode.UP -> playerSnake.changeDirection(Snake.Direction.UP);
-                case KeyCode.DOWN -> playerSnake.changeDirection(Snake.Direction.DOWN);
-                case KeyCode.LEFT -> playerSnake.changeDirection(Snake.Direction.LEFT);
-                case KeyCode.RIGHT -> playerSnake.changeDirection(Snake.Direction.RIGHT);
-                case KeyCode.R -> {
-                    timeline.stop();
-                    startNewGame();
-                }
-                default -> {}
-            }
-        });
+        fieldView.setOnKeyPressed(
+                e -> {
+                    switch (e.getCode()) {
+                        case KeyCode.UP -> tryChangeSnakeDirection(playerSnake, Snake.Direction.UP);
+                        case KeyCode.DOWN ->
+                                tryChangeSnakeDirection(playerSnake, Snake.Direction.DOWN);
+                        case KeyCode.LEFT ->
+                                tryChangeSnakeDirection(playerSnake, Snake.Direction.LEFT);
+                        case KeyCode.RIGHT ->
+                                tryChangeSnakeDirection(playerSnake, Snake.Direction.RIGHT);
+                        case KeyCode.R -> {
+                            timeline.stop();
+                            startNewGame();
+                        }
+                        default -> {}
+                    }
+                });
 
         timeline.play();
+    }
+
+    private void tryChangeSnakeDirection(Snake snake, Snake.Direction dir) {
+        if (snake.getDirection().getOpposite() != dir) {
+            snake.setDirection(dir);
+        }
     }
 }

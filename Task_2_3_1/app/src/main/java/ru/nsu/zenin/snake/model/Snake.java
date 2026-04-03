@@ -22,7 +22,7 @@ public class Snake {
 
     public Snake(List<Point2D> segments, Direction direction, Integer ticksToMove) {
         if (segments.isEmpty()) {
-            // TODO: Throw
+            throw new IllegalArgumentException("Cannot create snake with zero segments");
         }
         this.segments = segments;
         this.targetSize = segments.size();
@@ -30,10 +30,11 @@ public class Snake {
         this.ticksToMove = ticksToMove;
     }
 
-    public void changeDirection(Direction direction) {
-        if (this.direction.getOpposite() == direction) {
-            // TODO: Throw
-        }
+    public Direction getDirection() {
+        return direction;
+    }
+
+    public void setDirection(Direction direction) {
         this.direction = direction;
     }
 
