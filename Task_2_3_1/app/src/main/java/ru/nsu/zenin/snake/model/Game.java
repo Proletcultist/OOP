@@ -11,8 +11,8 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import ru.nsu.zenin.collection.Field;
 import ru.nsu.zenin.collection.Point2D;
-import ru.nsu.zenin.snake.model.apple.AppleFactory;
 import ru.nsu.zenin.snake.model.apple.Apple;
+import ru.nsu.zenin.snake.model.apple.AppleFactory;
 
 public class Game {
     private final Field<TileState> field;
@@ -26,10 +26,20 @@ public class Game {
     private int score = 0;
 
     public Game(Field<TileState> field, AppleFactory appleFactory, int applesAmount) {
-        this(field, appleFactory, applesAmount, p -> p.wrappedAround(field.getWidth(), field.getHeight()), g -> g.getScore() == 2);
+        this(
+                field,
+                appleFactory,
+                applesAmount,
+                p -> p.wrappedAround(field.getWidth(), field.getHeight()),
+                g -> g.getScore() == 2);
     }
 
-    public Game(Field<TileState> field, AppleFactory appleFactory, int applesAmount, Function<Point2D, Point2D> pointsTranslator, Predicate<Game> winPredicate) {
+    public Game(
+            Field<TileState> field,
+            AppleFactory appleFactory,
+            int applesAmount,
+            Function<Point2D, Point2D> pointsTranslator,
+            Predicate<Game> winPredicate) {
         this.field = field;
         this.appleFactory = appleFactory;
         this.available = new HashSet<Point2D>();
@@ -37,11 +47,12 @@ public class Game {
         this.pointsTranslator = pointsTranslator;
         this.winPredicate = winPredicate;
 
-        field.forEach((point, state) -> {
-            if (state instanceof TileState.Free) {
-                available.add(point);
-            }
-        });
+        field.forEach(
+                (point, state) -> {
+                    if (state instanceof TileState.Free) {
+                        available.add(point);
+                    }
+                });
 
         for (int i = 0; i < applesAmount; i++) {
             spawnNewApple();
@@ -60,19 +71,21 @@ public class Game {
                         change -> {
                             while (change.next()) {
                                 if (change.wasAdded()) {
-                                    for (int i = change.getFrom(); i < change.getTo(); i++) {
-                                        Point2D segment = pointsTranslator.apply(change.getList().get(i));
+                                    for (Point2D segment : change.getAddedSubList()) {
+                                        segment = pointsTranslator.apply(segment);
 
                                         // Check for collision
                                         if (!available.contains(segment)) {
                                             switch (field.get(segment)) {
                                                 case TileState.Free free -> {}
-                                                case TileState.OccupiedBySnake os -> state = State.GAME_OVER;
+                                                case TileState.OccupiedBySnake os ->
+                                                        state = State.GAME_OVER;
                                                 case TileState.OccupiedByApple oa -> {
                                                     oa.apple().apply(snake);
                                                     score++;
                                                     field.set(
-                                                            segment, new TileState.OccupiedBySnake(snake));
+                                                            segment,
+                                                            new TileState.OccupiedBySnake(snake));
                                                     spawnNewApple();
                                                 }
                                             }

@@ -120,7 +120,7 @@ public class GameFieldView extends Region {
     }
 
     private void resize() {
-        Double pWidth  = getWidth() - getInsets().getLeft() - getInsets().getRight();
+        Double pWidth = getWidth() - getInsets().getLeft() - getInsets().getRight();
         Double pHeight = getHeight() - getInsets().getTop() - getInsets().getBottom();
 
         Double factor =
@@ -151,14 +151,13 @@ public class GameFieldView extends Region {
         ctx.setFill(Color.BLACK);
         ctx.fillRect(0, 0, canvas.getWidth(), getHeight());
 
-        field.forEach((point, state) -> {
-                switch (state) {
-                    case TileState.Free free -> {}
-                    case TileState.OccupiedBySnake occS ->
-                            redrawTile(point, Color.GREEN);
-                    case TileState.OccupiedByApple occS ->
-                            redrawTile(point, Color.GREEN);
-                }
-        });
+        field.forEach(
+                (point, state) -> {
+                    switch (state) {
+                        case TileState.Free free -> {}
+                        case TileState.OccupiedBySnake occS -> redrawTile(point, Color.GREEN);
+                        case TileState.OccupiedByApple occS -> redrawTile(point, Color.GREEN);
+                    }
+                });
     }
 }
