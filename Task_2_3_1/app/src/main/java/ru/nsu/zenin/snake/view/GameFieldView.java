@@ -69,14 +69,15 @@ public class GameFieldView extends Region {
     }
 
     private void initGraphics() {
-        drawer = (ctx, tile, x, y, width, height) -> {
-            switch (tile) {
-                case TileState.Free free -> ctx.setFill(Color.BLACK);
-                case TileState.OccupiedBySnake occS ->  ctx.setFill(Color.GREEN);
-                case TileState.OccupiedByApple occA -> ctx.setFill(Color.GREEN);
-            }
-            ctx.fillRect(x, y, width, height);
-        };
+        drawer =
+                (ctx, tile, x, y, width, height) -> {
+                    switch (tile) {
+                        case TileState.Free free -> ctx.setFill(Color.BLACK);
+                        case TileState.OccupiedBySnake occS -> ctx.setFill(Color.GREEN);
+                        case TileState.OccupiedByApple occA -> ctx.setFill(Color.GREEN);
+                    }
+                    ctx.fillRect(x, y, width, height);
+                };
 
         canvas = new Canvas(getPrefWidth(), getPrefHeight());
         ctx = canvas.getGraphicsContext2D();
@@ -139,7 +140,8 @@ public class GameFieldView extends Region {
         canvas.setWidth(width);
         canvas.setHeight(height);
 
-        canvas.relocate(Math.rint((getWidth() - width) * 0.5), Math.rint((getHeight() - height) * 0.5));
+        canvas.relocate(
+                Math.rint((getWidth() - width) * 0.5), Math.rint((getHeight() - height) * 0.5));
 
         redrawAll();
     }
@@ -148,7 +150,13 @@ public class GameFieldView extends Region {
         Double tileWidth = width / gridWidth.getValue();
         Double tileHeight = height / gridHeight.getValue();
 
-        drawer.draw(ctx, state, Math.rint(coord.x() * tileWidth - TILE_BOARDER / 2), Math.rint(coord.y() * tileHeight - TILE_BOARDER / 2), Math.rint(tileWidth + TILE_BOARDER), Math.rint(tileHeight + TILE_BOARDER));
+        drawer.draw(
+                ctx,
+                state,
+                Math.rint(coord.x() * tileWidth - TILE_BOARDER / 2),
+                Math.rint(coord.y() * tileHeight - TILE_BOARDER / 2),
+                Math.rint(tileWidth + TILE_BOARDER),
+                Math.rint(tileHeight + TILE_BOARDER));
     }
 
     private void redrawAll() {
