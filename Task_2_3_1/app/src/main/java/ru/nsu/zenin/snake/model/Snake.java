@@ -1,6 +1,6 @@
 package ru.nsu.zenin.snake.model;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import ru.nsu.zenin.collection.Point2D;
 
@@ -15,7 +15,7 @@ public class Snake {
     private Integer counter = 0;
 
     public Snake(Point2D head, Direction direction, Integer ticksToMove) {
-        segments = new ArrayList<Point2D>();
+        segments = new LinkedList<Point2D>();
         segments.add(head);
         targetSize = 1;
         this.intendDirection = direction;
