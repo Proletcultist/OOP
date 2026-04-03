@@ -29,6 +29,10 @@ public class ObservableField<T> implements Field<T> {
     }
 
     public void set(Point2D point, T value) {
+        if (!contains(point)) {
+            throw new IndexOutOfBoundsException(
+                    "No point with coords (" + point.x() + ", " + point.y() + ")");
+        }
         state.get(point.y()).set(point.x(), value);
         for (FieldChangeListener<T> l : listeners) {
             l.onChange(new FieldChangeListener.Change<T>(point, value));
@@ -36,6 +40,10 @@ public class ObservableField<T> implements Field<T> {
     }
 
     public T get(Point2D point) {
+        if (!contains(point)) {
+            throw new IndexOutOfBoundsException(
+                    "No point with coords (" + point.x() + ", " + point.y() + ")");
+        }
         return state.get(point.y()).get(point.x());
     }
 
@@ -52,9 +60,10 @@ public class ObservableField<T> implements Field<T> {
     }
 
     public void setAll(T value) {
-        forEach((point, state) -> {
-            set(point, value);
-        });
+        forEach(
+                (point, state) -> {
+                    set(point, value);
+                });
     }
 
     public void resize(T fill, int width, int height) {
