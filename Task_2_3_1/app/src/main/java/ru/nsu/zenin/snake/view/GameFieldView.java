@@ -70,11 +70,23 @@ public class GameFieldView extends Region {
 
     private void initGraphics() {
         drawer =
-                (ctx, tile, x, y, width, height) -> {
+                (ctx, coord, tile, x, y, width, height) -> {
                     switch (tile) {
-                        case TileState.Free free -> ctx.setFill(Color.BLACK);
-                        case TileState.OccupiedBySnake occS -> ctx.setFill(Color.GREEN);
-                        case TileState.OccupiedByApple occA -> ctx.setFill(Color.GREEN);
+                        case TileState.Free free -> {
+                            ctx.setFill(Color.BLACK);
+                        }
+                        case TileState.SnakeTail sT -> {
+                            ctx.setFill(Color.GREEN);
+                        }
+                        case TileState.SnakeBody sB -> {
+                            ctx.setFill(Color.GREEN);
+                        }
+                        case TileState.SnakeHead sH -> {
+                            ctx.setFill(Color.GREEN);
+                        }
+                        case TileState.AppleTile occA -> {
+                            ctx.setFill(Color.GREEN);
+                        }
                     }
                     ctx.fillRect(x, y, width, height);
                 };
@@ -106,6 +118,11 @@ public class GameFieldView extends Region {
 
     public void setGridHeight(final Integer value) {
         gridHeight.setValue(value);
+    }
+
+    public void setDrawer(TileDrawer drawer) {
+        this.drawer = drawer;
+        redrawAll();
     }
 
     public Integer getGridWidth() {
@@ -152,6 +169,7 @@ public class GameFieldView extends Region {
 
         drawer.draw(
                 ctx,
+                coord,
                 state,
                 Math.rint(coord.x() * tileWidth - TILE_BOARDER / 2),
                 Math.rint(coord.y() * tileHeight - TILE_BOARDER / 2),
