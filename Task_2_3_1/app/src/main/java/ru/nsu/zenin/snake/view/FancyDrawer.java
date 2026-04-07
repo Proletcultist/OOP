@@ -60,27 +60,25 @@ public class FancyDrawer implements TileDrawer {
                         // Fill head
                         ctx.fillRect(x + width * HEAD_PADDING / 2, y + height * HEAD_PADDING / 2, width - width * HEAD_PADDING, height - height * HEAD_PADDING);
 
-                        // Fill connection to body
-                        if (h.next().isOnTheLeftOf(coord)) {
-                            ctx.fillRect(x, y + height * (1 - THICKNESS) / 2, width / 2, height * THICKNESS);
-                        }
-                        else if (h.next().isOnTheRightOf(coord)) {
-                            ctx.fillRect(x + width / 2, y + height * (1 - THICKNESS) / 2, width / 2, height * THICKNESS);
-                        }
-                        else if (h.next().isOnTheTopOf(coord)) {
-                            ctx.fillRect(x + width * (1 - THICKNESS) / 2, y, width * THICKNESS, height / 2);
-                        }
-                        else if (h.next().isOnTheBottomOf(coord)) {
-                            ctx.fillRect(x + width * (1 - THICKNESS) / 2, y + height / 2, width * THICKNESS, height / 2);
-                        }
+                        drawConnectionBetween(ctx, h.next(), coord, x, y, width, height);
                     }
                     case TileState.OccupiedBySnake.SnakeBody b -> {
-                        ctx.setFill(color);
+                        // Fill background
+                        ctx.setFill(backgroundColor);
                         ctx.fillRect(x, y, width, height);
+
+                        ctx.setFill(color);
+                        drawConnectionBetween(ctx, b.next(), coord, x, y, width, height);
+                        drawConnectionBetween(ctx, b.prev(), coord, x, y, width, height);
                     }
                     case TileState.OccupiedBySnake.SnakeTail t -> {
-                        ctx.setFill(color);
+                        // Fill background
+                        ctx.setFill(backgroundColor);
                         ctx.fillRect(x, y, width, height);
+
+                        ctx.setFill(color);
+
+                        drawConnectionBetween(ctx, t.prev(), coord, x, y, width, height);
                     }
                 }
             }
@@ -92,6 +90,21 @@ public class FancyDrawer implements TileDrawer {
                 ctx.setFill(color);
                 ctx.fillRect(x, y, width, height);
             }
+        }
+    }
+
+    private void drawConnectionBetween(GraphicsContext ctx, Point2D from, Point2D to, double x, double y, double width, double height) {
+        if (from.isOnTheLeftOf(to)) {
+            ctx.fillRect(x, y + height * (1 - THICKNESS) / 2, width / 2, height * THICKNESS);
+        }
+        else if (from.isOnTheRightOf(to)) {
+            ctx.fillRect(x + width / 2, y + height * (1 - THICKNESS) / 2, width / 2, height * THICKNESS);
+        }
+        else if (from.isOnTheTopOf(to)) {
+            ctx.fillRect(x + width * (1 - THICKNESS) / 2, y, width * THICKNESS, height / 2);
+        }
+        else if (from.isOnTheBottomOf(to)) {
+            ctx.fillRect(x + width * (1 - THICKNESS) / 2, y + height / 2, width * THICKNESS, height / 2);
         }
     }
 }

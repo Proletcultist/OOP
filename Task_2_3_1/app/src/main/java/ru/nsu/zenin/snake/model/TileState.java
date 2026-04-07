@@ -9,10 +9,10 @@ public sealed interface TileState {
     public sealed interface OccupiedBySnake extends TileState {
         Snake snake();
 
-        public record SnakeHead(Snake snake, Point2D next) implements OccupiedBySnake {}
         public record SnakeHeadTail(Snake snake) implements OccupiedBySnake {}
-        public record SnakeBody(Snake snake, Point2D next) implements OccupiedBySnake {}
-        public record SnakeTail(Snake snake) implements OccupiedBySnake {}
+        public record SnakeHead(Snake snake, Point2D next) implements OccupiedBySnake {}
+        public record SnakeBody(Snake snake, Point2D next, Point2D prev) implements OccupiedBySnake {}
+        public record SnakeTail(Snake snake, Point2D prev) implements OccupiedBySnake {}
     }
 
     public record OccupiedByApple(Apple apple) implements TileState {}
