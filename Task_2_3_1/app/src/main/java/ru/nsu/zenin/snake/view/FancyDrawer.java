@@ -95,16 +95,16 @@ public class FancyDrawer implements TileDrawer {
 
     private void drawConnectionBetween(GraphicsContext ctx, Point2D from, Point2D to, double x, double y, double width, double height) {
         if (from.isOnTheLeftOf(to)) {
-            ctx.fillRect(x, y + height * (1 - THICKNESS) / 2, width / 2, height * THICKNESS);
+            ctx.fillRect(x, y + height * (1 - THICKNESS) / 2, width * (1 + THICKNESS) / 2, height * THICKNESS);
         }
         else if (from.isOnTheRightOf(to)) {
-            ctx.fillRect(x + width / 2, y + height * (1 - THICKNESS) / 2, width / 2, height * THICKNESS);
+            ctx.fillRect(x + width * (1 - THICKNESS) / 2, y + height * (1 - THICKNESS) / 2, width * (1 + THICKNESS) / 2, height * THICKNESS);
         }
         else if (from.isOnTheTopOf(to)) {
-            ctx.fillRect(x + width * (1 - THICKNESS) / 2, y, width * THICKNESS, height / 2);
+            ctx.fillRect(x + width * (1 - THICKNESS) / 2, y, width * THICKNESS, height * (1 + THICKNESS) / 2);
         }
         else if (from.isOnTheBottomOf(to)) {
-            ctx.fillRect(x + width * (1 - THICKNESS) / 2, y + height / 2, width * THICKNESS, height / 2);
+            ctx.fillRect(x + width * (1 - THICKNESS) / 2, y + height / 2, width * THICKNESS, height * (1 + THICKNESS) / 2);
         }
     }
 }
