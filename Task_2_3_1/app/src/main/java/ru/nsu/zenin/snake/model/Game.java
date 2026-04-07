@@ -91,11 +91,11 @@ public class Game {
                     if (field.contains(transPrevHead)) {
                         // If snake got tail for the first time
                         if (snake.size() == 2) {
-                            field.set(transPrevHead, new TileState.OccupiedBySnake.SnakeTail(snake));
+                            field.set(transPrevHead, new TileState.OccupiedBySnake.SnakeTail(snake, transHead));
                         }
                         else {
                             TileState.OccupiedBySnake.SnakeHead prevHeadTile = (TileState.OccupiedBySnake.SnakeHead) field.get(transPrevHead);
-                            field.set(transPrevHead, new TileState.OccupiedBySnake.SnakeBody(snake, prevHeadTile.next()));
+                            field.set(transPrevHead, new TileState.OccupiedBySnake.SnakeBody(snake, prevHeadTile.next(), transHead));
                         }
                     }
                 }
@@ -113,7 +113,8 @@ public class Game {
                             field.set(transNewTail, new TileState.OccupiedBySnake.SnakeHeadTail(snake));
                         }
                         else {
-                            field.set(transNewTail, new TileState.OccupiedBySnake.SnakeTail(snake));
+                            TileState.OccupiedBySnake.SnakeBody newTailTile = (TileState.OccupiedBySnake.SnakeBody) field.get(transNewTail);
+                            field.set(transNewTail, new TileState.OccupiedBySnake.SnakeTail(snake, newTailTile.prev()));
                         }
                     }
                 }
