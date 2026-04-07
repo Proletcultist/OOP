@@ -35,7 +35,9 @@ public class GameController {
     }
 
     private void initGraphics() {
-        fieldView.setDrawer(new DebugDrawer(Color.BLACK));
+        fieldView.setDrawer(new FancyDrawer(Color.BLACK, Color.GREEN, Color.GREEN));
+        // fieldView.setDrawer(new DebugDrawer(Color.BLACK));
+
         fieldView
                 .paddingProperty()
                 .bind(
