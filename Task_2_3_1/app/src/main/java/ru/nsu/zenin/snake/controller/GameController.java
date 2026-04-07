@@ -17,6 +17,7 @@ import ru.nsu.zenin.snake.model.TileState;
 import ru.nsu.zenin.snake.model.apple.BasicAppleFactory;
 import ru.nsu.zenin.snake.view.GameFieldView;
 import ru.nsu.zenin.snake.view.FancyDrawer;
+import ru.nsu.zenin.snake.view.DebugDrawer;
 
 public class GameController {
 
@@ -34,6 +35,7 @@ public class GameController {
     }
 
     private void initGraphics() {
+        fieldView.setDrawer(new DebugDrawer(Color.BLACK));
         fieldView
                 .paddingProperty()
                 .bind(
@@ -49,7 +51,6 @@ public class GameController {
 
     private void startNewGame() {
         fieldView.getField().setAll(new TileState.Free());
-        fieldView.setDrawer(new FancyDrawer(Color.BLACK));
 
         game = new Game(fieldView.getField(), new BasicAppleFactory(), 1);
 

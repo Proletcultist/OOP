@@ -75,16 +75,10 @@ public class GameFieldView extends Region {
                         case TileState.Free free -> {
                             ctx.setFill(Color.BLACK);
                         }
-                        case TileState.SnakeTail sT -> {
+                        case TileState.OccupiedBySnake occS -> {
                             ctx.setFill(Color.GREEN);
                         }
-                        case TileState.SnakeBody sB -> {
-                            ctx.setFill(Color.GREEN);
-                        }
-                        case TileState.SnakeHead sH -> {
-                            ctx.setFill(Color.GREEN);
-                        }
-                        case TileState.AppleTile occA -> {
+                        case TileState.OccupiedByApple occA -> {
                             ctx.setFill(Color.GREEN);
                         }
                     }
