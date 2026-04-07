@@ -18,19 +18,11 @@ public class FancyDrawer implements TileDrawer {
                 ctx.setFill(backgroundColor);
                 ctx.fillRect(x, y, width, height);
             }
-            case TileState.SnakeTail sT -> {
+            case TileState.OccupiedBySnake sT -> {
                 ctx.setFill(Color.GREEN);
                 ctx.fillRect(x, y, width, height);
             }
-            case TileState.SnakeBody sB -> {
-                ctx.setFill(Color.GREEN);
-                ctx.fillRect(x, y, width, height);
-            }
-            case TileState.SnakeHead sH -> {
-                ctx.setFill(Color.GREEN);
-                ctx.fillRect(x, y, width, height);
-            }
-            case TileState.AppleTile occA -> {
+            case TileState.OccupiedByApple occA -> {
                 ctx.setFill(Color.GREEN);
                 ctx.fillRect(x, y, width, height);
             }
