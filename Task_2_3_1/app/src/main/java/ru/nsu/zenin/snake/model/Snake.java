@@ -8,6 +8,7 @@ public interface Snake {
     void grow();
     void shrink();
     void tick();
+    int size();
 
     public enum Direction {
         UP,

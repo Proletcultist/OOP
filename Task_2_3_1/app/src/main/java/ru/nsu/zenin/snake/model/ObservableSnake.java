@@ -95,6 +95,10 @@ public class ObservableSnake implements Snake {
         }
     }
 
+    public int size() {
+        return segments.size();
+    }
+
     public void addListener(SnakeChangeListener listener) {
         listeners.add(listener);
     }

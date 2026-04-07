@@ -64,7 +64,7 @@ public class Game {
         ObservableSnake snake = new ObservableSnake(head, dir, ticksToMove);
 
         available.remove(head);
-        field.set(head, new TileState.SnakeHead(snake, null));
+        field.set(head, new TileState.OccupiedBySnake.SnakeHeadTail(snake));
 
         snake.addListener(change -> {
             switch (change) {
@@ -75,10 +75,8 @@ public class Game {
                     if (field.contains(transHead)) {
                         // Check for collision
                         switch (field.get(transHead)) {
-                            case TileState.SnakeHead os -> state = State.GAME_OVER;
-                            case TileState.SnakeBody os -> state = State.GAME_OVER;
-                            case TileState.SnakeTail os -> state = State.GAME_OVER;
-                            case TileState.AppleTile oa -> {
+                            case TileState.OccupiedBySnake os -> state = State.GAME_OVER;
+                            case TileState.OccupiedByApple oa -> {
                                 oa.apple().apply(snake);
                                 score++;
                                 spawnNewApple();
@@ -88,11 +86,17 @@ public class Game {
 
                         available.remove(transHead);
 
-                        field.set(transHead, new TileState.SnakeHead(snake, transPrevHead));
+                        field.set(transHead, new TileState.OccupiedBySnake.SnakeHead(snake, transPrevHead));
                     }
                     if (field.contains(transPrevHead)) {
-                        TileState.SnakeHead prevHeadTile = (TileState.SnakeHead) field.get(transPrevHead);
-                        field.set(transPrevHead, new TileState.SnakeBody(snake, prevHeadTile.next()));
+                        // If snake got tail for the first time
+                        if (snake.size() == 2) {
+                            field.set(transPrevHead, new TileState.OccupiedBySnake.SnakeTail(snake));
+                        }
+                        else {
+                            TileState.OccupiedBySnake.SnakeHead prevHeadTile = (TileState.OccupiedBySnake.SnakeHead) field.get(transPrevHead);
+                            field.set(transPrevHead, new TileState.OccupiedBySnake.SnakeBody(snake, prevHeadTile.next()));
+                        }
                     }
                 }
                 case SnakeChangeListener.Change.TailMovedFrom t -> {
@@ -103,8 +107,14 @@ public class Game {
                         available.add(transTail);
                         field.set(transTail, new TileState.Free());
                     }
-                    if (field.contains(transNewTail) && !(field.get(transNewTail) instanceof TileState.SnakeHead)) {
-                        field.set(transNewTail, new TileState.SnakeTail(snake));
+                    if (field.contains(transNewTail)) {
+                        // If only head left
+                        if (snake.size() == 1) {
+                            field.set(transNewTail, new TileState.OccupiedBySnake.SnakeHeadTail(snake));
+                        }
+                        else {
+                            field.set(transNewTail, new TileState.OccupiedBySnake.SnakeTail(snake));
+                        }
                     }
                 }
             }
@@ -126,7 +136,7 @@ public class Game {
     private void spawnNewApple() {
         Apple apple = appleFactory.create(available);
         available.remove(apple.getPosition());
-        field.set(apple.getPosition(), new TileState.AppleTile(apple));
+        field.set(apple.getPosition(), new TileState.OccupiedByApple(apple));
     }
 
     public void tick() {
