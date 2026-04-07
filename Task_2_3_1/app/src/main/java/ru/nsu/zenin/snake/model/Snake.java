@@ -1,100 +1,13 @@
 package ru.nsu.zenin.snake.model;
 
-import java.util.LinkedList;
-import java.util.List;
-import ru.nsu.zenin.collection.Point2D;
-
-public class Snake {
-    private final List<Point2D> segments;
-    private Integer targetSize;
-
-    private Direction lastMoveDirection;
-    private Direction intendDirection;
-
-    private Integer ticksToMove;
-    private Integer counter = 0;
-
-    public Snake(Point2D head, Direction direction, Integer ticksToMove) {
-        segments = new LinkedList<Point2D>();
-        segments.add(head);
-        targetSize = 1;
-        this.intendDirection = direction;
-        this.lastMoveDirection = direction;
-        this.ticksToMove = ticksToMove;
-    }
-
-    public Snake(List<Point2D> segments, Direction direction, Integer ticksToMove) {
-        if (segments.isEmpty()) {
-            throw new IllegalArgumentException("Cannot create snake with zero segments");
-        }
-        this.segments = segments;
-        this.targetSize = segments.size();
-        this.lastMoveDirection = direction;
-        this.intendDirection = direction;
-        this.ticksToMove = ticksToMove;
-    }
-
-    public Direction getLastMoveDirection() {
-        return lastMoveDirection;
-    }
-
-    public void setIntendDirection(Direction direction) {
-        this.intendDirection = direction;
-    }
-
-    public void setTicksToMove(Integer ticksToMove) {
-        this.ticksToMove = ticksToMove;
-    }
-
-    public Integer getTicksToMove() {
-        return ticksToMove;
-    }
-
-    public void grow() {
-        targetSize += 1;
-    }
-
-    public void shrink() {
-        if (targetSize > 1) {
-            targetSize -= 1;
-        }
-    }
-
-    public void tick() {
-        if (counter >= ticksToMove) {
-            Point2D currHead = segments.get(0);
-
-            if (segments.size() == targetSize) {
-                segments.remove(segments.size() - 1);
-            } else if (segments.size() > targetSize) {
-                segments.remove(segments.size() - 1);
-                segments.remove(segments.size() - 1);
-            }
-
-            Point2D nextHead =
-                    switch (this.intendDirection) {
-                        case UP -> new Point2D(currHead.x(), currHead.y() - 1);
-                        case DOWN -> new Point2D(currHead.x(), currHead.y() + 1);
-                        case RIGHT -> new Point2D(currHead.x() + 1, currHead.y());
-                        case LEFT -> new Point2D(currHead.x() - 1, currHead.y());
-                    };
-
-            segments.add(0, nextHead);
-
-            counter = 0;
-            lastMoveDirection = intendDirection;
-        } else {
-            counter++;
-        }
-    }
-
-    public Point2D getHead() {
-        return segments.get(0);
-    }
-
-    public List<Point2D> getSegments() {
-        return segments;
-    }
+public interface Snake {
+    Direction getLastMoveDirection();
+    void setPendingDirection(Direction direction);
+    void setTicksToMove(Integer ticksToMove);
+    Integer getTicksToMove();
+    void grow();
+    void shrink();
+    void tick();
 
     public enum Direction {
         UP,
