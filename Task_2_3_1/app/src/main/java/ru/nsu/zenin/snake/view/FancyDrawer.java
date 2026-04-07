@@ -11,6 +11,7 @@ import ru.nsu.zenin.collection.Point2D;
 
 public class FancyDrawer implements TileDrawer {
     private final static double HEAD_PADDING = 0.2;
+    private final static double THICKNESS = 0.33;
 
     private final Color backgroundColor;
     private final Color defaultAppleColor;
@@ -58,7 +59,20 @@ public class FancyDrawer implements TileDrawer {
 
                         // Fill head
                         ctx.fillRect(x + width * HEAD_PADDING / 2, y + height * HEAD_PADDING / 2, width - width * HEAD_PADDING, height - height * HEAD_PADDING);
+
                         // Fill connection to body
+                        if (h.next().isOnTheLeftOf(coord)) {
+                            ctx.fillRect(x, y + height * (1 - THICKNESS) / 2, width / 2, height * THICKNESS);
+                        }
+                        else if (h.next().isOnTheRightOf(coord)) {
+                            ctx.fillRect(x + width / 2, y + height * (1 - THICKNESS) / 2, width / 2, height * THICKNESS);
+                        }
+                        else if (h.next().isOnTheTopOf(coord)) {
+                            ctx.fillRect(x + width * (1 - THICKNESS) / 2, y, width * THICKNESS, height / 2);
+                        }
+                        else if (h.next().isOnTheBottomOf(coord)) {
+                            ctx.fillRect(x + width * (1 - THICKNESS) / 2, y + height / 2, width * THICKNESS, height / 2);
+                        }
                     }
                     case TileState.OccupiedBySnake.SnakeBody b -> {
                         ctx.setFill(color);
