@@ -5,6 +5,7 @@ import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
+import javafx.scene.paint.Color;
 import javafx.geometry.Insets;
 import javafx.scene.input.KeyCode;
 import javafx.scene.text.Text;
@@ -15,6 +16,7 @@ import ru.nsu.zenin.snake.model.Snake;
 import ru.nsu.zenin.snake.model.TileState;
 import ru.nsu.zenin.snake.model.apple.BasicAppleFactory;
 import ru.nsu.zenin.snake.view.GameFieldView;
+import ru.nsu.zenin.snake.view.FancyDrawer;
 
 public class GameController {
 
@@ -47,6 +49,7 @@ public class GameController {
 
     private void startNewGame() {
         fieldView.getField().setAll(new TileState.Free());
+        fieldView.setDrawer(new FancyDrawer(Color.BLACK));
 
         game = new Game(fieldView.getField(), new BasicAppleFactory(), 1);
 
@@ -60,7 +63,7 @@ public class GameController {
         timeline.getKeyFrames()
                 .add(
                         new KeyFrame(
-                                Duration.millis(10),
+                                Duration.millis(25),
                                 event -> {
                                     game.tick();
 
@@ -109,7 +112,7 @@ public class GameController {
 
     private void tryChangeSnakeDirection(Snake snake, Snake.Direction dir) {
         if (snake.getLastMoveDirection().getOpposite() != dir) {
-            snake.setIntendDirection(dir);
+            snake.setPendingDirection(dir);
         }
     }
 }
