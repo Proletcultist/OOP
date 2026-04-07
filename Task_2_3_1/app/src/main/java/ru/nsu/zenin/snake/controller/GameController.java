@@ -66,7 +66,7 @@ public class GameController {
         timeline.getKeyFrames()
                 .add(
                         new KeyFrame(
-                                Duration.millis(25),
+                                Duration.millis(10),
                                 event -> {
                                     game.tick();
 
