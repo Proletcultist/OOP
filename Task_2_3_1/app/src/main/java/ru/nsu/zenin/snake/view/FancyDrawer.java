@@ -17,11 +17,11 @@ public class FancyDrawer implements TileDrawer {
     private final Color defaultAppleColor;
     private final Color defaultSnakeColor;
 
-    private final Map<Class<Apple>, Color> appleColors;
+    private final Map<Class<? extends Apple>, Color> appleColors;
     private final Map<Snake, Color> snakeColors;
 
     public FancyDrawer(Color backgroundColor, Color defaultAppleColor, Color defaultSnakeColor) {
-        this.appleColors = new HashMap<Class<Apple>, Color>();
+        this.appleColors = new HashMap<Class<? extends Apple>, Color>();
         this.snakeColors = new HashMap<Snake, Color>();
         this.backgroundColor = backgroundColor;
         this.defaultSnakeColor = defaultSnakeColor;
@@ -95,6 +95,14 @@ public class FancyDrawer implements TileDrawer {
                 ctx.fillRect(x, y, width, height);
             }
         }
+    }
+
+    public void setSnakeColor(Snake snake, Color color) {
+        snakeColors.put(snake, color);
+    }
+
+    public void setAppleColor(Class<? extends Apple> apple, Color color) {
+        appleColors.put(apple, color);
     }
 
     private void drawConnectionBetween(GraphicsContext ctx, Point2D to, Point2D from, double x, double y, double width, double height) {

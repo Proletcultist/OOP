@@ -14,7 +14,10 @@ import ru.nsu.zenin.collection.Point2D;
 import ru.nsu.zenin.snake.model.Game;
 import ru.nsu.zenin.snake.model.Snake;
 import ru.nsu.zenin.snake.model.TileState;
+import ru.nsu.zenin.snake.model.apple.ShrinkingApple;
+import ru.nsu.zenin.snake.model.apple.AppleFactory;
 import ru.nsu.zenin.snake.model.apple.BasicAppleFactory;
+import ru.nsu.zenin.snake.model.apple.ShrinkingAppleFactory;
 import ru.nsu.zenin.snake.view.GameFieldView;
 import ru.nsu.zenin.snake.view.FancyDrawer;
 import ru.nsu.zenin.snake.view.DebugDrawer;
@@ -35,9 +38,6 @@ public class GameController {
     }
 
     private void initGraphics() {
-        fieldView.setDrawer(new FancyDrawer(Color.BLACK, Color.GREEN, Color.GREEN));
-        // fieldView.setDrawer(new DebugDrawer(Color.BLACK));
-
         fieldView
                 .paddingProperty()
                 .bind(
@@ -54,12 +54,16 @@ public class GameController {
     private void startNewGame() {
         fieldView.getField().setAll(new TileState.Free());
 
-        game = new Game(fieldView.getField(), new BasicAppleFactory(), 1);
+        game = new Game(fieldView.getField(), (new BasicAppleFactory()).combinedWith(new ShrinkingAppleFactory(), 0.2), 2);
 
         prevScore = game.getScore();
         statusBar.setText("Score: " + game.getScore());
 
         Snake playerSnake = game.createSnake(new Point2D(0, 0), Snake.Direction.RIGHT, 20);
+
+        FancyDrawer drawer = new FancyDrawer(Color.BLACK, Color.GREEN, Color.GREEN);
+        drawer.setAppleColor(ShrinkingApple.class, Color.BLUE);
+        fieldView.setDrawer(drawer);
 
         Timeline timeline = new Timeline();
 
