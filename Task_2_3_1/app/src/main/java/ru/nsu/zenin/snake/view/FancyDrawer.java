@@ -42,18 +42,22 @@ public class FancyDrawer implements TileDrawer {
 
                 switch (occS) {
                     case TileState.OccupiedBySnake.SnakeHeadTail ht -> {
-                        // Fill background
-                        ctx.setFill(backgroundColor);
-                        ctx.fillRect(x, y, width, height);
+                        if (!ht.dead()) {
+                            // Fill background
+                            ctx.setFill(backgroundColor);
+                            ctx.fillRect(x, y, width, height);
+                        }
 
                         // Fill head
                         ctx.setFill(color);
                         ctx.fillRect(x + width * HEAD_PADDING / 2, y + height * HEAD_PADDING / 2, width - width * HEAD_PADDING, height - height * HEAD_PADDING);
                     }
                     case TileState.OccupiedBySnake.SnakeHead h -> {
-                        // Fill background
-                        ctx.setFill(backgroundColor);
-                        ctx.fillRect(x, y, width, height);
+                        if (!h.dead()) {
+                            // Fill background
+                            ctx.setFill(backgroundColor);
+                            ctx.fillRect(x, y, width, height);
+                        }
 
                         ctx.setFill(color);
 
@@ -93,18 +97,18 @@ public class FancyDrawer implements TileDrawer {
         }
     }
 
-    private void drawConnectionBetween(GraphicsContext ctx, Point2D from, Point2D to, double x, double y, double width, double height) {
-        if (from.isOnTheLeftOf(to)) {
+    private void drawConnectionBetween(GraphicsContext ctx, Point2D to, Point2D from, double x, double y, double width, double height) {
+        if (to.isOnTheLeftOf(from)) {
             ctx.fillRect(x, y + height * (1 - THICKNESS) / 2, width * (1 + THICKNESS) / 2, height * THICKNESS);
         }
-        else if (from.isOnTheRightOf(to)) {
+        else if (to.isOnTheRightOf(from)) {
             ctx.fillRect(x + width * (1 - THICKNESS) / 2, y + height * (1 - THICKNESS) / 2, width * (1 + THICKNESS) / 2, height * THICKNESS);
         }
-        else if (from.isOnTheTopOf(to)) {
+        else if (to.isOnTheTopOf(from)) {
             ctx.fillRect(x + width * (1 - THICKNESS) / 2, y, width * THICKNESS, height * (1 + THICKNESS) / 2);
         }
-        else if (from.isOnTheBottomOf(to)) {
-            ctx.fillRect(x + width * (1 - THICKNESS) / 2, y + height / 2, width * THICKNESS, height * (1 + THICKNESS) / 2);
+        else if (to.isOnTheBottomOf(from)) {
+            ctx.fillRect(x + width * (1 - THICKNESS) / 2, y + height * (1 - THICKNESS) / 2, width * THICKNESS, height * (1 + THICKNESS) / 2);
         }
     }
 }
