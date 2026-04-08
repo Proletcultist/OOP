@@ -59,25 +59,29 @@ public class ObservableSnake implements Snake {
             int sizeOnTickStart = segments.size();
             int targetSizeOnTickStart = targetSize;
 
-            Point2D currHead = segments.getFirst();
+            Point2D prevHead = segments.getFirst();
             Point2D nextHead =
                     switch (this.pendingDirection) {
-                        case UP -> new Point2D(currHead.x(), currHead.y() - 1);
-                        case DOWN -> new Point2D(currHead.x(), currHead.y() + 1);
-                        case RIGHT -> new Point2D(currHead.x() + 1, currHead.y());
-                        case LEFT -> new Point2D(currHead.x() - 1, currHead.y());
+                        case UP -> new Point2D(prevHead.x(), prevHead.y() - 1);
+                        case DOWN -> new Point2D(prevHead.x(), prevHead.y() + 1);
+                        case RIGHT -> new Point2D(prevHead.x() + 1, prevHead.y());
+                        case LEFT -> new Point2D(prevHead.x() - 1, prevHead.y());
                     };
+            
             segments.addFirst(nextHead);
 
-            for (SnakeChangeListener listener : listeners) {
-                listener.onChange(new SnakeChangeListener.Change.HeadMovedTo(nextHead, currHead));
-            }
+            Point2D prevTail = segments.removeLast();
+            Point2D nextTail = segments.getLast();
 
-            if (sizeOnTickStart == targetSizeOnTickStart) {
-                popTail();
+            sendChange(new SnakeChangeListener.Change.Moved(nextHead, prevHead, nextTail, prevTail));
+
+            if (sizeOnTickStart < targetSizeOnTickStart) {
+                segments.addLast(prevTail);
+                sendChange(new SnakeChangeListener.Change.Growed(prevTail, nextTail));
             } else if (sizeOnTickStart > targetSizeOnTickStart) {
-                popTail();
-                popTail();
+                prevTail = segments.removeLast();
+                nextTail = segments.getLast();
+                sendChange(new SnakeChangeListener.Change.Shrinked(nextTail, prevTail));
             }
 
             counter = 0;
@@ -87,11 +91,9 @@ public class ObservableSnake implements Snake {
         }
     }
 
-    private void popTail() {
-        Point2D removed = segments.removeLast();
-        Point2D newTail = segments.getLast();
-        for (SnakeChangeListener listener : listeners) {
-            listener.onChange(new SnakeChangeListener.Change.TailMovedFrom(removed, newTail));
+    private void sendChange(SnakeChangeListener.Change c) {
+        for (SnakeChangeListener l : listeners) {
+            l.onChange(c);
         }
     }
 
