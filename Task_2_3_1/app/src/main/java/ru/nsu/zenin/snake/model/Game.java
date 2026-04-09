@@ -77,14 +77,29 @@ public class Game {
                             // Check for collision
                             switch (field.get(transNewHead)) {
                                 case TileState.OccupiedBySnake os -> {
-                                    if (snake == playerSnake || (os.snake() == playerSnake) && (os instanceof TileState.OccupiedBySnake.SnakeHead || os instanceof TileState.OccupiedBySnake.SnakeHeadTail)) {
+                                    if (snake == playerSnake
+                                            || (os.snake() == playerSnake)
+                                                    && (os
+                                                                    instanceof
+                                                                    TileState.OccupiedBySnake
+                                                                            .SnakeHead
+                                                            || os
+                                                                    instanceof
+                                                                    TileState.OccupiedBySnake
+                                                                            .SnakeHeadTail)) {
                                         state = State.GAME_OVER;
-                                    }
-                                    else {
+                                    } else {
                                         pendingToRemove.add(snake);
                                         for (Point2D p : snake.getSegments()) {
-                                            Point2D transP = p.wrappedAround(field.getWidth(), field.getHeight());
-                                            if (field.get(transP) instanceof TileState.OccupiedBySnake && ((TileState.OccupiedBySnake) field.get(transP)).snake() == snake) {
+                                            Point2D transP =
+                                                    p.wrappedAround(
+                                                            field.getWidth(), field.getHeight());
+                                            if (field.get(transP)
+                                                            instanceof TileState.OccupiedBySnake
+                                                    && ((TileState.OccupiedBySnake)
+                                                                            field.get(transP))
+                                                                    .snake()
+                                                            == snake) {
                                                 field.set(transP, new TileState.Free());
                                             }
                                         }
