@@ -142,6 +142,10 @@ public class Game {
         field.set(apple.getPosition(), new TileState.OccupiedByApple(apple));
     }
 
+    public Set<Point2D> getAvailable() {
+        return available;
+    }
+
     public void tick() {
         if (state == State.RUNNING) {
             for (Snake snake : snakes) {

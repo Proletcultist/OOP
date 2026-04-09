@@ -133,7 +133,7 @@ public class GameFieldView extends Region {
 
     private void resizeGrid() {
         field.resize(new TileState.Free(), gridWidth.getValue(), gridHeight.getValue());
-        redrawAll();
+        resize();
     }
 
     private void resize() {
