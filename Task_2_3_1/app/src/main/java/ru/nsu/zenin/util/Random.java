@@ -1,7 +1,7 @@
 package ru.nsu.zenin.util;
 
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Random {
     public static <T> T getRandomFromSet(Set<T> set) {

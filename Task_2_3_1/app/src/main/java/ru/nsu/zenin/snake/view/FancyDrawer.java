@@ -1,17 +1,17 @@
 package ru.nsu.zenin.snake.view;
 
+import java.util.HashMap;
+import java.util.Map;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import java.util.Map;
-import java.util.HashMap;
-import ru.nsu.zenin.snake.model.TileState;
-import ru.nsu.zenin.snake.model.Snake;
-import ru.nsu.zenin.snake.model.apple.Apple;
 import ru.nsu.zenin.collection.Point2D;
+import ru.nsu.zenin.snake.model.Snake;
+import ru.nsu.zenin.snake.model.TileState;
+import ru.nsu.zenin.snake.model.apple.Apple;
 
 public class FancyDrawer implements TileDrawer {
-    private final static double HEAD_PADDING = 0.2;
-    private final static double THICKNESS = 0.33;
+    private static final double HEAD_PADDING = 0.2;
+    private static final double THICKNESS = 0.33;
 
     private final Color backgroundColor;
     private final Color defaultAppleColor;
@@ -28,7 +28,14 @@ public class FancyDrawer implements TileDrawer {
         this.defaultAppleColor = defaultAppleColor;
     }
 
-    public void draw(GraphicsContext ctx, Point2D coord, TileState tile, double x, double y, double width, double height) {
+    public void draw(
+            GraphicsContext ctx,
+            Point2D coord,
+            TileState tile,
+            double x,
+            double y,
+            double width,
+            double height) {
         switch (tile) {
             case TileState.Free free -> {
                 ctx.setFill(backgroundColor);
@@ -50,7 +57,11 @@ public class FancyDrawer implements TileDrawer {
 
                         // Fill head
                         ctx.setFill(color);
-                        ctx.fillRect(x + width * HEAD_PADDING / 2, y + height * HEAD_PADDING / 2, width - width * HEAD_PADDING, height - height * HEAD_PADDING);
+                        ctx.fillRect(
+                                x + width * HEAD_PADDING / 2,
+                                y + height * HEAD_PADDING / 2,
+                                width - width * HEAD_PADDING,
+                                height - height * HEAD_PADDING);
                     }
                     case TileState.OccupiedBySnake.SnakeHead h -> {
                         if (!h.dead()) {
@@ -62,7 +73,11 @@ public class FancyDrawer implements TileDrawer {
                         ctx.setFill(color);
 
                         // Fill head
-                        ctx.fillRect(x + width * HEAD_PADDING / 2, y + height * HEAD_PADDING / 2, width - width * HEAD_PADDING, height - height * HEAD_PADDING);
+                        ctx.fillRect(
+                                x + width * HEAD_PADDING / 2,
+                                y + height * HEAD_PADDING / 2,
+                                width - width * HEAD_PADDING,
+                                height - height * HEAD_PADDING);
 
                         drawConnectionBetween(ctx, h.next(), coord, x, y, width, height);
                     }
@@ -105,18 +120,38 @@ public class FancyDrawer implements TileDrawer {
         appleColors.put(apple, color);
     }
 
-    private void drawConnectionBetween(GraphicsContext ctx, Point2D to, Point2D from, double x, double y, double width, double height) {
+    private void drawConnectionBetween(
+            GraphicsContext ctx,
+            Point2D to,
+            Point2D from,
+            double x,
+            double y,
+            double width,
+            double height) {
         if (to.isOnTheLeftOf(from)) {
-            ctx.fillRect(x, y + height * (1 - THICKNESS) / 2, width * (1 + THICKNESS) / 2, height * THICKNESS);
-        }
-        else if (to.isOnTheRightOf(from)) {
-            ctx.fillRect(x + width * (1 - THICKNESS) / 2, y + height * (1 - THICKNESS) / 2, width * (1 + THICKNESS) / 2, height * THICKNESS);
-        }
-        else if (to.isOnTheTopOf(from)) {
-            ctx.fillRect(x + width * (1 - THICKNESS) / 2, y, width * THICKNESS, height * (1 + THICKNESS) / 2);
-        }
-        else if (to.isOnTheBottomOf(from)) {
-            ctx.fillRect(x + width * (1 - THICKNESS) / 2, y + height * (1 - THICKNESS) / 2, width * THICKNESS, height * (1 + THICKNESS) / 2);
+            ctx.fillRect(
+                    x,
+                    y + height * (1 - THICKNESS) / 2,
+                    width * (1 + THICKNESS) / 2,
+                    height * THICKNESS);
+        } else if (to.isOnTheRightOf(from)) {
+            ctx.fillRect(
+                    x + width * (1 - THICKNESS) / 2,
+                    y + height * (1 - THICKNESS) / 2,
+                    width * (1 + THICKNESS) / 2,
+                    height * THICKNESS);
+        } else if (to.isOnTheTopOf(from)) {
+            ctx.fillRect(
+                    x + width * (1 - THICKNESS) / 2,
+                    y,
+                    width * THICKNESS,
+                    height * (1 + THICKNESS) / 2);
+        } else if (to.isOnTheBottomOf(from)) {
+            ctx.fillRect(
+                    x + width * (1 - THICKNESS) / 2,
+                    y + height * (1 - THICKNESS) / 2,
+                    width * THICKNESS,
+                    height * (1 + THICKNESS) / 2);
         }
     }
 }

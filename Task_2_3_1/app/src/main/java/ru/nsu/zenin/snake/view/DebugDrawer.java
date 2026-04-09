@@ -2,8 +2,8 @@ package ru.nsu.zenin.snake.view;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import ru.nsu.zenin.snake.model.TileState;
 import ru.nsu.zenin.collection.Point2D;
+import ru.nsu.zenin.snake.model.TileState;
 
 public class DebugDrawer implements TileDrawer {
     private final Color backgroundColor;
@@ -12,7 +12,14 @@ public class DebugDrawer implements TileDrawer {
         this.backgroundColor = backgroundColor;
     }
 
-    public void draw(GraphicsContext ctx, Point2D coord, TileState tile, double x, double y, double width, double height) {
+    public void draw(
+            GraphicsContext ctx,
+            Point2D coord,
+            TileState tile,
+            double x,
+            double y,
+            double width,
+            double height) {
         switch (tile) {
             case TileState.Free free -> {
                 ctx.setFill(backgroundColor);
