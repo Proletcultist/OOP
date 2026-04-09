@@ -1,5 +1,7 @@
 package ru.nsu.zenin.snake.controller;
 
+import java.util.ArrayList;
+import java.util.List;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
@@ -17,17 +19,15 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
-import java.util.List;
-import java.util.ArrayList;
 import lombok.RequiredArgsConstructor;
 import ru.nsu.zenin.snake.model.Game;
 import ru.nsu.zenin.snake.model.Snake;
-import ru.nsu.zenin.snake.model.bot.SnakeBot;
-import ru.nsu.zenin.snake.model.bot.RandomSnakeBot;
 import ru.nsu.zenin.snake.model.TileState;
 import ru.nsu.zenin.snake.model.apple.BasicAppleFactory;
 import ru.nsu.zenin.snake.model.apple.ShrinkingApple;
 import ru.nsu.zenin.snake.model.apple.ShrinkingAppleFactory;
+import ru.nsu.zenin.snake.model.bot.RandomSnakeBot;
+import ru.nsu.zenin.snake.model.bot.SnakeBot;
 import ru.nsu.zenin.snake.view.DebugDrawer;
 import ru.nsu.zenin.snake.view.FancyDrawer;
 import ru.nsu.zenin.snake.view.GameFieldView;
@@ -226,13 +226,14 @@ public class GameController {
         switch (difficultyInput.getValue()) {
             case LevelOption.LEVEL1 -> {}
             case LevelOption.LEVEL2 -> {
-                Snake botSnake =  game.createSnake(
-                                    Random.getRandomFromSet(game.getAvailable()),
-                                    Snake.Direction.RIGHT,
-                                    10);
+                Snake botSnake =
+                        game.createSnake(
+                                Random.getRandomFromSet(game.getAvailable()),
+                                Snake.Direction.RIGHT,
+                                10);
                 bots.add(new RandomSnakeBot(botSnake));
             }
-            case LevelOption.LEVEL3 -> { }
+            case LevelOption.LEVEL3 -> {}
         }
 
         switch (drawerInput.getValue()) {

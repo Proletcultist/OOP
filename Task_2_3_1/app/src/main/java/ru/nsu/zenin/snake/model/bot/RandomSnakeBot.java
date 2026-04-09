@@ -1,12 +1,14 @@
 package ru.nsu.zenin.snake.model.bot;
 
-import ru.nsu.zenin.snake.model.Snake;
 import java.util.concurrent.ThreadLocalRandom;
+import ru.nsu.zenin.snake.model.Snake;
 
 public class RandomSnakeBot extends SnakeBot {
     private static final double CHANGE_DIRECTION_CHANCE = 0.01;
-    private static final Snake.Direction[] OPTIONS = {Snake.Direction.UP, Snake.Direction.DOWN, Snake.Direction.LEFT, Snake.Direction.RIGHT};
-    
+    private static final Snake.Direction[] OPTIONS = {
+        Snake.Direction.UP, Snake.Direction.DOWN, Snake.Direction.LEFT, Snake.Direction.RIGHT
+    };
+
     private int currentDirectionIndex = 0;
 
     public RandomSnakeBot(Snake snake) {
