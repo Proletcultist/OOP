@@ -1,18 +1,16 @@
 package ru.nsu.zenin.snake.model;
 
+import java.util.Set;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
-import ru.nsu.zenin.collection.Point2D;
 import ru.nsu.zenin.collection.Field;
 import ru.nsu.zenin.collection.ObservableField;
-import ru.nsu.zenin.snake.model.apple.AppleFactory;
+import ru.nsu.zenin.collection.Point2D;
 import ru.nsu.zenin.snake.model.apple.Apple;
+import ru.nsu.zenin.snake.model.apple.AppleFactory;
 import ru.nsu.zenin.snake.model.apple.BasicApple;
-import java.util.Arrays;
-import java.util.Set;
-import java.util.ArrayList;
 
 public class GameTest {
     @Test
@@ -53,37 +51,53 @@ public class GameTest {
             case Snake.Direction.UP -> {
                 Assertions.assertTrue(field.get(new Point2D(0, 0)) instanceof TileState.Free);
                 Assertions.assertTrue(field.get(new Point2D(1, 0)) instanceof TileState.Free);
-                Assertions.assertTrue(field.get(new Point2D(0, 1)) instanceof TileState.OccupiedBySnake.SnakeHeadTail);
-                Assertions.assertTrue(field.get(new Point2D(1, 1)) instanceof TileState.OccupiedByApple);
-                TileState.OccupiedBySnake occS = (TileState.OccupiedBySnake) field.get(new Point2D(0, 1));
+                Assertions.assertTrue(
+                        field.get(new Point2D(0, 1))
+                                instanceof TileState.OccupiedBySnake.SnakeHeadTail);
+                Assertions.assertTrue(
+                        field.get(new Point2D(1, 1)) instanceof TileState.OccupiedByApple);
+                TileState.OccupiedBySnake occS =
+                        (TileState.OccupiedBySnake) field.get(new Point2D(0, 1));
                 Assertions.assertEquals(occS.snake(), snake);
             }
             case Snake.Direction.DOWN -> {
                 Assertions.assertTrue(field.get(new Point2D(0, 0)) instanceof TileState.Free);
                 Assertions.assertTrue(field.get(new Point2D(1, 0)) instanceof TileState.Free);
-                Assertions.assertTrue(field.get(new Point2D(0, 1)) instanceof TileState.OccupiedBySnake.SnakeHeadTail);
-                Assertions.assertTrue(field.get(new Point2D(1, 1)) instanceof TileState.OccupiedByApple);
-                TileState.OccupiedBySnake occS = (TileState.OccupiedBySnake) field.get(new Point2D(0, 1));
+                Assertions.assertTrue(
+                        field.get(new Point2D(0, 1))
+                                instanceof TileState.OccupiedBySnake.SnakeHeadTail);
+                Assertions.assertTrue(
+                        field.get(new Point2D(1, 1)) instanceof TileState.OccupiedByApple);
+                TileState.OccupiedBySnake occS =
+                        (TileState.OccupiedBySnake) field.get(new Point2D(0, 1));
                 Assertions.assertEquals(occS.snake(), snake);
             }
             case Snake.Direction.LEFT -> {
                 Assertions.assertTrue(field.get(new Point2D(0, 0)) instanceof TileState.Free);
-                Assertions.assertTrue(field.get(new Point2D(1, 0)) instanceof TileState.OccupiedBySnake.SnakeHeadTail);
+                Assertions.assertTrue(
+                        field.get(new Point2D(1, 0))
+                                instanceof TileState.OccupiedBySnake.SnakeHeadTail);
                 Assertions.assertTrue(field.get(new Point2D(0, 1)) instanceof TileState.Free);
-                Assertions.assertTrue(field.get(new Point2D(1, 1)) instanceof TileState.OccupiedByApple);
-                TileState.OccupiedBySnake occS = (TileState.OccupiedBySnake) field.get(new Point2D(1, 0));
+                Assertions.assertTrue(
+                        field.get(new Point2D(1, 1)) instanceof TileState.OccupiedByApple);
+                TileState.OccupiedBySnake occS =
+                        (TileState.OccupiedBySnake) field.get(new Point2D(1, 0));
                 Assertions.assertEquals(occS.snake(), snake);
             }
             case Snake.Direction.RIGHT -> {
                 Assertions.assertTrue(field.get(new Point2D(0, 0)) instanceof TileState.Free);
-                Assertions.assertTrue(field.get(new Point2D(1, 0)) instanceof TileState.OccupiedBySnake.SnakeHeadTail);
+                Assertions.assertTrue(
+                        field.get(new Point2D(1, 0))
+                                instanceof TileState.OccupiedBySnake.SnakeHeadTail);
                 Assertions.assertTrue(field.get(new Point2D(0, 1)) instanceof TileState.Free);
-                Assertions.assertTrue(field.get(new Point2D(1, 1)) instanceof TileState.OccupiedByApple);
-                TileState.OccupiedBySnake occS = (TileState.OccupiedBySnake) field.get(new Point2D(1, 0));
+                Assertions.assertTrue(
+                        field.get(new Point2D(1, 1)) instanceof TileState.OccupiedByApple);
+                TileState.OccupiedBySnake occS =
+                        (TileState.OccupiedBySnake) field.get(new Point2D(1, 0));
                 Assertions.assertEquals(occS.snake(), snake);
             }
-        };
-
+        }
+        ;
     }
 
     @Test
@@ -96,7 +110,8 @@ public class GameTest {
         game.tick();
 
         Assertions.assertTrue(field.get(new Point2D(0, 0)) instanceof TileState.Free);
-        Assertions.assertTrue(field.get(new Point2D(1, 0)) instanceof TileState.OccupiedBySnake.SnakeHeadTail);
+        Assertions.assertTrue(
+                field.get(new Point2D(1, 0)) instanceof TileState.OccupiedBySnake.SnakeHeadTail);
         Assertions.assertTrue(field.get(new Point2D(0, 1)) instanceof TileState.Free);
         Assertions.assertTrue(field.get(new Point2D(1, 1)) instanceof TileState.OccupiedByApple);
 
@@ -106,7 +121,8 @@ public class GameTest {
         Assertions.assertTrue(field.get(new Point2D(0, 0)) instanceof TileState.Free);
         Assertions.assertTrue(field.get(new Point2D(1, 0)) instanceof TileState.Free);
         Assertions.assertTrue(field.get(new Point2D(0, 1)) instanceof TileState.Free);
-        Assertions.assertTrue(field.get(new Point2D(1, 1)) instanceof TileState.OccupiedBySnake.SnakeHeadTail);
+        Assertions.assertTrue(
+                field.get(new Point2D(1, 1)) instanceof TileState.OccupiedBySnake.SnakeHeadTail);
     }
 
     @Test
@@ -120,8 +136,10 @@ public class GameTest {
 
         game.tick();
 
-        Assertions.assertTrue(field.get(new Point2D(0, 0)) instanceof TileState.OccupiedBySnake.SnakeTail);
-        Assertions.assertTrue(field.get(new Point2D(1, 0)) instanceof TileState.OccupiedBySnake.SnakeHead);
+        Assertions.assertTrue(
+                field.get(new Point2D(0, 0)) instanceof TileState.OccupiedBySnake.SnakeTail);
+        Assertions.assertTrue(
+                field.get(new Point2D(1, 0)) instanceof TileState.OccupiedBySnake.SnakeHead);
         Assertions.assertTrue(field.get(new Point2D(0, 1)) instanceof TileState.Free);
         Assertions.assertTrue(field.get(new Point2D(1, 1)) instanceof TileState.OccupiedByApple);
     }
@@ -140,10 +158,13 @@ public class GameTest {
         snake.grow();
         game.tick();
 
-        Assertions.assertTrue(field.get(new Point2D(0, 0)) instanceof TileState.OccupiedBySnake.SnakeTail);
-        Assertions.assertTrue(field.get(new Point2D(1, 0)) instanceof TileState.OccupiedBySnake.SnakeBody);
+        Assertions.assertTrue(
+                field.get(new Point2D(0, 0)) instanceof TileState.OccupiedBySnake.SnakeTail);
+        Assertions.assertTrue(
+                field.get(new Point2D(1, 0)) instanceof TileState.OccupiedBySnake.SnakeBody);
         Assertions.assertTrue(field.get(new Point2D(0, 1)) instanceof TileState.Free);
-        Assertions.assertTrue(field.get(new Point2D(1, 1)) instanceof TileState.OccupiedBySnake.SnakeHead);
+        Assertions.assertTrue(
+                field.get(new Point2D(1, 1)) instanceof TileState.OccupiedBySnake.SnakeHead);
     }
 
     @Test
@@ -161,9 +182,11 @@ public class GameTest {
         game.tick();
 
         Assertions.assertTrue(field.get(new Point2D(0, 0)) instanceof TileState.Free);
-        Assertions.assertTrue(field.get(new Point2D(1, 0)) instanceof TileState.OccupiedBySnake.SnakeTail);
+        Assertions.assertTrue(
+                field.get(new Point2D(1, 0)) instanceof TileState.OccupiedBySnake.SnakeTail);
         Assertions.assertTrue(field.get(new Point2D(0, 1)) instanceof TileState.Free);
-        Assertions.assertTrue(field.get(new Point2D(1, 1)) instanceof TileState.OccupiedBySnake.SnakeHead);
+        Assertions.assertTrue(
+                field.get(new Point2D(1, 1)) instanceof TileState.OccupiedBySnake.SnakeHead);
     }
 
     @Test
@@ -185,9 +208,11 @@ public class GameTest {
         Assertions.assertEquals(game.getScore(), 1);
 
         Assertions.assertTrue(field.get(new Point2D(0, 0)) instanceof TileState.Free);
-        Assertions.assertTrue(field.get(new Point2D(1, 0)) instanceof TileState.OccupiedBySnake.SnakeHead);
+        Assertions.assertTrue(
+                field.get(new Point2D(1, 0)) instanceof TileState.OccupiedBySnake.SnakeHead);
         Assertions.assertTrue(field.get(new Point2D(0, 1)) instanceof TileState.Free);
-        Assertions.assertTrue(field.get(new Point2D(1, 1)) instanceof TileState.OccupiedBySnake.SnakeTail);
+        Assertions.assertTrue(
+                field.get(new Point2D(1, 1)) instanceof TileState.OccupiedBySnake.SnakeTail);
     }
 
     @Test
@@ -286,10 +311,13 @@ public class GameTest {
 
         game.tick();
         game.tick();
-    
-        field.forEach((p, s) -> {
-            Assertions.assertFalse(s instanceof TileState.OccupiedBySnake && ((TileState.OccupiedBySnake) s).snake() == snake2);
-        });
+
+        field.forEach(
+                (p, s) -> {
+                    Assertions.assertFalse(
+                            s instanceof TileState.OccupiedBySnake
+                                    && ((TileState.OccupiedBySnake) s).snake() == snake2);
+                });
 
         Assertions.assertEquals(game.getState(), Game.State.RUNNING);
     }
