@@ -1,9 +1,9 @@
 package ru.nsu.zenin.util;
 
+import java.util.HashSet;
+import java.util.Set;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import java.util.Set;
-import java.util.HashSet;
 
 public class RandomTest {
     @Test

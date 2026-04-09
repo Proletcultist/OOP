@@ -1,13 +1,11 @@
 package ru.nsu.zenin.snake.model;
 
+import java.util.Arrays;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import ru.nsu.zenin.collection.Point2D;
-import java.util.Arrays;
-import java.util.List;
-import java.util.ArrayList;
 
 public class ObservableSnakeTest {
     @Test
@@ -41,8 +39,8 @@ public class ObservableSnakeTest {
                 Point2D[] expect = {new Point2D(1, 0)};
                 Assertions.assertTrue(Arrays.equals(snake.getSegments().toArray(), expect));
             }
-        };
-
+        }
+        ;
     }
 
     @Test
@@ -139,7 +137,7 @@ public class ObservableSnakeTest {
 
         Point2D[] expect = {new Point2D(2, 0), new Point2D(1, 0), new Point2D(0, 0)};
         Assertions.assertTrue(Arrays.equals(snake.getSegments().toArray(), expect));
-        
+
         snake.setPendingDirection(Snake.Direction.DOWN);
 
         snake.tick();
@@ -155,28 +153,28 @@ public class ObservableSnakeTest {
 
         Point2D[] expect = {new Point2D(0, 0)};
         Assertions.assertTrue(Arrays.equals(snake.getSegments().toArray(), expect));
-        
+
         snake.tick();
 
         Point2D[] expect2 = {new Point2D(1, 0)};
         Assertions.assertTrue(Arrays.equals(snake.getSegments().toArray(), expect2));
     }
 
-
     @Test
     void listenerTest() {
         ObservableSnake snake = new ObservableSnake(new Point2D(0, 0), Snake.Direction.RIGHT, 0);
-        snake.addListener(c -> {
-            switch (c) {
-                case SnakeChangeListener.Change.Moved m -> {
-                    Assertions.assertEquals(m.prevHead(), new Point2D(0, 0));
-                    Assertions.assertEquals(m.newHead(), new Point2D(1, 0));
-                    Assertions.assertEquals(m.newTail(), new Point2D(1, 0));
-                    Assertions.assertEquals(m.prevTail(), new Point2D(0, 0));
-                }
-                default -> {}
-            }
-        });
+        snake.addListener(
+                c -> {
+                    switch (c) {
+                        case SnakeChangeListener.Change.Moved m -> {
+                            Assertions.assertEquals(m.prevHead(), new Point2D(0, 0));
+                            Assertions.assertEquals(m.newHead(), new Point2D(1, 0));
+                            Assertions.assertEquals(m.newTail(), new Point2D(1, 0));
+                            Assertions.assertEquals(m.prevTail(), new Point2D(0, 0));
+                        }
+                        default -> {}
+                    }
+                });
 
         snake.tick();
     }
@@ -187,17 +185,18 @@ public class ObservableSnakeTest {
         snake.grow();
         snake.tick();
 
-        snake.addListener(c -> {
-            switch (c) {
-                case SnakeChangeListener.Change.Moved m -> {
-                    Assertions.assertEquals(m.prevHead(), new Point2D(1, 0));
-                    Assertions.assertEquals(m.newHead(), new Point2D(2, 0));
-                    Assertions.assertEquals(m.newTail(), new Point2D(1, 0));
-                    Assertions.assertEquals(m.prevTail(), new Point2D(0, 0));
-                }
-                default -> {}
-            }
-        });
+        snake.addListener(
+                c -> {
+                    switch (c) {
+                        case SnakeChangeListener.Change.Moved m -> {
+                            Assertions.assertEquals(m.prevHead(), new Point2D(1, 0));
+                            Assertions.assertEquals(m.newHead(), new Point2D(2, 0));
+                            Assertions.assertEquals(m.newTail(), new Point2D(1, 0));
+                            Assertions.assertEquals(m.prevTail(), new Point2D(0, 0));
+                        }
+                        default -> {}
+                    }
+                });
 
         snake.tick();
     }
@@ -206,15 +205,16 @@ public class ObservableSnakeTest {
     void listenerTest3() {
         ObservableSnake snake = new ObservableSnake(new Point2D(0, 0), Snake.Direction.RIGHT, 0);
 
-        snake.addListener(c -> {
-            switch (c) {
-                case SnakeChangeListener.Change.Growed g -> {
-                    Assertions.assertEquals(g.newTail(), new Point2D(0, 0));
-                    Assertions.assertEquals(g.prevTail(), new Point2D(1, 0));
-                }
-                default -> {}
-            }
-        });
+        snake.addListener(
+                c -> {
+                    switch (c) {
+                        case SnakeChangeListener.Change.Growed g -> {
+                            Assertions.assertEquals(g.newTail(), new Point2D(0, 0));
+                            Assertions.assertEquals(g.prevTail(), new Point2D(1, 0));
+                        }
+                        default -> {}
+                    }
+                });
 
         snake.grow();
         snake.tick();
@@ -227,15 +227,16 @@ public class ObservableSnakeTest {
         snake.grow();
         snake.tick();
 
-        snake.addListener(c -> {
-            switch (c) {
-                case SnakeChangeListener.Change.Shrinked s -> {
-                    Assertions.assertEquals(s.newTail(), new Point2D(2, 0));
-                    Assertions.assertEquals(s.prevTail(), new Point2D(1, 0));
-                }
-                default -> {}
-            }
-        });
+        snake.addListener(
+                c -> {
+                    switch (c) {
+                        case SnakeChangeListener.Change.Shrinked s -> {
+                            Assertions.assertEquals(s.newTail(), new Point2D(2, 0));
+                            Assertions.assertEquals(s.prevTail(), new Point2D(1, 0));
+                        }
+                        default -> {}
+                    }
+                });
 
         snake.shrink();
         snake.tick();

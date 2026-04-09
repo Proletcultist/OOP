@@ -1,10 +1,10 @@
 package ru.nsu.zenin.snake.model.bot;
 
-import lombok.RequiredArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import ru.nsu.zenin.collection.Field;
 import ru.nsu.zenin.snake.model.Snake;
 import ru.nsu.zenin.snake.model.TileState;
-import ru.nsu.zenin.collection.Field;
 
 @RequiredArgsConstructor
 public abstract class SnakeBot {
