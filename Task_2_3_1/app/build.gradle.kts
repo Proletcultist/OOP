@@ -59,6 +59,7 @@ tasks.jacocoTestReport {
             exclude("ru/nsu/zenin/snake/app/*")
             exclude("ru/nsu/zenin/snake/view/*")
             exclude("ru/nsu/zenin/snake/controller/*")
+            exclude("ru/nsu/zenin/snake/model/bot/*")
         }
     }))
 }

@@ -27,6 +27,7 @@ import ru.nsu.zenin.snake.model.apple.BasicAppleFactory;
 import ru.nsu.zenin.snake.model.apple.ShrinkingApple;
 import ru.nsu.zenin.snake.model.apple.ShrinkingAppleFactory;
 import ru.nsu.zenin.snake.model.bot.RandomSnakeBot;
+import ru.nsu.zenin.snake.model.bot.ClosestAppleSnakeBot;
 import ru.nsu.zenin.snake.model.bot.SnakeBot;
 import ru.nsu.zenin.snake.view.DebugDrawer;
 import ru.nsu.zenin.snake.view.FancyDrawer;
@@ -188,19 +189,22 @@ public class GameController {
                                     fieldView.getField(),
                                     (new BasicAppleFactory())
                                             .combinedWith(new ShrinkingAppleFactory(), 0.2),
-                                    5);
+                                    5,
+                                    g -> g.getScore() == 12);
                     case LevelOption.LEVEL2 ->
                             new Game(
                                     fieldView.getField(),
                                     (new BasicAppleFactory())
                                             .combinedWith(new ShrinkingAppleFactory(), 0.2),
-                                    2);
+                                    2,
+                                    g -> g.getScore() == 20);
                     case LevelOption.LEVEL3 ->
                             new Game(
                                     fieldView.getField(),
                                     (new BasicAppleFactory())
                                             .combinedWith(new ShrinkingAppleFactory(), 0.2),
-                                    1);
+                                    1,
+                                    g -> g.getScore() == 25);
                 };
         Snake playerSnake =
                 switch (difficultyInput.getValue()) {
@@ -231,14 +235,30 @@ public class GameController {
                                 Random.getRandomFromSet(game.getAvailable()),
                                 Snake.Direction.RIGHT,
                                 10);
-                bots.add(new RandomSnakeBot(botSnake));
+                bots.add(new RandomSnakeBot(botSnake, fieldView.getField()));
             }
-            case LevelOption.LEVEL3 -> {}
+            case LevelOption.LEVEL3 -> {
+                Snake botSnake1 =
+                        game.createSnake(
+                                Random.getRandomFromSet(game.getAvailable()),
+                                Snake.Direction.RIGHT,
+                                10);
+                Snake botSnake2 =
+                        game.createSnake(
+                                Random.getRandomFromSet(game.getAvailable()),
+                                Snake.Direction.RIGHT,
+                                10);
+                bots.add(new RandomSnakeBot(botSnake1, fieldView.getField()));
+                bots.add(new ClosestAppleSnakeBot(botSnake2, fieldView.getField()));
+            }
         }
 
         switch (drawerInput.getValue()) {
             case DrawerOption.FANCY -> {
                 FancyDrawer drawer = new FancyDrawer(Color.BLACK, Color.GREEN, Color.GREEN);
+                for (SnakeBot s : bots) {
+                    drawer.setSnakeColor(s.getSnake(), Color.RED);
+                }
                 drawer.setAppleColor(ShrinkingApple.class, Color.BLUE);
                 fieldView.setDrawer(drawer);
             }

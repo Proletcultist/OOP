@@ -96,6 +96,10 @@ public class ObservableSnake implements Snake {
         return segments;
     }
 
+    public Point2D getHead() {
+        return segments.getFirst();
+    }
+
     private void sendChange(SnakeChangeListener.Change c) {
         for (SnakeChangeListener l : listeners) {
             l.onChange(c);
