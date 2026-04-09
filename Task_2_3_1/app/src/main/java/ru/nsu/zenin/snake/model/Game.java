@@ -71,14 +71,10 @@ public class Game {
     }
 
     private void processSnakeMove(Snake snake, SnakeChangeListener.Change.Moved m) {
-        Point2D transNewHead =
-                m.newHead().wrappedAround(field.getWidth(), field.getHeight());
-        Point2D transPrevHead =
-                m.prevHead().wrappedAround(field.getWidth(), field.getHeight());
-        Point2D transNewTail =
-                m.newTail().wrappedAround(field.getWidth(), field.getHeight());
-        Point2D transPrevTail =
-                m.prevTail().wrappedAround(field.getWidth(), field.getHeight());
+        Point2D transNewHead = m.newHead().wrappedAround(field.getWidth(), field.getHeight());
+        Point2D transPrevHead = m.prevHead().wrappedAround(field.getWidth(), field.getHeight());
+        Point2D transNewTail = m.newTail().wrappedAround(field.getWidth(), field.getHeight());
+        Point2D transPrevTail = m.prevTail().wrappedAround(field.getWidth(), field.getHeight());
 
         available.add(transPrevTail);
         available.remove(transNewHead);
@@ -106,40 +102,28 @@ public class Game {
         }
 
         if (snake.size() == 1) {
-            field.set(
-                    transNewHead,
-                    new TileState.OccupiedBySnake.SnakeHeadTail(snake));
+            field.set(transNewHead, new TileState.OccupiedBySnake.SnakeHeadTail(snake));
         } else {
-            field.set(
-                    transNewHead,
-                    new TileState.OccupiedBySnake.SnakeHead(
-                            snake, transPrevHead));
+            field.set(transNewHead, new TileState.OccupiedBySnake.SnakeHead(snake, transPrevHead));
             TileState.OccupiedBySnake.SnakeHead prevHead =
-                    (TileState.OccupiedBySnake.SnakeHead)
-                            field.get(transPrevHead);
+                    (TileState.OccupiedBySnake.SnakeHead) field.get(transPrevHead);
             field.set(
                     transPrevHead,
-                    new TileState.OccupiedBySnake.SnakeBody(
-                            snake, prevHead.next(), transNewHead));
+                    new TileState.OccupiedBySnake.SnakeBody(snake, prevHead.next(), transNewHead));
 
-            TileState.OccupiedBySnake newTail =
-                    (TileState.OccupiedBySnake) field.get(transNewTail);
+            TileState.OccupiedBySnake newTail = (TileState.OccupiedBySnake) field.get(transNewTail);
             if (!(newTail instanceof TileState.OccupiedBySnake.SnakeHead)) {
                 field.set(
                         transNewTail,
                         new TileState.OccupiedBySnake.SnakeTail(
-                                snake,
-                                ((TileState.OccupiedBySnake.SnakeBody) newTail)
-                                        .prev()));
+                                snake, ((TileState.OccupiedBySnake.SnakeBody) newTail).prev()));
             }
         }
     }
 
     private void processSnakeGrow(Snake snake, SnakeChangeListener.Change.Growed g) {
-        Point2D transNewTail =
-                g.newTail().wrappedAround(field.getWidth(), field.getHeight());
-        Point2D transPrevTail =
-                g.prevTail().wrappedAround(field.getWidth(), field.getHeight());
+        Point2D transNewTail = g.newTail().wrappedAround(field.getWidth(), field.getHeight());
+        Point2D transPrevTail = g.prevTail().wrappedAround(field.getWidth(), field.getHeight());
 
         switch (field.get(transNewTail)) {
             case TileState.OccupiedBySnake os -> {
@@ -155,41 +139,27 @@ public class Game {
 
         available.remove(transNewTail);
 
-        field.set(
-                transNewTail,
-                new TileState.OccupiedBySnake.SnakeTail(snake, transPrevTail));
+        field.set(transNewTail, new TileState.OccupiedBySnake.SnakeTail(snake, transPrevTail));
 
         if (snake.size() == 2) {
-            field.set(
-                    transPrevTail,
-                    new TileState.OccupiedBySnake.SnakeHead(
-                            snake, transNewTail));
+            field.set(transPrevTail, new TileState.OccupiedBySnake.SnakeHead(snake, transNewTail));
         } else {
             TileState.OccupiedBySnake.SnakeTail prevTail =
-                    (TileState.OccupiedBySnake.SnakeTail)
-                            field.get(transPrevTail);
+                    (TileState.OccupiedBySnake.SnakeTail) field.get(transPrevTail);
             field.set(
                     transPrevTail,
-                    new TileState.OccupiedBySnake.SnakeBody(
-                            snake, transNewTail, prevTail.prev()));
+                    new TileState.OccupiedBySnake.SnakeBody(snake, transNewTail, prevTail.prev()));
         }
     }
 
     private void processSnakeShrink(Snake snake, SnakeChangeListener.Change.Shrinked s) {
-        Point2D transNewTail =
-                s.newTail().wrappedAround(field.getWidth(), field.getHeight());
+        Point2D transNewTail = s.newTail().wrappedAround(field.getWidth(), field.getHeight());
         if (snake.size() == 1) {
-            field.set(
-                    transNewTail,
-                    new TileState.OccupiedBySnake.SnakeHeadTail(snake));
+            field.set(transNewTail, new TileState.OccupiedBySnake.SnakeHeadTail(snake));
         } else {
             TileState.OccupiedBySnake.SnakeBody newTail =
-                    (TileState.OccupiedBySnake.SnakeBody)
-                            field.get(transNewTail);
-            field.set(
-                    transNewTail,
-                    new TileState.OccupiedBySnake.SnakeTail(
-                            snake, newTail.prev()));
+                    (TileState.OccupiedBySnake.SnakeBody) field.get(transNewTail);
+            field.set(transNewTail, new TileState.OccupiedBySnake.SnakeTail(snake, newTail.prev()));
         }
     }
 
