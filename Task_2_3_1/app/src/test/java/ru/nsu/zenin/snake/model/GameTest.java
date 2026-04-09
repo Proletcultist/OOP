@@ -186,7 +186,7 @@ public class GameTest {
                 field.get(new Point2D(1, 0)) instanceof TileState.OccupiedBySnake.SnakeTail);
         Assertions.assertTrue(field.get(new Point2D(0, 1)) instanceof TileState.Free);
         Assertions.assertTrue(
-                field.get(new Point2D(1, 1)) instanceof TileState.OccupiedBySnake.SnakeHead);
+                field.get(new Point2D(1, 1)) instanceof TileState.OccupiedBySnake.SnakeHeadTail);
     }
 
     @Test

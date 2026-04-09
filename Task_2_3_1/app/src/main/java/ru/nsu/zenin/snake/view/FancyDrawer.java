@@ -49,11 +49,8 @@ public class FancyDrawer implements TileDrawer {
 
                 switch (occS) {
                     case TileState.OccupiedBySnake.SnakeHeadTail ht -> {
-                        if (!ht.dead()) {
-                            // Fill background
-                            ctx.setFill(backgroundColor);
-                            ctx.fillRect(x, y, width, height);
-                        }
+                        ctx.setFill(backgroundColor);
+                        ctx.fillRect(x, y, width, height);
 
                         // Fill head
                         ctx.setFill(color);
@@ -64,11 +61,8 @@ public class FancyDrawer implements TileDrawer {
                                 height - height * HEAD_PADDING);
                     }
                     case TileState.OccupiedBySnake.SnakeHead h -> {
-                        if (!h.dead()) {
-                            // Fill background
-                            ctx.setFill(backgroundColor);
-                            ctx.fillRect(x, y, width, height);
-                        }
+                        ctx.setFill(backgroundColor);
+                        ctx.fillRect(x, y, width, height);
 
                         ctx.setFill(color);
 
