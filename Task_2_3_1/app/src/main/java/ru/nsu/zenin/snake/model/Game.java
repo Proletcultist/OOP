@@ -125,7 +125,6 @@ public class Game {
                                         transNewHead,
                                         new TileState.OccupiedBySnake.SnakeHead(
                                                 snake, transPrevHead, false));
-
                                 TileState.OccupiedBySnake.SnakeHead prevHead =
                                         (TileState.OccupiedBySnake.SnakeHead)
                                                 field.get(transPrevHead);
@@ -151,6 +150,31 @@ public class Game {
                                     g.newTail().wrappedAround(field.getWidth(), field.getHeight());
                             Point2D transPrevTail =
                                     g.prevTail().wrappedAround(field.getWidth(), field.getHeight());
+
+                            switch (field.get(transNewTail)) {
+                                case TileState.OccupiedBySnake os -> {
+                                    if (os.snake() == playerSnake) {
+                                        state = State.GAME_OVER;
+                                    } else {
+                                        pendingToRemove.add(os.snake());
+                                        for (Point2D p : os.snake().getSegments()) {
+                                            Point2D transP =
+                                                    p.wrappedAround(
+                                                            field.getWidth(), field.getHeight());
+                                            if (field.get(transP)
+                                                            instanceof TileState.OccupiedBySnake
+                                                    && ((TileState.OccupiedBySnake)
+                                                                            field.get(transP))
+                                                                    .snake()
+                                                            == snake) {
+                                                field.set(transP, new TileState.Free());
+                                            }
+                                        }
+                                        return;
+                                    }
+                                }
+                                default -> {}
+                            }
 
                             available.remove(transNewTail);
 
