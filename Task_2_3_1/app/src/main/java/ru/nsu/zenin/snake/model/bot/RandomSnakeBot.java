@@ -1,7 +1,9 @@
 package ru.nsu.zenin.snake.model.bot;
 
 import java.util.concurrent.ThreadLocalRandom;
+import ru.nsu.zenin.collection.Field;
 import ru.nsu.zenin.snake.model.Snake;
+import ru.nsu.zenin.snake.model.TileState;
 
 public class RandomSnakeBot extends SnakeBot {
     private static final double CHANGE_DIRECTION_CHANCE = 0.01;
@@ -11,8 +13,8 @@ public class RandomSnakeBot extends SnakeBot {
 
     private int currentDirectionIndex = 0;
 
-    public RandomSnakeBot(Snake snake) {
-        super(snake);
+    public RandomSnakeBot(Snake snake, Field<TileState> field) {
+        super(snake, field);
         Snake.Direction currDir = snake.getLastMoveDirection();
         for (int i = 0; i < OPTIONS.length; i++) {
             if (OPTIONS[i] == currDir) {

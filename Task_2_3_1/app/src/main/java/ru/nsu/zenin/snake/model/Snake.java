@@ -14,6 +14,8 @@ public interface Snake {
 
     Deque<Point2D> getSegments();
 
+    Point2D getHead();
+
     void grow();
 
     void shrink();
