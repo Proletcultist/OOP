@@ -1,5 +1,8 @@
 package ru.nsu.zenin.snake.model;
 
+import java.util.Deque;
+import ru.nsu.zenin.collection.Point2D;
+
 public interface Snake {
     Direction getLastMoveDirection();
 
@@ -8,6 +11,8 @@ public interface Snake {
     void setTicksToMove(Integer ticksToMove);
 
     Integer getTicksToMove();
+
+    Deque<Point2D> getSegments();
 
     void grow();
 

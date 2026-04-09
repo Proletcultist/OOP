@@ -15,8 +15,11 @@ public class Game {
     private final Set<Point2D> available;
     private final AppleFactory appleFactory;
     private final List<Snake> snakes = new ArrayList<Snake>();
+    private final List<Snake> pendingToRemove = new ArrayList<Snake>();
     private final Predicate<Game> winPredicate;
     private State state;
+
+    private Snake playerSnake = null;
 
     private int score = 0;
 
@@ -73,11 +76,27 @@ public class Game {
 
                             // Check for collision
                             switch (field.get(transNewHead)) {
-                                case TileState.OccupiedBySnake os -> state = State.GAME_OVER;
+                                case TileState.OccupiedBySnake os -> {
+                                    if (snake == playerSnake || (os.snake() == playerSnake) && (os instanceof TileState.OccupiedBySnake.SnakeHead || os instanceof TileState.OccupiedBySnake.SnakeHeadTail)) {
+                                        state = State.GAME_OVER;
+                                    }
+                                    else {
+                                        pendingToRemove.add(snake);
+                                        for (Point2D p : snake.getSegments()) {
+                                            Point2D transP = p.wrappedAround(field.getWidth(), field.getHeight());
+                                            if (field.get(transP) instanceof TileState.OccupiedBySnake && ((TileState.OccupiedBySnake) field.get(transP)).snake() == snake) {
+                                                field.set(transP, new TileState.Free());
+                                            }
+                                        }
+                                        return;
+                                    }
+                                }
                                 case TileState.OccupiedByApple oa -> {
                                     oa.apple().apply(snake);
-                                    score++;
                                     spawnNewApple();
+                                    if (snake == playerSnake) {
+                                        score++;
+                                    }
                                 }
                                 case TileState.Free free -> {}
                             }
@@ -148,6 +167,10 @@ public class Game {
         return snake;
     }
 
+    public void setPlayerSnake(Snake snake) {
+        playerSnake = snake;
+    }
+
     public State getState() {
         return state;
     }
@@ -170,7 +193,14 @@ public class Game {
         if (state == State.RUNNING) {
             for (Snake snake : snakes) {
                 snake.tick();
+                if (state == State.GAME_OVER) {
+                    break;
+                }
             }
+            for (Snake s : pendingToRemove) {
+                snakes.remove(s);
+            }
+            pendingToRemove.clear();
         }
 
         if (winPredicate.test(this)) {
