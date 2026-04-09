@@ -5,7 +5,7 @@ import ru.nsu.zenin.snake.model.Snake;
 
 @RequiredArgsConstructor
 public abstract class SnakeBot {
-    private final Snake snake;
+    protected final Snake snake;
 
     public abstract void tick();
 }

@@ -92,6 +92,10 @@ public class ObservableSnake implements Snake {
         }
     }
 
+    public Deque<Point2D> getSegments() {
+        return segments;
+    }
+
     private void sendChange(SnakeChangeListener.Change c) {
         for (SnakeChangeListener l : listeners) {
             l.onChange(c);
