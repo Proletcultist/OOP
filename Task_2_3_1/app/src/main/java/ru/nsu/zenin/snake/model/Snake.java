@@ -2,12 +2,19 @@ package ru.nsu.zenin.snake.model;
 
 public interface Snake {
     Direction getLastMoveDirection();
+
     void setPendingDirection(Direction direction);
+
     void setTicksToMove(Integer ticksToMove);
+
     Integer getTicksToMove();
+
     void grow();
+
     void shrink();
+
     void tick();
+
     int size();
 
     public enum Direction {
