@@ -1,0 +1,9 @@
+module:ru.nsu.zenin.snake
+ru.nsu.zenin.collection
+ru.nsu.zenin.snake.app
+ru.nsu.zenin.snake.controller
+ru.nsu.zenin.snake.model
+ru.nsu.zenin.snake.model.apple
+ru.nsu.zenin.snake.model.bot
+ru.nsu.zenin.snake.view
+ru.nsu.zenin.util
