@@ -166,10 +166,13 @@ public class Game {
                             Point2D transNewTail =
                                     s.newTail().wrappedAround(field.getWidth(), field.getHeight());
                             if (snake.size() == 1) {
-                                field.set(transNewTail, new TileState.OccupiedBySnake.SnakeHeadTail(snake));
-                            }
-                            else {
-                                TileState.OccupiedBySnake.SnakeBody newTail = (TileState.OccupiedBySnake.SnakeBody) field.get(transNewTail);
+                                field.set(
+                                        transNewTail,
+                                        new TileState.OccupiedBySnake.SnakeHeadTail(snake));
+                            } else {
+                                TileState.OccupiedBySnake.SnakeBody newTail =
+                                        (TileState.OccupiedBySnake.SnakeBody)
+                                                field.get(transNewTail);
                                 field.set(
                                         transNewTail,
                                         new TileState.OccupiedBySnake.SnakeTail(
@@ -187,15 +190,9 @@ public class Game {
     private void removeSnake(Snake snake) {
         pendingToRemove.add(snake);
         for (Point2D p : snake.getSegments()) {
-            Point2D transP =
-                    p.wrappedAround(
-                            field.getWidth(), field.getHeight());
-            if (field.get(transP)
-                            instanceof TileState.OccupiedBySnake
-                    && ((TileState.OccupiedBySnake)
-                                            field.get(transP))
-                                    .snake()
-                            == snake) {
+            Point2D transP = p.wrappedAround(field.getWidth(), field.getHeight());
+            if (field.get(transP) instanceof TileState.OccupiedBySnake
+                    && ((TileState.OccupiedBySnake) field.get(transP)).snake() == snake) {
                 field.set(transP, new TileState.Free());
             }
         }

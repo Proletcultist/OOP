@@ -11,8 +11,7 @@ public sealed interface TileState {
 
         public record SnakeHeadTail(Snake snake) implements OccupiedBySnake {}
 
-        public record SnakeHead(Snake snake, Point2D next)
-                implements OccupiedBySnake {}
+        public record SnakeHead(Snake snake, Point2D next) implements OccupiedBySnake {}
 
         public record SnakeBody(Snake snake, Point2D next, Point2D prev)
                 implements OccupiedBySnake {}
