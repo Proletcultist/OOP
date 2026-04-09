@@ -53,6 +53,9 @@ spotless{
 tasks.jacocoTestReport {
     reports {
         xml.required = true
+        xml.outputLocation = layout.buildDirectory.file(
+            "${rootDir}/build/reports/jacoco/test/jacocoTestReport.xml"
+        )
     }
     classDirectories.setFrom(files(classDirectories.files.map {
         fileTree(it).matching {
