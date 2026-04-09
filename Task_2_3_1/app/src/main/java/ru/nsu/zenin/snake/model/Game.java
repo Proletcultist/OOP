@@ -111,8 +111,9 @@ public class Game {
                     transPrevHead,
                     new TileState.OccupiedBySnake.SnakeBody(snake, prevHead.next(), transNewHead));
 
-            TileState.OccupiedBySnake newTail = (TileState.OccupiedBySnake) field.get(transNewTail);
-            if (!(newTail instanceof TileState.OccupiedBySnake.SnakeHead)) {
+            if (state != State.GAME_OVER) {
+                TileState.OccupiedBySnake newTail =
+                        (TileState.OccupiedBySnake) field.get(transNewTail);
                 field.set(
                         transNewTail,
                         new TileState.OccupiedBySnake.SnakeTail(
