@@ -17,9 +17,13 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
+import java.util.List;
+import java.util.ArrayList;
 import lombok.RequiredArgsConstructor;
 import ru.nsu.zenin.snake.model.Game;
 import ru.nsu.zenin.snake.model.Snake;
+import ru.nsu.zenin.snake.model.bot.SnakeBot;
+import ru.nsu.zenin.snake.model.bot.RandomSnakeBot;
 import ru.nsu.zenin.snake.model.TileState;
 import ru.nsu.zenin.snake.model.apple.BasicAppleFactory;
 import ru.nsu.zenin.snake.model.apple.ShrinkingApple;
@@ -39,6 +43,8 @@ public class GameController {
     @FXML private ComboBox<DrawerOption> drawerInput;
     @FXML private TextField gridWidthInput;
     @FXML private TextField gridHeightInput;
+
+    private final List<SnakeBot> bots = new ArrayList<SnakeBot>();
 
     private final ComboBox<Color> playerColors =
             new ComboBox<Color>(
@@ -138,6 +144,9 @@ public class GameController {
                         new KeyFrame(
                                 Duration.millis(10),
                                 event -> {
+                                    for (SnakeBot bot : bots) {
+                                        bot.tick();
+                                    }
                                     game.tick();
 
                                     if (game.getScore() != prevScore) {
@@ -169,6 +178,7 @@ public class GameController {
     }
 
     private void configureGame() {
+        bots.clear();
         fieldView.getField().setAll(new TileState.Free());
 
         game =
@@ -210,6 +220,20 @@ public class GameController {
                                     Snake.Direction.RIGHT,
                                     5);
                 };
+
+        game.setPlayerSnake(playerSnake);
+
+        switch (difficultyInput.getValue()) {
+            case LevelOption.LEVEL1 -> {}
+            case LevelOption.LEVEL2 -> {
+                Snake botSnake =  game.createSnake(
+                                    Random.getRandomFromSet(game.getAvailable()),
+                                    Snake.Direction.RIGHT,
+                                    10);
+                bots.add(new RandomSnakeBot(botSnake));
+            }
+            case LevelOption.LEVEL3 -> { }
+        }
 
         switch (drawerInput.getValue()) {
             case DrawerOption.FANCY -> {
