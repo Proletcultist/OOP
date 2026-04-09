@@ -4,37 +4,30 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
-import javafx.fxml.FXML;
-import javafx.scene.paint.Color;
-import javafx.geometry.Insets;
-import javafx.scene.input.KeyCode;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.Region;
-import javafx.scene.text.Text;
-import javafx.scene.control.ComboBox;
-import javafx.util.Duration;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.VBox;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.geometry.Insets;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
+import javafx.util.Duration;
 import lombok.RequiredArgsConstructor;
-import lombok.Getter;
-import ru.nsu.zenin.collection.Point2D;
 import ru.nsu.zenin.snake.model.Game;
-import ru.nsu.zenin.snake.model.apple.AppleFactory;
-import ru.nsu.zenin.snake.model.apple.BasicAppleFactory;
-import ru.nsu.zenin.snake.model.apple.ShrinkingAppleFactory;
 import ru.nsu.zenin.snake.model.Snake;
 import ru.nsu.zenin.snake.model.TileState;
+import ru.nsu.zenin.snake.model.apple.BasicAppleFactory;
 import ru.nsu.zenin.snake.model.apple.ShrinkingApple;
-import ru.nsu.zenin.snake.view.GameFieldView;
-import ru.nsu.zenin.snake.view.TileDrawer;
-import ru.nsu.zenin.snake.view.FancyDrawer;
+import ru.nsu.zenin.snake.model.apple.ShrinkingAppleFactory;
 import ru.nsu.zenin.snake.view.DebugDrawer;
-import ru.nsu.zenin.snake.model.apple.AppleFactory;
-import ru.nsu.zenin.snake.model.bot.SnakeBot;
-import java.util.List;
-import java.util.function.Predicate;
-import java.util.ArrayList;
+import ru.nsu.zenin.snake.view.FancyDrawer;
+import ru.nsu.zenin.snake.view.GameFieldView;
+import ru.nsu.zenin.util.Random;
 
 public class GameController {
     @FXML private GameFieldView fieldView;
@@ -43,8 +36,16 @@ public class GameController {
     @FXML private StackPane mainContainer;
 
     @FXML private ComboBox<LevelOption> difficultyInput;
+    @FXML private ComboBox<DrawerOption> drawerInput;
     @FXML private TextField gridWidthInput;
     @FXML private TextField gridHeightInput;
+
+    private final ComboBox<Color> playerColors =
+            new ComboBox<Color>(
+                    FXCollections.observableArrayList(Color.GREEN, Color.PURPLE, Color.RED));
+    private final ComboBox<Color> botsColors =
+            new ComboBox<Color>(
+                    FXCollections.observableArrayList(Color.GREEN, Color.PURPLE, Color.RED));
 
     private int prevScore = 0;
 
@@ -57,7 +58,10 @@ public class GameController {
     }
 
     private void initGraphics() {
+        playerColors.setEditable(false);
+        botsColors.setEditable(false);
         difficultyInput.getSelectionModel().selectFirst();
+        drawerInput.getSelectionModel().selectFirst();
         fieldView
                 .paddingProperty()
                 .bind(
@@ -69,17 +73,24 @@ public class GameController {
                                 },
                                 fieldView.widthProperty(),
                                 fieldView.heightProperty()));
-        statusBar.styleProperty().bind(
-                Bindings.createStringBinding(() -> {
-                    double fontSize = Math.rint((fieldView.getHeight() > fieldView.getWidth() ? fieldView.getWidth() : fieldView.getHeight()) * 0.04);
-                    if (fontSize > 20) {
-                        fontSize = 20;
-                    }
-                    return String.format("-fx-font-size: %.1fpx;", fontSize);
-                },
-                    fieldView.heightProperty(), fieldView.widthProperty()
-                )
-        );
+        statusBar
+                .styleProperty()
+                .bind(
+                        Bindings.createStringBinding(
+                                () -> {
+                                    double fontSize =
+                                            Math.rint(
+                                                    (fieldView.getHeight() > fieldView.getWidth()
+                                                                    ? fieldView.getWidth()
+                                                                    : fieldView.getHeight())
+                                                            * 0.04);
+                                    if (fontSize > 20) {
+                                        fontSize = 20;
+                                    }
+                                    return String.format("-fx-font-size: %.1fpx;", fontSize);
+                                },
+                                fieldView.heightProperty(),
+                                fieldView.widthProperty()));
         modalContainer.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
         modalContainer
                 .paddingProperty()
@@ -99,40 +110,29 @@ public class GameController {
         if (!gridWidthInput.getText().isEmpty()) {
             try {
                 fieldView.setGridWidth(Integer.valueOf(gridWidthInput.getText()));
-            }
-            catch (NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 statusBar.setText("Invalid int format for grid width");
             }
         }
         if (!gridHeightInput.getText().isEmpty()) {
             try {
                 fieldView.setGridHeight(Integer.valueOf(gridHeightInput.getText()));
-            }
-            catch (NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 statusBar.setText("Invalid int format for grid height");
             }
         }
 
-        startNewGame(difficultyInput.getValue().getConfig());
+        startNewGame();
         modalContainer.setVisible(false);
     }
 
-    private void startNewGame(LevelConfig config) {
-        fieldView.getField().setAll(new TileState.Free());
-
-        game = new Game(fieldView.getField(), config.appleFactory(), 2);
-
-        Snake playerSnake = game.createSnake(new Point2D(0, 0), Snake.Direction.RIGHT, 20);
+    private void startNewGame() {
+        configureGame();
 
         prevScore = game.getScore();
         statusBar.setText("Score: " + game.getScore());
 
-        FancyDrawer drawer = new FancyDrawer(Color.BLACK, Color.GREEN, Color.GREEN);
-        drawer.setAppleColor(ShrinkingApple.class, Color.BLUE);
-        fieldView.setDrawer(drawer);
-
         Timeline timeline = new Timeline();
-
         timeline.getKeyFrames()
                 .add(
                         new KeyFrame(
@@ -148,19 +148,80 @@ public class GameController {
                                     if (game.getState() == Game.State.GAME_OVER) {
                                         timeline.stop();
                                         statusBar.setText(
-                                                "Game Over! Your score: "
-                                                        + game.getScore());
+                                                "Game Over! Your score: " + game.getScore());
                                         modalContainer.setVisible(true);
                                     } else if (game.getState() == Game.State.WIN) {
                                         timeline.stop();
                                         statusBar.setText(
-                                                "You won! Your score: "
-                                                        + game.getScore());
+                                                "You won! Your score: " + game.getScore());
                                         modalContainer.setVisible(true);
                                     }
                                 }));
 
         timeline.setCycleCount(Timeline.INDEFINITE);
+        timeline.play();
+    }
+
+    private void tryChangeSnakeDirection(Snake snake, Snake.Direction dir) {
+        if (snake.getLastMoveDirection().getOpposite() != dir) {
+            snake.setPendingDirection(dir);
+        }
+    }
+
+    private void configureGame() {
+        fieldView.getField().setAll(new TileState.Free());
+
+        game =
+                switch (difficultyInput.getValue()) {
+                    case LevelOption.LEVEL1 ->
+                            new Game(
+                                    fieldView.getField(),
+                                    (new BasicAppleFactory())
+                                            .combinedWith(new ShrinkingAppleFactory(), 0.2),
+                                    5);
+                    case LevelOption.LEVEL2 ->
+                            new Game(
+                                    fieldView.getField(),
+                                    (new BasicAppleFactory())
+                                            .combinedWith(new ShrinkingAppleFactory(), 0.2),
+                                    2);
+                    case LevelOption.LEVEL3 ->
+                            new Game(
+                                    fieldView.getField(),
+                                    (new BasicAppleFactory())
+                                            .combinedWith(new ShrinkingAppleFactory(), 0.2),
+                                    1);
+                };
+        Snake playerSnake =
+                switch (difficultyInput.getValue()) {
+                    case LevelOption.LEVEL1 ->
+                            game.createSnake(
+                                    Random.getRandomFromSet(game.getAvailable()),
+                                    Snake.Direction.RIGHT,
+                                    15);
+                    case LevelOption.LEVEL2 ->
+                            game.createSnake(
+                                    Random.getRandomFromSet(game.getAvailable()),
+                                    Snake.Direction.RIGHT,
+                                    10);
+                    case LevelOption.LEVEL3 ->
+                            game.createSnake(
+                                    Random.getRandomFromSet(game.getAvailable()),
+                                    Snake.Direction.RIGHT,
+                                    5);
+                };
+
+        switch (drawerInput.getValue()) {
+            case DrawerOption.FANCY -> {
+                FancyDrawer drawer = new FancyDrawer(Color.BLACK, Color.GREEN, Color.GREEN);
+                drawer.setAppleColor(ShrinkingApple.class, Color.BLUE);
+                fieldView.setDrawer(drawer);
+            }
+            case DrawerOption.DEBUG -> {
+                DebugDrawer drawer = new DebugDrawer(Color.BLACK);
+                fieldView.setDrawer(drawer);
+            }
+        }
 
         fieldView.setOnKeyPressed(
                 e -> {
@@ -175,27 +236,16 @@ public class GameController {
                         default -> {}
                     }
                 });
-
-        timeline.play();
         Platform.runLater(() -> fieldView.requestFocus());
     }
 
-    private void tryChangeSnakeDirection(Snake snake, Snake.Direction dir) {
-        if (snake.getLastMoveDirection().getOpposite() != dir) {
-            snake.setPendingDirection(dir);
-        }
-    }
-
-    private record LevelConfig(int ticksFrequency, AppleFactory appleFactory, List<SnakeBot> bots, Predicate<Game> winPredicate) {}
-
     @RequiredArgsConstructor
     public enum LevelOption {
-        LEVEL1("Level 1", new LevelConfig(10, (new BasicAppleFactory()).combinedWith(new ShrinkingAppleFactory(), 0.2), new ArrayList<SnakeBot>(), g -> g.getScore() == 12)),
-        LEVEL2("Level 2", new LevelConfig(10, (new BasicAppleFactory()).combinedWith(new ShrinkingAppleFactory(), 0.2), new ArrayList<SnakeBot>(), g -> g.getScore() == 12)),
-        LEVEL3("Level 3", new LevelConfig(10, (new BasicAppleFactory()).combinedWith(new ShrinkingAppleFactory(), 0.2), new ArrayList<SnakeBot>(), g -> g.getScore() == 12));
+        LEVEL1("Level 1"),
+        LEVEL2("Level 2"),
+        LEVEL3("Level 3");
 
         private final String asString;
-        @Getter private final LevelConfig config;
 
         @Override
         public String toString() {
@@ -206,8 +256,7 @@ public class GameController {
     @RequiredArgsConstructor
     public enum DrawerOption {
         FANCY("Fancy"),
-        DEBUG("Debug"),
-        DEFAULT("Default");
+        DEBUG("Debug");
 
         private final String asString;
 

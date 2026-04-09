@@ -48,7 +48,6 @@
                     <FXCollections fx:factory="observableArrayList">
                         <GameController.DrawerOption fx:value="FANCY"/>
                         <GameController.DrawerOption fx:value="DEBUG"/>
-                        <GameController.DrawerOption fx:value="DEFAULT"/>
                     </FXCollections>
                 </items>
             </ComboBox>

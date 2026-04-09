@@ -1,9 +1,9 @@
 package ru.nsu.zenin.snake.model;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
-import java.util.ArrayList;
 import ru.nsu.zenin.collection.Point2D;
 
 public class ObservableSnake implements Snake {
@@ -67,13 +67,14 @@ public class ObservableSnake implements Snake {
                         case RIGHT -> new Point2D(prevHead.x() + 1, prevHead.y());
                         case LEFT -> new Point2D(prevHead.x() - 1, prevHead.y());
                     };
-            
+
             segments.addFirst(nextHead);
 
             Point2D prevTail = segments.removeLast();
             Point2D nextTail = segments.getLast();
 
-            sendChange(new SnakeChangeListener.Change.Moved(nextHead, prevHead, nextTail, prevTail));
+            sendChange(
+                    new SnakeChangeListener.Change.Moved(nextHead, prevHead, nextTail, prevTail));
 
             if (sizeOnTickStart < targetSizeOnTickStart) {
                 segments.addLast(prevTail);
