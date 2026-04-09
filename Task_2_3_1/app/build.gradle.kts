@@ -56,7 +56,9 @@ tasks.jacocoTestReport {
     }
     classDirectories.setFrom(files(classDirectories.files.map {
         fileTree(it).matching {
-            exclude("ru/nsu/zenin/snake/App.*")
+            exclude("ru/nsu/zenin/snake/app/*")
+            exclude("ru/nsu/zenin/snake/view/*")
+            exclude("ru/nsu/zenin/snake/controller/*")
         }
     }))
 }
