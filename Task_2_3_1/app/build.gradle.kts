@@ -25,6 +25,9 @@ dependencies {
     // This dependency is used by the application.
     implementation(libs.guava)
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    compileOnly("org.projectlombok:lombok:1.18.42")
+
+    annotationProcessor("org.projectlombok:lombok:1.18.42")
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
