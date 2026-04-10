@@ -278,8 +278,7 @@ public class GameController {
                                 tryChangeSnakeDirection(playerSnake, Snake.Direction.LEFT);
                         case KeyCode.RIGHT ->
                                 tryChangeSnakeDirection(playerSnake, Snake.Direction.RIGHT);
-                        case KeyCode.Q ->
-                                game.stop();
+                        case KeyCode.Q -> game.stop();
                         default -> {}
                     }
                 });
