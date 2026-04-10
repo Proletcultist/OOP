@@ -59,132 +59,138 @@ public class Game {
         snake.addListener(
                 change -> {
                     switch (change) {
-                        case SnakeChangeListener.Change.Moved m -> {
-                            Point2D transNewHead =
-                                    m.newHead().wrappedAround(field.getWidth(), field.getHeight());
-                            Point2D transPrevHead =
-                                    m.prevHead().wrappedAround(field.getWidth(), field.getHeight());
-                            Point2D transNewTail =
-                                    m.newTail().wrappedAround(field.getWidth(), field.getHeight());
-                            Point2D transPrevTail =
-                                    m.prevTail().wrappedAround(field.getWidth(), field.getHeight());
-
-                            available.add(transPrevTail);
-                            available.remove(transNewHead);
-
-                            field.set(transPrevTail, new TileState.Free());
-
-                            // Check for collision
-                            switch (field.get(transNewHead)) {
-                                case TileState.OccupiedBySnake os -> {
-                                    if (snake == playerSnake) {
-                                        state = State.GAME_OVER;
-                                    } else {
-                                        removeSnake(snake);
-                                        return;
-                                    }
-                                }
-                                case TileState.OccupiedByApple oa -> {
-                                    oa.apple().apply(snake);
-                                    spawnNewApple();
-                                    if (snake == playerSnake) {
-                                        score++;
-                                    }
-                                }
-                                case TileState.Free free -> {}
-                            }
-
-                            if (snake.size() == 1) {
-                                field.set(
-                                        transNewHead,
-                                        new TileState.OccupiedBySnake.SnakeHeadTail(snake));
-                            } else {
-                                field.set(
-                                        transNewHead,
-                                        new TileState.OccupiedBySnake.SnakeHead(
-                                                snake, transPrevHead));
-                                TileState.OccupiedBySnake.SnakeHead prevHead =
-                                        (TileState.OccupiedBySnake.SnakeHead)
-                                                field.get(transPrevHead);
-                                field.set(
-                                        transPrevHead,
-                                        new TileState.OccupiedBySnake.SnakeBody(
-                                                snake, prevHead.next(), transNewHead));
-
-                                TileState.OccupiedBySnake newTail =
-                                        (TileState.OccupiedBySnake) field.get(transNewTail);
-                                if (!(newTail instanceof TileState.OccupiedBySnake.SnakeHead)) {
-                                    field.set(
-                                            transNewTail,
-                                            new TileState.OccupiedBySnake.SnakeTail(
-                                                    snake,
-                                                    ((TileState.OccupiedBySnake.SnakeBody) newTail)
-                                                            .prev()));
-                                }
-                            }
-                        }
-                        case SnakeChangeListener.Change.Growed g -> {
-                            Point2D transNewTail =
-                                    g.newTail().wrappedAround(field.getWidth(), field.getHeight());
-                            Point2D transPrevTail =
-                                    g.prevTail().wrappedAround(field.getWidth(), field.getHeight());
-
-                            switch (field.get(transNewTail)) {
-                                case TileState.OccupiedBySnake os -> {
-                                    if (os.snake() == playerSnake) {
-                                        state = State.GAME_OVER;
-                                    } else {
-                                        removeSnake(os.snake());
-                                        return;
-                                    }
-                                }
-                                default -> {}
-                            }
-
-                            available.remove(transNewTail);
-
-                            field.set(
-                                    transNewTail,
-                                    new TileState.OccupiedBySnake.SnakeTail(snake, transPrevTail));
-
-                            if (snake.size() == 2) {
-                                field.set(
-                                        transPrevTail,
-                                        new TileState.OccupiedBySnake.SnakeHead(
-                                                snake, transNewTail));
-                            } else {
-                                TileState.OccupiedBySnake.SnakeTail prevTail =
-                                        (TileState.OccupiedBySnake.SnakeTail)
-                                                field.get(transPrevTail);
-                                field.set(
-                                        transPrevTail,
-                                        new TileState.OccupiedBySnake.SnakeBody(
-                                                snake, transNewTail, prevTail.prev()));
-                            }
-                        }
-                        case SnakeChangeListener.Change.Shrinked s -> {
-                            Point2D transNewTail =
-                                    s.newTail().wrappedAround(field.getWidth(), field.getHeight());
-                            if (snake.size() == 1) {
-                                field.set(
-                                        transNewTail,
-                                        new TileState.OccupiedBySnake.SnakeHeadTail(snake));
-                            } else {
-                                TileState.OccupiedBySnake.SnakeBody newTail =
-                                        (TileState.OccupiedBySnake.SnakeBody)
-                                                field.get(transNewTail);
-                                field.set(
-                                        transNewTail,
-                                        new TileState.OccupiedBySnake.SnakeTail(
-                                                snake, newTail.prev()));
-                            }
-                        }
+                        case SnakeChangeListener.Change.Moved m -> processSnakeMove(snake, m);
+                        case SnakeChangeListener.Change.Growed g -> processSnakeGrow(snake, g);
+                        case SnakeChangeListener.Change.Shrinked s -> processSnakeShrink(snake, s);
                     }
                 });
 
         snakes.add(snake);
 
         return snake;
+    }
+
+    private void processSnakeMove(Snake snake, SnakeChangeListener.Change.Moved m) {
+        Point2D transNewHead =
+                m.newHead().wrappedAround(field.getWidth(), field.getHeight());
+        Point2D transPrevHead =
+                m.prevHead().wrappedAround(field.getWidth(), field.getHeight());
+        Point2D transNewTail =
+                m.newTail().wrappedAround(field.getWidth(), field.getHeight());
+        Point2D transPrevTail =
+                m.prevTail().wrappedAround(field.getWidth(), field.getHeight());
+
+        available.add(transPrevTail);
+        available.remove(transNewHead);
+
+        field.set(transPrevTail, new TileState.Free());
+
+        // Check for collision
+        switch (field.get(transNewHead)) {
+            case TileState.OccupiedBySnake os -> {
+                if (snake == playerSnake) {
+                    state = State.GAME_OVER;
+                } else {
+                    removeSnake(snake);
+                    return;
+                }
+            }
+            case TileState.OccupiedByApple oa -> {
+                oa.apple().apply(snake);
+                spawnNewApple();
+                if (snake == playerSnake) {
+                    score++;
+                }
+            }
+            case TileState.Free free -> {}
+        }
+
+        if (snake.size() == 1) {
+            field.set(
+                    transNewHead,
+                    new TileState.OccupiedBySnake.SnakeHeadTail(snake));
+        } else {
+            field.set(
+                    transNewHead,
+                    new TileState.OccupiedBySnake.SnakeHead(
+                            snake, transPrevHead));
+            TileState.OccupiedBySnake.SnakeHead prevHead =
+                    (TileState.OccupiedBySnake.SnakeHead)
+                            field.get(transPrevHead);
+            field.set(
+                    transPrevHead,
+                    new TileState.OccupiedBySnake.SnakeBody(
+                            snake, prevHead.next(), transNewHead));
+
+            TileState.OccupiedBySnake newTail =
+                    (TileState.OccupiedBySnake) field.get(transNewTail);
+            if (!(newTail instanceof TileState.OccupiedBySnake.SnakeHead)) {
+                field.set(
+                        transNewTail,
+                        new TileState.OccupiedBySnake.SnakeTail(
+                                snake,
+                                ((TileState.OccupiedBySnake.SnakeBody) newTail)
+                                        .prev()));
+            }
+        }
+    }
+
+    private void processSnakeGrow(Snake snake, SnakeChangeListener.Change.Growed g) {
+        Point2D transNewTail =
+                g.newTail().wrappedAround(field.getWidth(), field.getHeight());
+        Point2D transPrevTail =
+                g.prevTail().wrappedAround(field.getWidth(), field.getHeight());
+
+        switch (field.get(transNewTail)) {
+            case TileState.OccupiedBySnake os -> {
+                if (os.snake() == playerSnake) {
+                    state = State.GAME_OVER;
+                } else {
+                    removeSnake(os.snake());
+                    return;
+                }
+            }
+            default -> {}
+        }
+
+        available.remove(transNewTail);
+
+        field.set(
+                transNewTail,
+                new TileState.OccupiedBySnake.SnakeTail(snake, transPrevTail));
+
+        if (snake.size() == 2) {
+            field.set(
+                    transPrevTail,
+                    new TileState.OccupiedBySnake.SnakeHead(
+                            snake, transNewTail));
+        } else {
+            TileState.OccupiedBySnake.SnakeTail prevTail =
+                    (TileState.OccupiedBySnake.SnakeTail)
+                            field.get(transPrevTail);
+            field.set(
+                    transPrevTail,
+                    new TileState.OccupiedBySnake.SnakeBody(
+                            snake, transNewTail, prevTail.prev()));
+        }
+    }
+
+    private void processSnakeShrink(Snake snake, SnakeChangeListener.Change.Shrinked s) {
+        Point2D transNewTail =
+                s.newTail().wrappedAround(field.getWidth(), field.getHeight());
+        if (snake.size() == 1) {
+            field.set(
+                    transNewTail,
+                    new TileState.OccupiedBySnake.SnakeHeadTail(snake));
+        } else {
+            TileState.OccupiedBySnake.SnakeBody newTail =
+                    (TileState.OccupiedBySnake.SnakeBody)
+                            field.get(transNewTail);
+            field.set(
+                    transNewTail,
+                    new TileState.OccupiedBySnake.SnakeTail(
+                            snake, newTail.prev()));
+        }
     }
 
     private void removeSnake(Snake snake) {
