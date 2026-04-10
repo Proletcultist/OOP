@@ -68,7 +68,7 @@ initTheme();
 <li><a href="#method-summary" tabindex="0">Method Summary</a></li>
 <li><a href="#constructor-detail" tabindex="0">Constructor Details</a>
 <ol class="toc-list">
-<li><a href="#%3Cinit%3E(ru.nsu.zenin.snake.model.Snake,boolean)" tabindex="0">SnakeHeadTail(Snake, boolean)</a></li>
+<li><a href="#%3Cinit%3E(ru.nsu.zenin.snake.model.Snake)" tabindex="0">SnakeHeadTail(Snake)</a></li>
 </ol>
 </li>
 <li><a href="#method-detail" tabindex="0">Method Details</a>
@@ -77,7 +77,6 @@ initTheme();
 <li><a href="#hashCode()" tabindex="0">hashCode()</a></li>
 <li><a href="#equals(java.lang.Object)" tabindex="0">equals(Object)</a></li>
 <li><a href="#snake()" tabindex="0">snake()</a></li>
-<li><a href="#dead()" tabindex="0">dead()</a></li>
 </ol>
 </li>
 </ol>
@@ -103,7 +102,7 @@ initTheme();
 </dl>
 <hr>
 <div class="horizontal-scroll">
-<div class="type-signature"><span class="modifiers">public static record </span><span class="element-name type-name-label">TileState.OccupiedBySnake.SnakeHeadTail</span>(<a href="Snake.html" title="interface in ru.nsu.zenin.snake.model">Snake</a>&nbsp;snake, boolean&nbsp;dead)
+<div class="type-signature"><span class="modifiers">public static record </span><span class="element-name type-name-label">TileState.OccupiedBySnake.SnakeHeadTail</span>(<a href="Snake.html" title="interface in ru.nsu.zenin.snake.model">Snake</a>&nbsp;snake)
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/lang/Record.html" title="class in java.lang" class="external-link">Record</a>
 implements <a href="TileState.OccupiedBySnake.html" title="interface in ru.nsu.zenin.snake.model">TileState.OccupiedBySnake</a></span></div>
 </div>
@@ -163,8 +162,7 @@ implements <a href="TileState.OccupiedBySnake.html" title="interface in ru.nsu.z
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(ru.nsu.zenin.snake.model.Snake,boolean)" class="member-name-link">SnakeHeadTail</a><wbr>(<a href="Snake.html" title="interface in ru.nsu.zenin.snake.model">Snake</a>&nbsp;snake,
- boolean&nbsp;dead)</code></div>
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(ru.nsu.zenin.snake.model.Snake)" class="member-name-link">SnakeHeadTail</a><wbr>(<a href="Snake.html" title="interface in ru.nsu.zenin.snake.model">Snake</a>&nbsp;snake)</code></div>
 <div class="col-last even-row-color">
 <div class="block">Creates an instance of a <code>SnakeHeadTail</code> record class.</div>
 </div>
@@ -182,29 +180,24 @@ implements <a href="TileState.OccupiedBySnake.html" title="interface in ru.nsu.z
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#dead()" class="member-name-link">dead</a>()</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#equals(java.lang.Object)" class="member-name-link">equals</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/lang/Object.html" title="class in java.lang" class="external-link">Object</a>&nbsp;o)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Returns the value of the <code>dead</code> record component.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#equals(java.lang.Object)" class="member-name-link">equals</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/lang/Object.html" title="class in java.lang" class="external-link">Object</a>&nbsp;o)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Indicates whether some other object is "equal to" this one.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final int</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#hashCode()" class="member-name-link">hashCode</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final int</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#hashCode()" class="member-name-link">hashCode</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns a hash code value for this object.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="Snake.html" title="interface in ru.nsu.zenin.snake.model">Snake</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#snake()" class="member-name-link">snake</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="Snake.html" title="interface in ru.nsu.zenin.snake.model">Snake</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#snake()" class="member-name-link">snake</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the value of the <code>snake</code> record component.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final <a href="https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/lang/String.html" title="class in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toString()" class="member-name-link">toString</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final <a href="https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/lang/String.html" title="class in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toString()" class="member-name-link">toString</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns a string representation of this record class.</div>
 </div>
 </div>
@@ -225,16 +218,14 @@ implements <a href="TileState.OccupiedBySnake.html" title="interface in ru.nsu.z
 <h2>Constructor Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="&lt;init&gt;(ru.nsu.zenin.snake.model.Snake,boolean)">
+<section class="detail" id="&lt;init&gt;(ru.nsu.zenin.snake.model.Snake)">
 <h3>SnakeHeadTail</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">SnakeHeadTail</span><wbr><span class="parameters">(<a href="Snake.html" title="interface in ru.nsu.zenin.snake.model">Snake</a>&nbsp;snake,
- boolean&nbsp;dead)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">SnakeHeadTail</span><wbr><span class="parameters">(<a href="Snake.html" title="interface in ru.nsu.zenin.snake.model">Snake</a>&nbsp;snake)</span></div>
 <div class="block">Creates an instance of a <code>SnakeHeadTail</code> record class.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>snake</code> - the value for the <code>snake</code> record component</dd>
-<dd><code>dead</code> - the value for the <code>dead</code> record component</dd>
 </dl>
 </div>
 </section>
@@ -282,7 +273,7 @@ implements <a href="TileState.OccupiedBySnake.html" title="interface in ru.nsu.z
 <h3>equals</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public final</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">equals</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/lang/Object.html" title="class in java.lang" class="external-link">Object</a>&nbsp;o)</span></div>
-<div class="block">Indicates whether some other object is "equal to" this one. The objects are equal if the other object is of the same class and if all the record components are equal. Reference components are compared with <a href="https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/util/Objects.html#equals(java.lang.Object,java.lang.Object)" class="external-link"><code>Objects::equals(Object,Object)</code></a>; primitive components are compared with the <code>compare</code> method from their corresponding wrapper classes.</div>
+<div class="block">Indicates whether some other object is "equal to" this one. The objects are equal if the other object is of the same class and if all the record components are equal. All components in this record class are compared with <a href="https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/util/Objects.html#equals(java.lang.Object,java.lang.Object)" class="external-link"><code>Objects::equals(Object,Object)</code></a>.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/lang/Record.html#equals(java.lang.Object)" class="external-link">equals</a></code>&nbsp;in class&nbsp;<code><a href="https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/lang/Record.html" title="class in java.lang" class="external-link">Record</a></code></dd>
@@ -305,19 +296,6 @@ implements <a href="TileState.OccupiedBySnake.html" title="interface in ru.nsu.z
 <dd><code><a href="TileState.OccupiedBySnake.html#snake()">snake</a></code>&nbsp;in interface&nbsp;<code><a href="TileState.OccupiedBySnake.html" title="interface in ru.nsu.zenin.snake.model">TileState.OccupiedBySnake</a></code></dd>
 <dt>Returns:</dt>
 <dd>the value of the <code>snake</code> record component</dd>
-</dl>
-</div>
-</section>
-</li>
-<li>
-<section class="detail" id="dead()">
-<h3>dead</h3>
-<div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">dead</span>()</div>
-<div class="block">Returns the value of the <code>dead</code> record component.</div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>the value of the <code>dead</code> record component</dd>
 </dl>
 </div>
 </section>
