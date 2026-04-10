@@ -66,6 +66,7 @@ public class GameFieldView extends Region {
 
         initGraphics();
         initListeners();
+        redrawAll();
     }
 
     private void initGraphics() {
