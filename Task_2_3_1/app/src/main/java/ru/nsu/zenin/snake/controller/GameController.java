@@ -119,6 +119,7 @@ public class GameController {
                 fieldView.setGridWidth(Integer.valueOf(gridWidthInput.getText()));
             } catch (NumberFormatException e) {
                 statusBar.setText("Invalid int format for grid width");
+                return;
             }
         }
         if (!gridHeightInput.getText().isEmpty()) {
@@ -126,6 +127,7 @@ public class GameController {
                 fieldView.setGridHeight(Integer.valueOf(gridHeightInput.getText()));
             } catch (NumberFormatException e) {
                 statusBar.setText("Invalid int format for grid height");
+                return;
             }
         }
 
