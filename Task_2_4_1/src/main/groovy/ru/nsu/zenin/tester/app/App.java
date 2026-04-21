@@ -1,20 +1,24 @@
 package ru.nsu.zenin.tester.app;
 
 import groovy.lang.GroovyShell;
-import groovy.lang.Script;
+import groovy.util.DelegatingScript;
 import java.nio.file.Paths;
-import ru.nsu.zenin.tester.dsl.Delegate;
+import org.codehaus.groovy.control.CompilerConfiguration;
+import ru.nsu.zenin.tester.dsl.DslScriptDelegate;
 
 public class App {
     public static void main(String[] args) throws Exception {
-        GroovyShell shell = new GroovyShell();
-        Delegate d = new Delegate();
+        CompilerConfiguration cc = new CompilerConfiguration();
+        cc.setScriptBaseClass(DelegatingScript.class.getName());
+        GroovyShell shell = new GroovyShell(cc);
 
-        Script script = shell.parse(Paths.get(args[0]).toFile());
+        DelegatingScript script = (DelegatingScript) shell.parse(Paths.get(args[0]).toFile());
+
+        DslScriptDelegate d = new DslScriptDelegate();
+
         script.setDelegate(d);
-        script.setResolveStrategy(groovy.lang.Closure.DELEGATE_FIRST);
         script.run();
 
-        System.out.println(d.getCourse().toString());
+        System.out.println(d.getConfig().toString());
     }
 }
