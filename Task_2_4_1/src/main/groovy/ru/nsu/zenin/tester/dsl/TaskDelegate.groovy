@@ -8,7 +8,7 @@ class TaskDelegate {
     private static DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
     List<Task> capturedTasks = []
 
-    def task(int id, String name, int score, String softDeadline, String hardDeadline) {
+    def task(String id, String name, int score, String softDeadline, String hardDeadline) {
         capturedTasks << new Task(id, name, score, LocalDate.parse(softDeadline, dateFormatter), LocalDate.parse(hardDeadline, dateFormatter))
     }
 }
