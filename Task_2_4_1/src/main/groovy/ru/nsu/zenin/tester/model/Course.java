@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import lombok.Setter;
+import ru.nsu.zenin.tester.service.logging.Logger;
 
 public class Course {
     private List<Group> groups = new ArrayList<Group>();
