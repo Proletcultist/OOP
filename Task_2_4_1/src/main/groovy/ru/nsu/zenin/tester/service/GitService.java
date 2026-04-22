@@ -10,9 +10,11 @@ public class GitService {
     public static Path cloneRepo(URL repoUrl) throws IOException, InterruptedException {
         Path cloneDir = Files.createTempDirectory("repo");
 
-        ProcessBuilder pb = new ProcessBuilder("git", "clone", "--depth", "1", repoUrl.toString(), cloneDir.toString());
+        ProcessBuilder pb =
+                new ProcessBuilder(
+                        "git", "clone", "--depth", "1", repoUrl.toString(), cloneDir.toString());
         pb.inheritIO();
-        
+
         Process process = pb.start();
         int exitCode = process.waitFor();
 
@@ -25,10 +27,14 @@ public class GitService {
 
     private static void deleteRecursively(Path dir) throws IOException {
         Files.walk(dir)
-             .sorted((a, b) -> b.compareTo(a))
-             .forEach(p -> {
-                 try { Files.delete(p); } 
-                 catch (IOException e) { System.err.println("Failed to delete: " + p); }
-             });
+                .sorted((a, b) -> b.compareTo(a))
+                .forEach(
+                        p -> {
+                            try {
+                                Files.delete(p);
+                            } catch (IOException e) {
+                                System.err.println("Failed to delete: " + p);
+                            }
+                        });
     }
 }
