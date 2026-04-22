@@ -38,6 +38,17 @@ public class Course {
         return tasks.get(taskId);
     }
 
+    public void checkAllAssignments() throws Exception {
+        for (Group g : groups) {
+            for (Student s : g.students()) {
+                s.checkAllAssignments();
+            }
+        }
+    }
+
+    public void reportAllAssignments() {
+    }
+
     @Override
     public String toString() {
         return "Tasks: " + tasks.toString() +

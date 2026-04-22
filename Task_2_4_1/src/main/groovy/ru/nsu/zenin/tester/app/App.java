@@ -27,5 +27,7 @@ public class App {
         }
 
         System.out.println(d.getCourse().toString());
+
+        d.getCourse().checkAllAssignments();
     }
 }
