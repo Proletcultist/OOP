@@ -1,6 +1,6 @@
 
 tasks {
-    task("lab1", "abobA", 2, "20.01.1999", "01.01.1970")
+    task("Task_1_1_1", "abobA", 2, "20.01.1999", "01.01.1970")
 }
 
 settings {
@@ -18,5 +18,5 @@ groups {
 }
 
 assignments {
-    assign("proletcultist", "lab1")
+    assign("proletcultist", "Task_1_1_1")
 }
