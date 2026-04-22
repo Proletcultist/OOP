@@ -52,7 +52,7 @@ class DslScriptDelegate {
         d.capturedTasks.each { course.addTask(it) }
     }
 
-    def getCourse() {
+    def Course getCourse() {
         return course
     }
 }

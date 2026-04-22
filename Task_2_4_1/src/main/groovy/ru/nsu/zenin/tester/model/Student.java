@@ -2,8 +2,10 @@ package ru.nsu.zenin.tester.model;
 
 import java.net.URL;
 import java.util.List;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import lombok.Data;
+import ru.nsu.zenin.tester.service.GitService;
 
 @Data
 public class Student {
@@ -17,6 +19,7 @@ public class Student {
         assignments.add(new Assignment(task, false, false, false, 0, 0));
     }
 
-    public void checkAllAssignments() {
+    public void checkAllAssignments() throws Exception {
+        Path repo = GitService.cloneRepo(ghRepo);
     }
 }
