@@ -3,11 +3,16 @@ package ru.nsu.zenin.tester.app;
 import groovy.lang.GroovyShell;
 import groovy.util.DelegatingScript;
 import java.nio.file.Paths;
+import java.io.OutputStreamWriter;
+import java.io.BufferedWriter;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import ru.nsu.zenin.tester.dsl.DslScriptDelegate;
+import ru.nsu.zenin.tester.service.logging.Logger;
 
 public class App {
     public static void main(String[] args) throws Exception {
+        Logger.init(new BufferedWriter(new OutputStreamWriter(System.err)));
+
         CompilerConfiguration cc = new CompilerConfiguration();
         cc.setScriptBaseClass(DelegatingScript.class.getName());
         GroovyShell shell = new GroovyShell(cc);
@@ -18,7 +23,7 @@ public class App {
         try {
             script.run();
         } catch (Exception e) {
-            System.err.println("[\033[31mError\033[0m] " + e.getMessage());
+            Logger.log(Logger.LogLevel.ERROR, e.getMessage());
             System.exit(-1);
         }
 
