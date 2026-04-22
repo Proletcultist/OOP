@@ -1,9 +1,9 @@
 package ru.nsu.zenin.tester.model;
 
 import java.net.URL;
-import java.util.List;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.List;
 import lombok.Data;
 import ru.nsu.zenin.tester.service.GitService;
 

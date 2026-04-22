@@ -1,12 +1,12 @@
 package ru.nsu.zenin.tester.model;
 
-import java.util.List;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 import lombok.Setter;
-import java.time.LocalDate;
 
 public class Course {
     private List<Group> groups = new ArrayList<Group>();
@@ -46,15 +46,17 @@ public class Course {
         }
     }
 
-    public void reportAllAssignments() {
-    }
+    public void reportAllAssignments() {}
 
     @Override
     public String toString() {
-        return "Tasks: " + tasks.toString() +
-               "\nGrade Scale: " + gradeScale.toString() +
-               "\nCheckpoints: " + checkpoints.toString() +
-               "\nGroups: " + groups.toString();
+        return "Tasks: "
+                + tasks.toString()
+                + "\nGrade Scale: "
+                + gradeScale.toString()
+                + "\nCheckpoints: "
+                + checkpoints.toString()
+                + "\nGroups: "
+                + groups.toString();
     }
 }
-
