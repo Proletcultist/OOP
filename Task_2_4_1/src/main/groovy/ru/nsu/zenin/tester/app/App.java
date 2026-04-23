@@ -7,6 +7,8 @@ import java.io.OutputStreamWriter;
 import java.nio.file.Paths;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import ru.nsu.zenin.tester.dsl.DslScriptDelegate;
+import ru.nsu.zenin.tester.service.CheckService;
+import ru.nsu.zenin.tester.service.ReportService;
 import ru.nsu.zenin.tester.service.logging.Logger;
 
 public class App {
@@ -29,8 +31,7 @@ public class App {
 
         // System.out.println(d.getCourse().toString());
 
-        d.getCourse().checkAllAssignments();
-
-        d.getCourse().reportAllAssignments();
+        CheckService.checkAllAssignments(d.getCourse());
+        ReportService.reportAllAssignments(d.getCourse());
     }
 }
