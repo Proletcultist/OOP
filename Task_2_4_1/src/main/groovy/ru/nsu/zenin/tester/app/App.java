@@ -2,9 +2,9 @@ package ru.nsu.zenin.tester.app;
 
 import groovy.lang.GroovyShell;
 import groovy.util.DelegatingScript;
-import java.nio.file.Paths;
-import java.io.OutputStreamWriter;
 import java.io.BufferedWriter;
+import java.io.OutputStreamWriter;
+import java.nio.file.Paths;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import ru.nsu.zenin.tester.dsl.DslScriptDelegate;
 import ru.nsu.zenin.tester.service.logging.Logger;
@@ -27,7 +27,7 @@ public class App {
             System.exit(-1);
         }
 
-        //System.out.println(d.getCourse().toString());
+        // System.out.println(d.getCourse().toString());
 
         d.getCourse().checkAllAssignments();
 
