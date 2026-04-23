@@ -1,18 +1,11 @@
 package ru.nsu.zenin.tester.service;
 
-import java.nio.file.Path;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.concurrent.TimeUnit;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 import ru.nsu.zenin.tester.service.logging.Logger;
 
 public class GradleService {
@@ -46,7 +39,7 @@ public class GradleService {
             for (Path xmlFile : stream) {
                 try {
                     Element suite = builder.parse(xmlFile.toFile()).getDocumentElement();
-                    
+
                     int tests = Integer.parseInt(suite.getAttribute("tests").trim());
                     int failures = Integer.parseInt(suite.getAttribute("failures").trim());
                     int errs = Integer.parseInt(suite.getAttribute("errors").trim());
@@ -56,7 +49,8 @@ public class GradleService {
                     skipped += skips;
                     passed += Math.max(0, tests - failures - errs - skips);
                 } catch (Exception e) {
-                    Logger.tryLog(Logger.LogLevel.WARNING, "Skipping malformed test report: " + xmlFile);
+                    Logger.tryLog(
+                            Logger.LogLevel.WARNING, "Skipping malformed test report: " + xmlFile);
                 }
             }
         }

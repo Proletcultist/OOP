@@ -2,7 +2,6 @@ package ru.nsu.zenin.tester.service;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -11,7 +10,8 @@ import java.time.format.DateTimeFormatter;
 import ru.nsu.zenin.tester.service.logging.Logger;
 
 public class GitService {
-    private static DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd kk:mm:ss xx");
+    private static DateTimeFormatter dateFormatter =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd kk:mm:ss xx");
 
     private GitService() {}
 
@@ -38,17 +38,17 @@ public class GitService {
 
     public static LocalDate getLastCommitDate(Path file) throws Exception {
         ProcessBuilder pb =
-                new ProcessBuilder(
-                        "git", "log", "-1", "--format=%ci", "--", file.toString());
+                new ProcessBuilder("git", "log", "-1", "--format=%ci", "--", file.toString());
 
         pb.directory(file.toFile());
         pb.redirectError(ProcessBuilder.Redirect.DISCARD);
         Process process = pb.start();
 
         String timestampStr;
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+        try (BufferedReader reader =
+                new BufferedReader(new InputStreamReader(process.getInputStream()))) {
             timestampStr = reader.readLine();
-            while (reader.readLine() != null) {} 
+            while (reader.readLine() != null) {}
         }
 
         int exitCode = process.waitFor();
@@ -56,7 +56,7 @@ public class GitService {
         if (exitCode != 0) {
             throw new RuntimeException("Git log failed with exit code: " + exitCode);
         }
-        
+
         return LocalDate.parse(timestampStr, dateFormatter);
     }
 }
