@@ -4,6 +4,8 @@ import groovy.lang.GroovyShell;
 import groovy.util.DelegatingScript;
 import java.io.BufferedWriter;
 import java.io.OutputStreamWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import ru.nsu.zenin.tester.dsl.DslScriptDelegate;
@@ -12,14 +14,22 @@ import ru.nsu.zenin.tester.service.ReportService;
 import ru.nsu.zenin.tester.service.logging.Logger;
 
 public class App {
+    private static String CONFIG_NAME = "config.groovy";
+
     public static void main(String[] args) throws Exception {
         Logger.init(new BufferedWriter(new OutputStreamWriter(System.err)));
+
+        Path config = Paths.get(CONFIG_NAME);
+        if (!Files.exists(config)) {
+            Logger.log(Logger.LogLevel.ERROR, "Cannot find config file " + config);
+            System.exit(-1);
+        }
 
         CompilerConfiguration cc = new CompilerConfiguration();
         cc.setScriptBaseClass(DelegatingScript.class.getName());
         GroovyShell shell = new GroovyShell(cc);
 
-        DelegatingScript script = (DelegatingScript) shell.parse(Paths.get(args[0]).toFile());
+        DelegatingScript script = (DelegatingScript) shell.parse(config.toFile());
         DslScriptDelegate d = new DslScriptDelegate();
         script.setDelegate(d);
         try {
@@ -28,8 +38,6 @@ public class App {
             Logger.log(Logger.LogLevel.ERROR, e.getMessage());
             System.exit(-1);
         }
-
-        // System.out.println(d.getCourse().toString());
 
         CheckService.checkAllAssignments(d.getCourse());
         ReportService.reportAllAssignments(d.getCourse());
