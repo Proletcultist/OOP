@@ -1,11 +1,21 @@
 package ru.nsu.zenin.tester.dsl
 
+import org.codehaus.groovy.control.CompilerConfiguration;
 import ru.nsu.zenin.tester.model.Course
 
 class DslScriptDelegate {
     private Course course = new Course()
 
     def include(String path) {
+        def file = new File(path)
+        if (!file.exists()) throw new FileNotFoundException("Config not found: $path")
+
+        def cc = new CompilerConfiguration()
+        cc.setScriptBaseClass(DelegatingScript.class.getName())
+        def shell = new groovy.lang.GroovyShell(cc)
+        def script = shell.parse(file)
+        script.setDelegate(this)
+        script.run()
     }
 
     def checkpoints(Closure c) {
