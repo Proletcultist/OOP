@@ -3,6 +3,7 @@ package ru.nsu.zenin.tester.service;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import ru.nsu.zenin.tester.model.Assignment;
 import ru.nsu.zenin.tester.model.Course;
 import ru.nsu.zenin.tester.model.Group;
@@ -10,6 +11,8 @@ import ru.nsu.zenin.tester.model.Student;
 import ru.nsu.zenin.tester.service.logging.Logger;
 
 public class CheckService {
+    static final String DOCS_DIR = "docs";
+
     private CheckService() {}
 
     public static void checkAllAssignments(Course course) throws Exception {
@@ -23,7 +26,7 @@ public class CheckService {
     public static void checkAllAssignments(Student student) throws Exception {
         Logger.tryLog(
                 Logger.LogLevel.INFO,
-                "Checing assignments of "
+                "Checking assignments of "
                         + student.getId()
                         + " ("
                         + student.getFullName()
@@ -65,7 +68,9 @@ public class CheckService {
                     Logger.LogLevel.INFO,
                     "Generating docs for " + student.getId() + " : " + ass.getTask().id() + "...");
             try {
-                GradleService.generateJavadoc(taskDir);
+                GradleService.generateJavadoc(
+                        taskDir,
+                        Paths.get(DOCS_DIR, student.getId(), ass.getTask().id()).toAbsolutePath());
                 ass.setHasDocs(true);
             } catch (Exception e) {
                 Logger.tryLog(
@@ -105,6 +110,7 @@ public class CheckService {
         }
 
         Logger.tryLog(Logger.LogLevel.INFO, "Removing " + student.getGhRepo().toString() + "...");
+
         Files.walk(repo)
                 .sorted((a, b) -> b.compareTo(a))
                 .forEach(
