@@ -6,8 +6,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import lombok.Getter;
 import lombok.Setter;
 
+@Getter
 public class Course {
     private List<Group> groups = new ArrayList<Group>();
     private Map<String, Student> studentById = new HashMap<String, Student>();
@@ -36,124 +38,6 @@ public class Course {
 
     public Task getTask(String taskId) {
         return tasks.get(taskId);
-    }
-
-    public void checkAllAssignments() throws Exception {
-        for (Group g : groups) {
-            for (Student s : g.students()) {
-                s.checkAllAssignments();
-            }
-        }
-    }
-
-    public void reportAllAssignments() {
-        System.out.println("<html>");
-        System.out.println(
-                "<head><style>table, th, td { border: 1px solid black; } table { table-layout: fixed; margin: 10px auto; border-collapse: collapse; }</style></head>");
-        System.out.println("<body>");
-
-        for (Group g : groups) {
-            reportGroup(g);
-        }
-
-        System.out.println("</body>");
-        System.out.println("</html>");
-    }
-
-    private void reportGroup(Group g) {
-        System.out.println("<h2>" + g.name() + "</h2>");
-        for (Student s : g.students()) {
-            reportStudent(s);
-        }
-    }
-
-    private void reportStudent(Student s) {
-        System.out.println("<h3>" + s.getFullName() + "</h3>\n<hr>");
-        System.out.println(
-                "<table>\n"
-                        + "\t<thead>\n"
-                        + "\t\t<tr>\n"
-                        + "\t\t\t<th scope=\"col\">Task id</th>\n"
-                        + "\t\t\t<th scope=\"col\">Build</th>\n"
-                        + "\t\t\t<th scope=\"col\">Code style</th>\n"
-                        + "\t\t\t<th scope=\"col\">Docs</th>\n"
-                        + "\t\t\t<th scope=\"col\">Tests</th>\n"
-                        + "\t\t\t<th scope=\"col\">Score</th>\n"
-                        + "\t\t</tr>\n"
-                        + "\t</thead>");
-
-        Map<Checkpoint, Integer> checkpointScore = new HashMap<Checkpoint, Integer>();
-        for (Checkpoint c : checkpoints.values()) {
-            checkpointScore.put(c, 0);
-        }
-
-        System.out.println("\t<tbody>");
-        for (Assignment ass : s.getAssignments()) {
-            int score = computeAssignmentScore(ass);
-
-            Checkpoint check = checkpoints.higherEntry(ass.getTask().hardDeadline()).getValue();
-            checkpointScore.put(check, checkpointScore.get(check) + score);
-
-            System.out.println(
-                    "\t<tr>\n"
-                            + "\t\t<td>"
-                            + ass.getTask().id()
-                            + "</td>\n"
-                            + "\t\t<td>"
-                            + booleanToString(ass.isBuildable())
-                            + "</td>\n"
-                            + "\t\t<td>"
-                            + booleanToString(ass.isCodestyleCompliant())
-                            + "</td>\n"
-                            + "\t\t<td>"
-                            + booleanToString(ass.isHasDocs())
-                            + "</td>\n"
-                            + "\t\t<td>"
-                            + ass.getTestsPassed()
-                            + "/"
-                            + ass.getTestsFailed()
-                            + "/"
-                            + ass.getTestsSkipped()
-                            + "</td>\n"
-                            + "\t\t<td>"
-                            + score
-                            + "</td>\n"
-                            + "\t</tr>");
-        }
-
-        System.out.println("\t</tbody>");
-        System.out.println("</table>");
-
-        System.out.println(
-                "<table>\n"
-                        + "\t<tr>\n"
-                        + "\t\t<th>Checkpoint</th>\n"
-                        + "\t\t<th>Date</th>\n"
-                        + "\t\t<th>Score</th>\n"
-                        + "\t</tr>");
-        for (Map.Entry<Checkpoint, Integer> e : checkpointScore.entrySet()) {
-            System.out.println(
-                    "\t<tr>\n"
-                            + "\t\t<td>"
-                            + e.getKey().id()
-                            + "</td>\n"
-                            + "\t\t<td>"
-                            + e.getKey().date()
-                            + "</td>\n"
-                            + "\t\t<td>"
-                            + e.getValue()
-                            + "</td>\n"
-                            + "\t</tr>");
-        }
-        System.out.println("</table>");
-    }
-
-    private int computeAssignmentScore(Assignment ass) {
-        return 0;
-    }
-
-    private String booleanToString(boolean b) {
-        return b ? "+" : "-";
     }
 
     @Override
