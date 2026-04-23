@@ -15,7 +15,7 @@ public class Course {
     private Map<String, Student> studentById = new HashMap<String, Student>();
     private Map<String, Task> tasks = new HashMap<String, Task>();
     private TreeMap<LocalDate, Checkpoint> checkpoints = new TreeMap<LocalDate, Checkpoint>();
-    @Setter private TreeMap<Integer, String> gradeScale = new TreeMap<Integer, String>();
+    @Setter private TreeMap<Double, String> gradeScale = new TreeMap<Double, String>();
 
     public void addTask(Task t) {
         tasks.put(t.id(), t);
@@ -38,17 +38,5 @@ public class Course {
 
     public Task getTask(String taskId) {
         return tasks.get(taskId);
-    }
-
-    @Override
-    public String toString() {
-        return "Tasks: "
-                + tasks.toString()
-                + "\nGrade Scale: "
-                + gradeScale.toString()
-                + "\nCheckpoints: "
-                + checkpoints.toString()
-                + "\nGroups: "
-                + groups.toString();
     }
 }

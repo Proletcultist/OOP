@@ -1,5 +1,7 @@
 package ru.nsu.zenin.tester.service;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import ru.nsu.zenin.tester.model.Assignment;
@@ -14,7 +16,7 @@ public class ReportService {
     public static void reportAllAssignments(Course course) {
         System.out.println("<html>");
         System.out.println(
-                "<head><style>table, th, td { border: 1px solid black; } table { table-layout: fixed; margin: 10px auto; border-collapse: collapse; }</style></head>");
+                "<head><style>table, th, td { border: 1px solid black; } th, td { padding: 10px } table { table-layout: fixed; margin: 10px auto; border-collapse: collapse; }</style></head>");
         System.out.println("<body>");
 
         for (Group g : course.getGroups()) {
@@ -47,23 +49,38 @@ public class ReportService {
                         + "\t\t</tr>\n"
                         + "\t</thead>");
 
-        Map<Checkpoint, Integer> checkpointScore = new HashMap<Checkpoint, Integer>();
+        Map<Checkpoint, Double> checkpointScore = new HashMap<Checkpoint, Double>();
         for (Checkpoint c : course.getCheckpoints().values()) {
-            checkpointScore.put(c, 0);
+            checkpointScore.put(c, 0.0);
         }
 
         System.out.println("\t<tbody>");
         for (Assignment ass : s.getAssignments()) {
-            int score = computeAssignmentScore(ass);
+            Path docs_index =
+                    Paths.get(CheckService.DOCS_DIR, s.getId(), ass.getTask().id(), "index.html")
+                            .toAbsolutePath();
 
-            Checkpoint check =
-                    course.getCheckpoints().higherEntry(ass.getTask().hardDeadline()).getValue();
-            checkpointScore.put(check, checkpointScore.get(check) + score);
+            double score = computeAssignmentScore(ass);
+
+            for (Checkpoint check :
+                    course.getCheckpoints()
+                            .subMap(
+                                    ass.getTask().hardDeadline(),
+                                    false,
+                                    course.getCheckpoints().lastKey(),
+                                    true)
+                            .values()) {
+                checkpointScore.put(check, checkpointScore.get(check) + score);
+            }
 
             System.out.println(
                     "\t<tr>\n"
                             + "\t\t<td>"
+                            + "<a href=\""
+                            + docs_index
+                            + "\">"
                             + ass.getTask().id()
+                            + "</a>"
                             + "</td>\n"
                             + "\t\t<td>"
                             + booleanToString(ass.isBuildable())
@@ -96,8 +113,9 @@ public class ReportService {
                         + "\t\t<th>Checkpoint</th>\n"
                         + "\t\t<th>Date</th>\n"
                         + "\t\t<th>Score</th>\n"
+                        + "\t\t<th>Grade</th>\n"
                         + "\t</tr>");
-        for (Map.Entry<Checkpoint, Integer> e : checkpointScore.entrySet()) {
+        for (Map.Entry<Checkpoint, Double> e : checkpointScore.entrySet()) {
             System.out.println(
                     "\t<tr>\n"
                             + "\t\t<td>"
@@ -109,13 +127,29 @@ public class ReportService {
                             + "\t\t<td>"
                             + e.getValue()
                             + "</td>\n"
+                            + "\t\t<td>"
+                            + course.getGradeScale().floorEntry(e.getValue()).getValue()
+                            + "</td>\n"
                             + "\t</tr>");
         }
         System.out.println("</table>");
     }
 
-    private static int computeAssignmentScore(Assignment ass) {
-        return 0;
+    private static double computeAssignmentScore(Assignment ass) {
+        if (!ass.isBuildable() || !ass.isCodestyleCompliant() || !ass.isHasDocs()) {
+            return 0;
+        }
+
+        double deadlineFactor = 0.0;
+
+        if (ass.getLastCommitDate().isBefore(ass.getTask().softDeadline())) {
+            deadlineFactor += 0.5;
+        }
+        if (ass.getLastCommitDate().isBefore(ass.getTask().hardDeadline())) {
+            deadlineFactor += 0.5;
+        }
+
+        return ass.getTask().maxScore() * deadlineFactor;
     }
 
     private static String booleanToString(boolean b) {
