@@ -27,8 +27,10 @@ public class App {
             System.exit(-1);
         }
 
-        System.out.println(d.getCourse().toString());
+        //System.out.println(d.getCourse().toString());
 
         d.getCourse().checkAllAssignments();
+
+        d.getCourse().reportAllAssignments();
     }
 }

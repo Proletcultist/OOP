@@ -39,16 +39,46 @@ public class Student {
                 continue;
             }
 
+            ass.setLastCommitDate(GitService.getLastCommitDate(taskDir));
+
             Logger.tryLog(Logger.LogLevel.INFO,"Building " + id + " : " + ass.getTask().id() + "...");
             try {
                 GradleService.build(taskDir);
+                ass.setBuildable(true);
             }
             catch (Exception e) {
                 Logger.tryLog(Logger.LogLevel.INFO, id + " : " + ass.getTask().id() + " isn't buildable");
                 continue;
             }
 
-            ass.setBuildable(true);
+            Logger.tryLog(Logger.LogLevel.INFO,"Generating docs for " + id + " : " + ass.getTask().id() + "...");
+            try {
+                GradleService.generateJavadoc(taskDir);
+                ass.setHasDocs(true);
+            }
+            catch (Exception e) {
+                Logger.tryLog(Logger.LogLevel.INFO, "Cannot generate docs for " + id + " : " + ass.getTask().id());
+            }
+
+            Logger.tryLog(Logger.LogLevel.INFO,"Checking codestyle of " + id + " : " + ass.getTask().id() + "...");
+            try {
+                GradleService.checkStyle(taskDir);
+                ass.setCodestyleCompliant(true);
+            }
+            catch (Exception e) {
+                Logger.tryLog(Logger.LogLevel.INFO, "Style check failed for " + id + " : " + ass.getTask().id());
+            }
+
+            Logger.tryLog(Logger.LogLevel.INFO,"Running tests for " + id + " : " + ass.getTask().id() + "...");
+            try {
+                GradleService.TestReport rep = GradleService.runTestsAndReport(taskDir);
+                ass.setTestsPassed(rep.passed());
+                ass.setTestsFailed(rep.failed());
+                ass.setTestsSkipped(rep.skipped());
+            }
+            catch (Exception e) {
+                Logger.tryLog(Logger.LogLevel.INFO, "Tests for " + id + " : " + ass.getTask().id() + " failed");
+            }
         }
 
         Logger.tryLog(Logger.LogLevel.INFO, "Removing " + ghRepo.toString() + "...");
