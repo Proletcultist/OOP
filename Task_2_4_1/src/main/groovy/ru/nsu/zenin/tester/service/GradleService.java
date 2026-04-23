@@ -1,8 +1,10 @@
 package ru.nsu.zenin.tester.service;
 
+import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.Element;
@@ -16,7 +18,52 @@ public class GradleService {
     }
 
     public static void generateJavadoc(Path taskDir) throws Exception {
+        generateJavadoc(taskDir, null);
+    }
+
+    public static void generateJavadoc(Path taskDir, Path destDir) throws Exception {
         runCommand(taskDir, "gradle", "javadoc", "-q");
+        if (destDir != null) {
+            Path docsDir = taskDir.resolve("build/docs/javadoc");
+            if (!Files.exists(docsDir)) {
+                Logger.tryLog(
+                        Logger.LogLevel.WARNING,
+                        "Failed to get javadoc: " + docsDir + " doesn't exist");
+                return;
+            }
+
+            if (Files.exists(destDir)) {
+                Files.walk(destDir)
+                        .sorted((a, b) -> b.compareTo(a))
+                        .forEach(
+                                p -> {
+                                    try {
+                                        Files.delete(p);
+                                    } catch (IOException e) {
+                                        Logger.tryLog(
+                                                Logger.LogLevel.WARNING, "Failed to delete: " + p);
+                                    }
+                                });
+            } else {
+                Files.createDirectories(destDir);
+            }
+
+            Files.walk(docsDir)
+                    .forEach(
+                            source -> {
+                                Path destination = destDir.resolve(docsDir.relativize(source));
+                                try {
+                                    Files.copy(
+                                            source,
+                                            destination,
+                                            StandardCopyOption.REPLACE_EXISTING);
+                                } catch (IOException e) {
+                                    Logger.tryLog(
+                                            Logger.LogLevel.WARNING,
+                                            "Failed to copy: " + e.toString());
+                                }
+                            });
+        }
     }
 
     public static void checkStyle(Path taskDir) throws Exception {
