@@ -15,10 +15,19 @@ public class CheckService {
 
     private CheckService() {}
 
-    public static void checkAllAssignments(Course course) throws Exception {
+    public static void checkAllAssignments(Course course) {
         for (Group g : course.getGroups()) {
             for (Student s : g.students()) {
-                checkAllAssignments(s);
+                try {
+                    checkAllAssignments(s);
+                } catch (Exception e) {
+                    Logger.tryLog(
+                            Logger.LogLevel.WARNING,
+                            "Failed to check assignments of student "
+                                    + s.getId()
+                                    + ": "
+                                    + e.getMessage());
+                }
             }
         }
     }
