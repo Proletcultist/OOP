@@ -2,8 +2,6 @@ package ru.nsu.zenin.tester.service;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
 import ru.nsu.zenin.tester.model.Assignment;
 import ru.nsu.zenin.tester.model.Checkpoint;
 import ru.nsu.zenin.tester.model.Course;
@@ -49,29 +47,11 @@ public class ReportService {
                         + "\t\t</tr>\n"
                         + "\t</thead>");
 
-        Map<Checkpoint, Double> checkpointScore = new HashMap<Checkpoint, Double>();
-        for (Checkpoint c : course.getCheckpoints().values()) {
-            checkpointScore.put(c, 0.0);
-        }
-
         System.out.println("\t<tbody>");
         for (Assignment ass : s.getAssignments()) {
             Path docs_index =
                     Paths.get(CheckService.DOCS_DIR, s.getId(), ass.getTask().id(), "index.html")
                             .toAbsolutePath();
-
-            double score = computeAssignmentScore(ass);
-
-            for (Checkpoint check :
-                    course.getCheckpoints()
-                            .subMap(
-                                    ass.getTask().hardDeadline(),
-                                    false,
-                                    course.getCheckpoints().lastKey(),
-                                    true)
-                            .values()) {
-                checkpointScore.put(check, checkpointScore.get(check) + score);
-            }
 
             System.out.println(
                     "\t<tr>\n"
@@ -99,7 +79,7 @@ public class ReportService {
                             + ass.getTestsSkipped()
                             + "</td>\n"
                             + "\t\t<td>"
-                            + score
+                            + ass.getScore()
                             + "</td>\n"
                             + "\t</tr>");
         }
@@ -115,41 +95,27 @@ public class ReportService {
                         + "\t\t<th>Score</th>\n"
                         + "\t\t<th>Grade</th>\n"
                         + "\t</tr>");
-        for (Map.Entry<Checkpoint, Double> e : checkpointScore.entrySet()) {
+        for (Checkpoint c : course.getCheckpoints().values()) {
+            Double score = s.getCheckpointScores().get(c);
             System.out.println(
                     "\t<tr>\n"
                             + "\t\t<td>"
-                            + e.getKey().id()
+                            + c.id()
                             + "</td>\n"
                             + "\t\t<td>"
-                            + e.getKey().date()
+                            + c.date()
                             + "</td>\n"
                             + "\t\t<td>"
-                            + e.getValue()
+                            + (score == null ? "-" : score)
                             + "</td>\n"
                             + "\t\t<td>"
-                            + course.getGradeScale().floorEntry(e.getValue()).getValue()
+                            + (score == null
+                                    ? "-"
+                                    : course.getGradeScale().floorEntry(score).getValue())
                             + "</td>\n"
                             + "\t</tr>");
         }
         System.out.println("</table>");
-    }
-
-    private static double computeAssignmentScore(Assignment ass) {
-        if (!ass.isBuildable() || !ass.isCodestyleCompliant() || !ass.isHasDocs()) {
-            return 0;
-        }
-
-        double deadlineFactor = 0.0;
-
-        if (ass.getLastCommitDate().isBefore(ass.getTask().softDeadline())) {
-            deadlineFactor += 0.5;
-        }
-        if (ass.getLastCommitDate().isBefore(ass.getTask().hardDeadline())) {
-            deadlineFactor += 0.5;
-        }
-
-        return ass.getTask().maxScore() * deadlineFactor;
     }
 
     private static String booleanToString(boolean b) {
