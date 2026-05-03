@@ -1,6 +1,7 @@
 package ru.nsu.zenin.tester.dsl
 
 import org.codehaus.groovy.control.CompilerConfiguration;
+import java.util.TreeMap
 import ru.nsu.zenin.tester.model.Course
 
 class DslScriptDelegate {
@@ -29,9 +30,22 @@ class DslScriptDelegate {
     }
 
     def settings(Closure c) {
-        c.delegate = course
+        c.delegate = this
         c.resolveStrategy = groovy.lang.Closure.DELEGATE_FIRST
         c()
+    }
+
+    def setGradeScale(Map<Double, String> gradeScale) {
+        TreeMap<Double, String> converted = new TreeMap<Double, String>();
+        gradeScale.each { key, value -> 
+            if (key instanceof Number) {
+                converted.put(key.doubleValue(), value.toString());
+            }
+            else {
+                throw new IllegalArgumentException("Grade scale must be numbers, got " + key.class);
+            }
+        }
+        course.setGradeScale(converted);
     }
 
     def groups(Closure c) {
