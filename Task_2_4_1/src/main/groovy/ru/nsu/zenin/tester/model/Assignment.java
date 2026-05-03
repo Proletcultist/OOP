@@ -13,6 +13,7 @@ public class Assignment {
     private int testsPassed = 0;
     private int testsFailed = 0;
     private int testsSkipped = 0;
+    private double score = 0;
 
     public void clearStatus() {
         buildable = false;
@@ -20,5 +21,6 @@ public class Assignment {
         codestyleCompliant = false;
         testsPassed = 0;
         testsFailed = 0;
+        score = 0;
     }
 }

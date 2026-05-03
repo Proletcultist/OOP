@@ -9,7 +9,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import ru.nsu.zenin.tester.dsl.DslScriptDelegate;
+import ru.nsu.zenin.tester.model.Group;
+import ru.nsu.zenin.tester.model.Student;
 import ru.nsu.zenin.tester.service.CheckService;
+import ru.nsu.zenin.tester.service.EvaluationService;
 import ru.nsu.zenin.tester.service.ReportService;
 import ru.nsu.zenin.tester.service.logging.Logger;
 
@@ -40,6 +43,11 @@ public class App {
         }
 
         CheckService.checkAllAssignments(d.getCourse());
+        for (Group g : d.getCourse().getGroups()) {
+            for (Student s : g.students()) {
+                EvaluationService.evaluateStudent(d.getCourse(), s);
+            }
+        }
         ReportService.reportAllAssignments(d.getCourse());
     }
 }
