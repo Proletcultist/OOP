@@ -5,6 +5,7 @@ import groovy.util.DelegatingScript;
 import java.io.BufferedWriter;
 import java.io.OutputStreamWriter;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import org.codehaus.groovy.control.CompilerConfiguration;
@@ -22,9 +23,19 @@ public class App {
     public static void main(String[] args) throws Exception {
         Logger.init(new BufferedWriter(new OutputStreamWriter(System.err)));
 
-        Path config = Paths.get(CONFIG_NAME);
+        Path root = Paths.get(".").toRealPath();
+        if (args.length != 0) {
+            try {
+                root = Paths.get(args[0]);
+            } catch (InvalidPathException e) {
+                Logger.log(Logger.LogLevel.ERROR, "Malformed path: \"" + args[0] + "\"");
+                System.exit(-1);
+            }
+        }
+
+        Path config = root.resolve(CONFIG_NAME);
         if (!Files.exists(config)) {
-            Logger.log(Logger.LogLevel.ERROR, "Cannot find config file " + config);
+            Logger.log(Logger.LogLevel.ERROR, "Cannot find config file " + config.toAbsolutePath());
             System.exit(-1);
         }
 
@@ -33,7 +44,7 @@ public class App {
         GroovyShell shell = new GroovyShell(cc);
 
         DelegatingScript script = (DelegatingScript) shell.parse(config.toFile());
-        DslScriptDelegate d = new DslScriptDelegate();
+        DslScriptDelegate d = new DslScriptDelegate(root);
         script.setDelegate(d);
         try {
             script.run();
@@ -42,12 +53,12 @@ public class App {
             System.exit(-1);
         }
 
-        CheckService.checkAllAssignments(d.getCourse());
+        CheckService.checkAllAssignments(root, d.getCourse());
         for (Group g : d.getCourse().getGroups()) {
             for (Student s : g.students()) {
                 EvaluationService.evaluateStudent(d.getCourse(), s);
             }
         }
-        ReportService.reportAllAssignments(d.getCourse());
+        ReportService.reportAllAssignments(root, d.getCourse());
     }
 }

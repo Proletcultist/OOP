@@ -6,16 +6,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
-@Getter
+@ToString
+@EqualsAndHashCode
 public class Course {
-    private List<Group> groups = new ArrayList<Group>();
+    @Getter private List<Group> groups = new ArrayList<Group>();
     private Map<String, Student> studentById = new HashMap<String, Student>();
     private Map<String, Task> tasks = new HashMap<String, Task>();
+
+    @Getter
     private TreeMap<LocalDate, Checkpoint> checkpoints = new TreeMap<LocalDate, Checkpoint>();
-    @Setter private TreeMap<Double, String> gradeScale = new TreeMap<Double, String>();
+
+    @Getter @Setter private TreeMap<Double, String> gradeScale = new TreeMap<Double, String>();
 
     public void addTask(Task t) {
         tasks.put(t.id(), t);
