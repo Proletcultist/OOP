@@ -1,14 +1,26 @@
 package ru.nsu.zenin.tester.dsl
 
 import org.codehaus.groovy.control.CompilerConfiguration;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.TreeMap
 import ru.nsu.zenin.tester.model.Course
 
 class DslScriptDelegate {
     private Course course = new Course()
 
+    private final Path workingDirectory;
+
+    DslScriptDelegate() {
+        workingDirectory = Paths.get(".")
+    }
+
+    DslScriptDelegate(Path workingDirectory) {
+        this.workingDirectory = workingDirectory
+    }
+
     def include(String path) {
-        def file = new File(path)
+        def file = workingDirectory.resolve(path).toFile()
         if (!file.exists()) throw new FileNotFoundException("Config not found: $path")
 
         def cc = new CompilerConfiguration()
