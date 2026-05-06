@@ -18,12 +18,12 @@ public class CheckService {
 
     private CheckService() {}
 
-    public static void checkAllAssignments(Course course) {
+    public static void checkAllAssignments(Path root, Course course) {
         List<StudentCheckTask> studentTasks = new ArrayList<StudentCheckTask>();
 
         for (Group g : course.getGroups()) {
             for (Student s : g.students()) {
-                studentTasks.add(new StudentCheckTask(s));
+                studentTasks.add(new StudentCheckTask(root, s));
             }
         }
 
@@ -36,9 +36,11 @@ public class CheckService {
     }
 
     private static class StudentCheckTask extends RecursiveAction {
+        private final Path root;
         private final Student student;
 
-        StudentCheckTask(Student student) {
+        StudentCheckTask(Path root, Student student) {
+            this.root = root;
             this.student = student;
         }
 
@@ -64,40 +66,46 @@ public class CheckService {
                 return;
             }
 
-            List<AssignmentCheckTask> assignmentTasks = new ArrayList<AssignmentCheckTask>();
-            for (Assignment ass : student.getAssignments()) {
-                assignmentTasks.add(new AssignmentCheckTask(student, ass, repo));
-            }
-
-            invokeAll(assignmentTasks);
-
-            Logger.tryLog(
-                    Logger.LogLevel.INFO, "Removing " + student.getGhRepo().toString() + "...");
-
             try {
-                Files.walk(repo)
-                        .sorted((a, b) -> b.compareTo(a))
-                        .forEach(
-                                p -> {
-                                    try {
-                                        Files.delete(p);
-                                    } catch (IOException e) {
-                                        Logger.tryLog(
-                                                Logger.LogLevel.WARNING, "Failed to delete: " + p);
-                                    }
-                                });
-            } catch (IOException e) {
-                Logger.tryLog(Logger.LogLevel.WARNING, "Failed to delete repo " + repo);
+                List<AssignmentCheckTask> assignmentTasks = new ArrayList<AssignmentCheckTask>();
+                for (Assignment ass : student.getAssignments()) {
+                    assignmentTasks.add(new AssignmentCheckTask(root, student, ass, repo));
+                }
+
+                invokeAll(assignmentTasks);
+
+                Logger.tryLog(
+                        Logger.LogLevel.INFO, "Removing " + student.getGhRepo().toString() + "...");
+
+            } finally {
+                try {
+                    Files.walk(repo)
+                            .sorted((a, b) -> b.compareTo(a))
+                            .forEach(
+                                    p -> {
+                                        try {
+                                            Files.delete(p);
+                                        } catch (IOException e) {
+                                            Logger.tryLog(
+                                                    Logger.LogLevel.WARNING,
+                                                    "Failed to delete: " + p);
+                                        }
+                                    });
+                } catch (IOException e) {
+                    Logger.tryLog(Logger.LogLevel.WARNING, "Failed to delete repo " + repo);
+                }
             }
         }
     }
 
     private static class AssignmentCheckTask extends RecursiveAction {
+        private final Path root;
         private final Student student;
         private final Assignment assignment;
         private final Path repo;
 
-        AssignmentCheckTask(Student student, Assignment assignment, Path repo) {
+        AssignmentCheckTask(Path root, Student student, Assignment assignment, Path repo) {
+            this.root = root;
             this.student = student;
             this.assignment = assignment;
             this.repo = repo;
@@ -149,7 +157,11 @@ public class CheckService {
                 try {
                     GradleService.generateJavadoc(
                             taskDir,
-                            Paths.get(DOCS_DIR, student.getId(), assignment.getTask().id())
+                            Paths.get(
+                                            root.toString(),
+                                            DOCS_DIR,
+                                            student.getId(),
+                                            assignment.getTask().id())
                                     .toAbsolutePath());
                     assignment.setHasDocs(true);
                 } catch (Exception e) {

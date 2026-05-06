@@ -21,6 +21,7 @@ public class Assignment {
         codestyleCompliant = false;
         testsPassed = 0;
         testsFailed = 0;
+        testsSkipped = 0;
         score = 0;
     }
 }

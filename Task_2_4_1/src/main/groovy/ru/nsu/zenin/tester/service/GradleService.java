@@ -112,7 +112,7 @@ public class GradleService {
         pb.redirectOutput(ProcessBuilder.Redirect.DISCARD);
         pb.redirectError(ProcessBuilder.Redirect.DISCARD);
         Process process = pb.start();
-        boolean inTime = process.waitFor(10, TimeUnit.SECONDS);
+        boolean inTime = process.waitFor(5, TimeUnit.MINUTES);
         if (!inTime) {
             throw new RuntimeException("Gradle timeout");
         } else if (process.exitValue() != 0) {

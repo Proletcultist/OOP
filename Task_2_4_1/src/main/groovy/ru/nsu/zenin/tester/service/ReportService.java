@@ -11,28 +11,28 @@ import ru.nsu.zenin.tester.model.Student;
 public class ReportService {
     private ReportService() {}
 
-    public static void reportAllAssignments(Course course) {
+    public static void reportAllAssignments(Path root, Course course) {
         System.out.println("<html>");
         System.out.println(
                 "<head><style>table, th, td { border: 1px solid black; } th, td { padding: 10px } table { table-layout: fixed; margin: 10px auto; border-collapse: collapse; }</style></head>");
         System.out.println("<body>");
 
         for (Group g : course.getGroups()) {
-            reportGroup(course, g);
+            reportGroup(root, course, g);
         }
 
         System.out.println("</body>");
         System.out.println("</html>");
     }
 
-    private static void reportGroup(Course course, Group g) {
+    private static void reportGroup(Path root, Course course, Group g) {
         System.out.println("<h2>" + g.name() + "</h2>");
         for (Student s : g.students()) {
-            reportStudent(course, s);
+            reportStudent(root, course, s);
         }
     }
 
-    private static void reportStudent(Course course, Student s) {
+    private static void reportStudent(Path root, Course course, Student s) {
         System.out.println("<h3>" + s.getFullName() + "</h3>\n<hr>");
         System.out.println(
                 "<table>\n"
@@ -50,7 +50,12 @@ public class ReportService {
         System.out.println("\t<tbody>");
         for (Assignment ass : s.getAssignments()) {
             Path docs_index =
-                    Paths.get(CheckService.DOCS_DIR, s.getId(), ass.getTask().id(), "index.html")
+                    Paths.get(
+                                    root.toString(),
+                                    CheckService.DOCS_DIR,
+                                    s.getId(),
+                                    ass.getTask().id(),
+                                    "index.html")
                             .toAbsolutePath();
 
             System.out.println(
@@ -109,7 +114,7 @@ public class ReportService {
                             + (score == null ? "-" : score)
                             + "</td>\n"
                             + "\t\t<td>"
-                            + (score == null
+                            + (score == null || course.getGradeScale() == null
                                     ? "-"
                                     : course.getGradeScale().floorEntry(score).getValue())
                             + "</td>\n"
