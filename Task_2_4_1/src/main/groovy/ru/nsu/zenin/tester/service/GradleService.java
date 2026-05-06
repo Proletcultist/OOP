@@ -5,6 +5,7 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.concurrent.TimeUnit;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.Element;
@@ -111,10 +112,11 @@ public class GradleService {
         pb.redirectOutput(ProcessBuilder.Redirect.DISCARD);
         pb.redirectError(ProcessBuilder.Redirect.DISCARD);
         Process process = pb.start();
-        int exitCode = process.waitFor();
-
-        if (exitCode != 0) {
-            throw new RuntimeException("Gradle failed with exit code: " + exitCode);
+        boolean inTime = process.waitFor(10, TimeUnit.SECONDS);
+        if (!inTime) {
+            throw new RuntimeException("Gradle timeout");
+        } else if (process.exitValue() != 0) {
+            throw new RuntimeException("Gradle failed with exit code: " + process.exitValue());
         }
     }
 
