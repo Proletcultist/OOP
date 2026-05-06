@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.concurrent.TimeUnit;
 import ru.nsu.zenin.tester.service.logging.Logger;
 
 public class GitService {
@@ -22,13 +23,15 @@ public class GitService {
         ProcessBuilder pb =
                 new ProcessBuilder(
                         "git", "clone", "--single-branch", repoUrl.toString(), cloneDir.toString());
-        pb.inheritIO();
+        pb.redirectOutput(ProcessBuilder.Redirect.DISCARD);
+        pb.redirectError(ProcessBuilder.Redirect.DISCARD);
 
         Process process = pb.start();
-        int exitCode = process.waitFor();
-
-        if (exitCode != 0) {
-            throw new RuntimeException("Git clone failed with exit code: " + exitCode);
+        boolean inTime = process.waitFor(10, TimeUnit.SECONDS);
+        if (!inTime) {
+            throw new RuntimeException("Git timeout");
+        } else if (process.exitValue() != 0) {
+            throw new RuntimeException("Git clone failed with exit code: " + process.exitValue());
         }
 
         Logger.tryLog(Logger.LogLevel.INFO, "Cloned " + repoUrl.toString() + " successfully");
@@ -51,10 +54,11 @@ public class GitService {
             while (reader.readLine() != null) {}
         }
 
-        int exitCode = process.waitFor();
-
-        if (exitCode != 0) {
-            throw new RuntimeException("Git log failed with exit code: " + exitCode);
+        boolean inTime = process.waitFor(10, TimeUnit.SECONDS);
+        if (!inTime) {
+            throw new RuntimeException("Git timeout");
+        } else if (process.exitValue() != 0) {
+            throw new RuntimeException("Git log failed with exit code: " + process.exitValue());
         }
 
         return LocalDate.parse(timestampStr, dateFormatter);
