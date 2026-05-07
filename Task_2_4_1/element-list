@@ -1,0 +1,5 @@
+ru.nsu.zenin.tester.app
+ru.nsu.zenin.tester.model
+ru.nsu.zenin.tester.service
+ru.nsu.zenin.tester.service.logging
+ru.nsu.zenin.tester.service.logging.exception
