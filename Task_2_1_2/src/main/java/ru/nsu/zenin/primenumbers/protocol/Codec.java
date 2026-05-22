@@ -49,7 +49,7 @@ public class Codec {
         try (DataInputStream dis = new DataInputStream(new ByteArrayInputStream(data))) {
             String magic_num = readChars(dis, MAGIC_NUMBER.length());
             if (!magic_num.equals(MAGIC_NUMBER)) {
-                throw new WrongMagicNumberException("Wrong magic number: " + magic_num);
+                throw new WrongMagicNumberException("Wrong magic number: \"" + magic_num + "\"");
             }
 
             ProtocolVersion ver = ProtocolVersion.fromCode(dis.readShort());

@@ -23,6 +23,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import ru.nsu.zenin.primenumbers.protocol.*;
 import ru.nsu.zenin.primenumbers.protocol.exception.*;
 
@@ -43,12 +45,14 @@ public class Node {
     private ThreadPoolExecutor computationPool;
     private final ScheduledExecutorService heartbeatScheduler = Executors.newScheduledThreadPool(1);
 
-    private final Map<UUID, CompletableFuture<Boolean>> activeTasks =
-            new ConcurrentHashMap<UUID, CompletableFuture<Boolean>>();
+    private final Map<UUID, AtomicBoolean> activeTasks =
+            new ConcurrentHashMap<UUID, AtomicBoolean>();
     private final Set<Connection> peers = ConcurrentHashMap.newKeySet();
+    private final Set<InetAddress> peerIps = ConcurrentHashMap.newKeySet();
 
-    private volatile UUID currentTaskUUID = null;
-    private volatile CompletableFuture<Boolean> currentTaskFuture;
+    private UUID currentTaskUUID = null;
+    private CompletableFuture<Boolean> currentTaskFuture;
+    private final AtomicInteger activeSubtasks = new AtomicInteger(0);
 
     static {
         try {
@@ -103,6 +107,8 @@ public class Node {
             throw new IllegalStateException("No available worker nodes found in the LAN");
         }
 
+        activeSubtasks.set(0);
+
         int chunkSize = (int) Math.ceil((double) array.length / availablePeers.size());
 
         for (int i = 0; i < availablePeers.size(); i++) {
@@ -113,7 +119,10 @@ public class Node {
             int[] chunk = new int[length];
             System.arraycopy(array, start, chunk, 0, length);
 
+            availablePeers.get(i).getSubmittedTasks().add(new Task(currentTaskUUID, chunk));
             sendMessage(availablePeers.get(i), new Message.TaskSubmit(currentTaskUUID, chunk));
+
+            activeSubtasks.getAndIncrement();
         }
 
         try {
@@ -133,9 +142,20 @@ public class Node {
                     public void completed(AsynchronousSocketChannel client, Void attachment) {
                         tcpServer.accept(
                                 null, (CompletionHandler<AsynchronousSocketChannel, Void>) this);
-                        Connection newConn = new Connection(client, System.currentTimeMillis());
-                        peers.add(newConn);
-                        listenToPeer(newConn);
+                        try {
+                            InetAddress address =
+                                    ((InetSocketAddress) client.getRemoteAddress()).getAddress();
+                            if (peerIps.contains(address)) {
+                                client.close();
+                            } else {
+                                Connection newConn =
+                                        new Connection(address, client, System.currentTimeMillis());
+                                peers.add(newConn);
+                                peerIps.add(address);
+                                listenToPeer(newConn);
+                            }
+                        } catch (IOException ignore) {
+                        }
                     }
 
                     @Override
@@ -220,34 +240,50 @@ public class Node {
             case Message.Ping p -> sendMessage(peer, new Message.Pong());
             case Message.Pong p -> peer.setLastSeen(System.currentTimeMillis());
             case Message.TaskSubmit t -> {
-                CompletableFuture<Boolean> fut =
-                        CompletableFuture.supplyAsync(
-                                        () -> computeChunk(t.numbers()), computationPool)
-                                .whenComplete(
-                                        (result, exception) -> {
-                                            sendMessage(
-                                                    peer,
-                                                    new Message.TaskResult(t.taskId(), result));
-                                        });
-            }
-            case Message.TaskResult r -> {
-                if (currentTaskFuture != null && r.hasComposite() && !currentTaskFuture.isDone()) {
-                    broadcast(new Message.TaskStop(r.taskId()));
-                    currentTaskFuture.complete(true);
-                }
+                AtomicBoolean isCancelled = new AtomicBoolean(false);
+                activeTasks.put(t.taskId(), isCancelled);
+
+                CompletableFuture.supplyAsync(
+                                () -> computeChunk(t.numbers(), isCancelled), computationPool)
+                        .whenComplete(
+                                (result, exception) -> {
+                                    activeTasks.remove(t.taskId());
+                                    if (!isCancelled.get()) {
+                                        sendMessage(
+                                                peer, new Message.TaskResult(t.taskId(), result));
+                                    }
+                                });
             }
             case Message.TaskStop s -> {
-                CompletableFuture<Boolean> fut = activeTasks.get(s.taskId());
-                if (fut != null) {
-                    fut.cancel(true);
+                AtomicBoolean isCancelled = activeTasks.get(s.taskId());
+                if (isCancelled != null) {
+                    isCancelled.set(true);
+                }
+            }
+            case Message.TaskResult r -> {
+                if (currentTaskFuture != null
+                        && currentTaskUUID.equals(r.taskId())
+                        && !currentTaskFuture.isDone()) {
+                    if (r.hasComposite()) {
+                        broadcast(new Message.TaskStop(r.taskId()));
+                        currentTaskFuture.complete(true);
+                    } else {
+                        if (activeSubtasks.decrementAndGet() == 0) {
+                            currentTaskFuture.complete(false);
+                        }
+                    }
                 }
             }
             default -> {}
         }
     }
 
-    private boolean computeChunk(int[] numbers) {
+    private boolean computeChunk(int[] numbers, AtomicBoolean isCancelled) {
         for (int num : numbers) {
+            if (isCancelled.get()) {
+                return false;
+            }
+
             if (num <= 1) continue;
             for (int i = 2; i * i <= num; i++) {
                 if (num % i == 0) {
@@ -303,6 +339,10 @@ public class Node {
     }
 
     private void connectToPeer(InetAddress address, int port) {
+        if (peerIps.contains(address)) {
+            return;
+        }
+
         try {
             AsynchronousSocketChannel client = AsynchronousSocketChannel.open(channelGroup);
             client.connect(
@@ -311,8 +351,10 @@ public class Node {
                     new CompletionHandler<Void, Void>() {
                         @Override
                         public void completed(Void result, Void attachment) {
-                            Connection newConn = new Connection(client, System.currentTimeMillis());
+                            Connection newConn =
+                                    new Connection(address, client, System.currentTimeMillis());
                             peers.add(newConn);
+                            peerIps.add(address);
                             listenToPeer(newConn);
                         }
 
@@ -343,7 +385,56 @@ public class Node {
 
     private void sendMessage(Connection peer, Message msg) {
         byte[] payload = Codec.serialize(ProtocolVersion.LEET_VER, msg);
-        peer.getChannel().write(ByteBuffer.wrap(payload));
+        ByteBuffer buffer = ByteBuffer.wrap(payload);
+
+        peer.getWriteQueue().add(buffer);
+        writeNext(peer);
+    }
+
+    private void writeNext(Connection peer) {
+        if (!peer.getIsWriting().compareAndSet(false, true)) {
+            // A write is already in progress
+            return;
+        }
+
+        ByteBuffer nextBuffer = peer.getWriteQueue().peek();
+        if (nextBuffer == null) {
+            peer.getIsWriting().set(false);
+
+            if (!peer.getWriteQueue().isEmpty() && peer.getIsWriting().compareAndSet(false, true)) {
+                nextBuffer = peer.getWriteQueue().peek();
+            } else {
+                return;
+            }
+        }
+
+        final ByteBuffer bufferToWrite = nextBuffer;
+
+        peer.getChannel()
+                .write(
+                        bufferToWrite,
+                        peer,
+                        new CompletionHandler<Integer, Connection>() {
+                            @Override
+                            public void completed(Integer bytesWritten, Connection p) {
+                                if (bufferToWrite.hasRemaining()) {
+                                    p.getIsWriting().set(false);
+                                    writeNext(p);
+                                } else {
+                                    p.getWriteQueue().poll();
+
+                                    p.getIsWriting().set(false);
+                                    writeNext(p);
+                                }
+                            }
+
+                            @Override
+                            public void failed(Throwable exc, Connection p) {
+                                System.err.println("Async write failed: " + exc.getMessage());
+                                p.getIsWriting().set(false);
+                                disconnect(p);
+                            }
+                        });
     }
 
     private void broadcast(Message msg) {
@@ -353,12 +444,38 @@ public class Node {
     }
 
     private void disconnect(Connection peer) {
+        peerIps.remove(peer.getAddress());
         peers.remove(peer);
         try {
             peer.getChannel().close();
         } catch (IOException ignored) {
         }
-        // In a complete implementation, this is where you take uncompleted chunks assigned
-        // to this 'client' and re-assign them to a new peer from the activePeers list.
+
+        // TODO Resubmit task instead
+        if (currentTaskFuture != null && !currentTaskFuture.isDone()) {
+            broadcast(new Message.TaskStop(currentTaskUUID));
+            currentTaskFuture.completeExceptionally(new RuntimeException("Worker failed"));
+        }
+        /*
+        if (!peer.getSubmittedTasks().isEmpty()) {
+            discoverNodes();
+
+            Thread.sleep(DISCOVERY_TIME);
+
+            List<Connection> availablePeers = new ArrayList<>(peers);
+
+            // Fail if no active peers found
+            if (availablePeers.isEmpty()) {
+                currentTaskFuture.completeExceptionally(new IllegalStateException("No available worker nodes found in the LAN"));
+                currentTaskUUID = null;
+                currentTaskFuture = null;
+            }
+
+            int i = 0;
+            for (Task task : peer.getSubmittedTasks()) {
+
+            }
+        }
+        */
     }
 }

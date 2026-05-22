@@ -1,3 +1,5 @@
 package ru.nsu.zenin.primenumbers;
 
-public class Task {}
+import java.util.UUID;
+
+public record Task(UUID taskId, int[] chunk) {}
