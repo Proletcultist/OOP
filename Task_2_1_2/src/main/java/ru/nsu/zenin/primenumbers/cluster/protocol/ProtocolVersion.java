@@ -1,7 +1,7 @@
-package ru.nsu.zenin.primenumbers.protocol;
+package ru.nsu.zenin.primenumbers.cluster.protocol;
 
 import lombok.Getter;
-import ru.nsu.zenin.primenumbers.protocol.exception.UnknownVersionException;
+import ru.nsu.zenin.primenumbers.cluster.protocol.exception.UnknownVersionException;
 
 public enum ProtocolVersion {
     LEET_VER((short) 1337);

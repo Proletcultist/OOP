@@ -1,11 +1,11 @@
-package ru.nsu.zenin.primenumbers.protocol;
+package ru.nsu.zenin.primenumbers.cluster.protocol;
 
 import java.util.UUID;
 
 public sealed interface Message {
     MessageType getType();
 
-    record Discover() implements Message {
+    record Discover(int tcpPort) implements Message {
         @Override
         public MessageType getType() {
             return MessageType.DISCOVER;
