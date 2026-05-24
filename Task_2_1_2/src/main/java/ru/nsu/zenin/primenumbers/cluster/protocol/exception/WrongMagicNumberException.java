@@ -1,4 +1,4 @@
-package ru.nsu.zenin.primenumbers.protocol.exception;
+package ru.nsu.zenin.primenumbers.cluster.protocol.exception;
 
 public class WrongMagicNumberException extends Exception {
     public WrongMagicNumberException(String msg) {

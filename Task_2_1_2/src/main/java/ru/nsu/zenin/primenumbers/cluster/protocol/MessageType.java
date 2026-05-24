@@ -1,7 +1,7 @@
-package ru.nsu.zenin.primenumbers.protocol;
+package ru.nsu.zenin.primenumbers.cluster.protocol;
 
 import lombok.Getter;
-import ru.nsu.zenin.primenumbers.protocol.exception.UnknownMessageTypeException;
+import ru.nsu.zenin.primenumbers.cluster.protocol.exception.UnknownMessageTypeException;
 
 public enum MessageType {
     DISCOVER((byte) 0x01),
