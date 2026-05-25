@@ -135,6 +135,22 @@ public abstract class ClusterConnection implements AutoCloseable {
                         @Override
                         protected void onStateChange(NodeConnection.State state) {
                             System.out.println(this.getRemoteNodeId() + ": " + state);
+                            switch (state) {
+                                case NodeConnection.State.CONNECTED -> {}
+                                case NodeConnection.State.IDENTIFIED -> {
+                                    if (nodeConnections.containsKey(this.getRemoteNodeId())) {
+                                        this.tryClose();
+                                    } else {
+                                        nodeConnections.put(this.getRemoteNodeId(), this);
+                                    }
+                                }
+                                case NodeConnection.State.DISCONNECTED -> {
+                                    UUID remote = this.getRemoteNodeId();
+                                    if (remote != null) {
+                                        nodeConnections.remove(this.getRemoteNodeId());
+                                    }
+                                }
+                            }
                         }
 
                         @Override
