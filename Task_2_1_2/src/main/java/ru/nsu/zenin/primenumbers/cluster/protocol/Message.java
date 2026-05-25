@@ -1,11 +1,12 @@
 package ru.nsu.zenin.primenumbers.cluster.protocol;
 
+import java.net.InetAddress;
 import java.util.UUID;
 
 public sealed interface Message {
     MessageType getType();
 
-    record Presence() implements Message {
+    record Presence(UUID nodeId, InetAddress address, int port) implements Message {
         @Override
         public MessageType getType() {
             return MessageType.PRESENCE;
@@ -44,6 +45,13 @@ public sealed interface Message {
         @Override
         public MessageType getType() {
             return MessageType.PONG;
+        }
+    }
+
+    record Handshake(UUID nodeId) implements Message {
+        @Override
+        public MessageType getType() {
+            return MessageType.HANDSHAKE;
         }
     }
 }
