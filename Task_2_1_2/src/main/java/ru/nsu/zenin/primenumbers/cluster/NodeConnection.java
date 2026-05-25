@@ -4,12 +4,11 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import lombok.Getter;
 import ru.nsu.zenin.primenumbers.cluster.protocol.Codec;
@@ -17,6 +16,9 @@ import ru.nsu.zenin.primenumbers.cluster.protocol.Message;
 import ru.nsu.zenin.primenumbers.cluster.protocol.ProtocolVersion;
 
 public abstract class NodeConnection implements AutoCloseable {
+    private static final TimeUnit HEARTBEAT_UNIT = TimeUnit.SECONDS;
+    private static final long HEARTBEAT_RATE = 2;
+
     private final ProtocolVersion ver;
 
     @Getter private final UUID localNodeId;
@@ -30,9 +32,13 @@ public abstract class NodeConnection implements AutoCloseable {
 
     private final Thread readingThread;
     private final Thread writingThread;
+    private final Thread heartbeatThread;
+
+    private CompletableFuture<?> pingedFuture;
 
     private long lastSeen;
-    private Set<CompletableFuture<Boolean>> tasks = new HashSet<CompletableFuture<Boolean>>();
+    // private final Set<CompletableFuture<Boolean>> tasks = new
+    // HashSet<CompletableFuture<Boolean>>();
     private final BlockingQueue<byte[]> sendQueue = new LinkedBlockingQueue<byte[]>();
 
     public NodeConnection(ProtocolVersion ver, Socket socket, UUID localNodeId) throws IOException {
@@ -46,10 +52,17 @@ public abstract class NodeConnection implements AutoCloseable {
         lastSeen = System.currentTimeMillis();
 
         state = new AtomicReference(State.CONNECTED);
+        pingedFuture = CompletableFuture.completedFuture(null);
+
+        try {
+            send(new Message.Handshake(localNodeId));
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
 
         readingThread = Thread.ofVirtual().start(() -> serviceReceivings());
         writingThread = Thread.ofVirtual().start(() -> serviceSendings());
-        // TODO: Don't forget to be state-aware in timeout thread
+        heartbeatThread = Thread.ofVirtual().start(() -> heartbeat());
     }
 
     protected abstract void onStateChange(State state);
@@ -67,8 +80,8 @@ public abstract class NodeConnection implements AutoCloseable {
                     case Message.TaskSubmit t -> {}
                     case Message.TaskResult r -> {}
                     case Message.TaskStop s -> {}
-                    case Message.Ping p -> {}
-                    case Message.Pong pp -> {}
+                    case Message.Ping p -> send(new Message.Pong());
+                    case Message.Pong pp -> pingedFuture.complete(null);
                     case Message.Handshake h -> {
                         if (state.getAndSet(State.IDENTIFIED) == State.CONNECTED) {
                             remoteNodeId = h.nodeId();
@@ -79,6 +92,8 @@ public abstract class NodeConnection implements AutoCloseable {
                     }
                 }
             }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         } catch (Exception e) {
             tryClose();
         }
@@ -86,9 +101,6 @@ public abstract class NodeConnection implements AutoCloseable {
 
     private void serviceSendings() {
         try {
-            byte[] handshake = Codec.serialize(ver, new Message.Handshake(localNodeId));
-            out.write(handshake, 0, handshake.length);
-
             while (!Thread.interrupted()) {
                 byte[] data = sendQueue.take();
                 out.write(data, 0, data.length);
@@ -98,12 +110,22 @@ public abstract class NodeConnection implements AutoCloseable {
         }
     }
 
-    private Message recieve() throws Exception {
-        return Codec.deserialize(in);
-    }
+    private void heartbeat() {
+        try {
+            HEARTBEAT_UNIT.sleep(HEARTBEAT_RATE);
 
-    private void send(Message msg) throws InterruptedException, IOException {
-        sendQueue.put(Codec.serialize(ver, msg));
+            while (!Thread.interrupted()) {
+                pingedFuture = new CompletableFuture<>();
+
+                send(new Message.Ping());
+
+                pingedFuture.get(HEARTBEAT_RATE, HEARTBEAT_UNIT);
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        } catch (Exception e) {
+            tryClose();
+        }
     }
 
     public void tryClose() {
@@ -122,13 +144,30 @@ public abstract class NodeConnection implements AutoCloseable {
             } catch (IOException ignore) {
             }
 
-            readingThread.interrupt();
-            writingThread.interrupt();
+            if (readingThread != null) {
+                readingThread.interrupt();
+            }
+            if (writingThread != null) {
+                writingThread.interrupt();
+            }
+            if (heartbeatThread != null) {
+                heartbeatThread.interrupt();
+            }
+
+            // TODO: Fail all tasks
 
             onStateChange(State.DISCONNECTED);
         } else {
             throw new IllegalStateException("Connection already closed");
         }
+    }
+
+    private Message recieve() throws Exception {
+        return Codec.deserialize(in);
+    }
+
+    private void send(Message msg) throws InterruptedException, IOException {
+        sendQueue.put(Codec.serialize(ver, msg));
     }
 
     public enum State {
