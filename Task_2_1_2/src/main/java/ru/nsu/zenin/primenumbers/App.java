@@ -26,6 +26,15 @@ public class App {
                     public void onClose() {}
                 };
 
+        ClusterConnection con3 =
+                new ClusterConnection(group, new InetSocketAddress("127.0.0.1", 53321)) {
+                    @Override
+                    public void onIncomingTask(int[] nums, CompletableFuture<Boolean> future) {}
+
+                    @Override
+                    public void onClose() {}
+                };
+
         while (true) {}
     }
 }
