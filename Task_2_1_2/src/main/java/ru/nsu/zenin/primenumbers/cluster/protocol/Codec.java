@@ -47,8 +47,7 @@ public class Codec {
 
         ret +=
                 switch (msg) {
-                    case Message.Discover d -> Integer.SIZE;
-                    case Message.Presence p -> Integer.SIZE;
+                    case Message.Presence p -> 0;
                     case Message.TaskSubmit t ->
                             Long.SIZE
                                     + Long.SIZE
@@ -70,8 +69,7 @@ public class Codec {
         dos.writeByte(msg.getType().getCode());
 
         switch (msg) {
-            case Message.Discover d -> dos.writeInt(d.tcpPort());
-            case Message.Presence p -> dos.writeInt(p.tcpPort());
+            case Message.Presence p -> {}
             case Message.TaskSubmit t -> {
                 dos.writeLong(t.taskId().getMostSignificantBits());
                 dos.writeLong(t.taskId().getLeastSignificantBits());
@@ -112,8 +110,7 @@ public class Codec {
         MessageType type = MessageType.fromCode(dis.readByte());
 
         return switch (type) {
-            case DISCOVER -> new Message.Discover(dis.readInt());
-            case PRESENCE -> new Message.Presence(dis.readInt());
+            case PRESENCE -> new Message.Presence();
             case TASK_SUBMIT -> {
                 java.util.UUID id = new java.util.UUID(dis.readLong(), dis.readLong());
                 int[] nums = new int[dis.readInt()];

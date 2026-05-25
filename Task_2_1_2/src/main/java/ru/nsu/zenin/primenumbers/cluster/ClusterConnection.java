@@ -2,8 +2,10 @@ package ru.nsu.zenin.primenumbers.cluster;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 import java.net.MulticastSocket;
+import java.net.NetworkInterface;
 import java.net.ServerSocket;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -13,10 +15,6 @@ import ru.nsu.zenin.primenumbers.cluster.protocol.Message;
 import ru.nsu.zenin.primenumbers.cluster.protocol.ProtocolVersion;
 
 public abstract class ClusterConnection implements AutoCloseable {
-    // We must be able to asynchronously:
-    // 1. Discover nodes
-    // 2. And then supply task
-    // 3. And then track teh task
     private final ProtocolVersion VERSION = ProtocolVersion.LEET_VER;
 
     private final InetSocketAddress groupAddress;
@@ -25,8 +23,10 @@ public abstract class ClusterConnection implements AutoCloseable {
     private Thread udpThread;
     private Thread tcpListenThread;
 
-    private MulticastSocket multicastSock;
+    private DatagramSocket groupSendingSock;
+    private MulticastSocket groupReceivingSock;
     private ServerSocket tcpServer;
+
     private final Map<InetSocketAddress, NodeConnection> nodeConnections;
 
     public abstract void onIncomingTask(int[] nums, CompletableFuture<Boolean> future);
@@ -39,6 +39,7 @@ public abstract class ClusterConnection implements AutoCloseable {
         this.nodeAddress = nodeAddress;
         this.nodeConnections = new ConcurrentHashMap<InetSocketAddress, NodeConnection>();
 
+        groupSendingSock = new DatagramSocket(nodeAddress);
         startTcpServer();
         startUdpListener();
 
@@ -50,9 +51,17 @@ public abstract class ClusterConnection implements AutoCloseable {
     @Override
     public void close() {}
 
+    private void startTcpServer() throws IOException {
+        tcpServer = new ServerSocket();
+
+        // tcpListenThread = Thread.ofVirtual();
+    }
+
     private void startUdpListener() throws IOException {
-        multicastSock = new MulticastSocket(nodeAddress);
-        multicastSock.joinGroup(groupAddress.getAddress());
+        groupReceivingSock = new MulticastSocket(groupAddress.getPort());
+        NetworkInterface nf = NetworkInterface.getByInetAddress(nodeAddress.getAddress());
+        groupReceivingSock.setNetworkInterface(nf);
+        groupReceivingSock.joinGroup(groupAddress, nf);
 
         udpThread =
                 Thread.ofVirtual()
@@ -64,9 +73,13 @@ public abstract class ClusterConnection implements AutoCloseable {
                                                 new DatagramPacket(buffer, buffer.length);
 
                                         try {
-                                            multicastSock.receive(packet);
+                                            groupReceivingSock.receive(packet);
                                         } catch (IOException e) {
                                             close();
+                                        }
+
+                                        if (packet.getSocketAddress().equals(nodeAddress)) {
+                                            continue;
                                         }
 
                                         Message msg;
@@ -85,11 +98,12 @@ public abstract class ClusterConnection implements AutoCloseable {
                                                 if (!nodeConnections.containsKey(
                                                         packet.getSocketAddress())) {
                                                     System.out.println(
-                                                            packet.getSocketAddress()
-                                                                    + Integer.toString(
-                                                                            p.tcpPort()));
+                                                            nodeAddress
+                                                                    + ": "
+                                                                    + packet.getSocketAddress());
                                                 } else {
-                                                    System.out.println("Already connected");
+                                                    System.out.println(
+                                                            nodeAddress + ": Already connected");
                                                 }
                                             }
                                             default -> {}
@@ -98,15 +112,9 @@ public abstract class ClusterConnection implements AutoCloseable {
                                 });
     }
 
-    private void startTcpServer() throws IOException {
-        tcpServer = new ServerSocket();
-
-        // tcpListenThread = Thread.ofVirtual();
-    }
-
     private void announceNode() throws IOException {
-        byte[] data = Codec.serialize(VERSION, new Message.Presence(nodeAddress.getPort()));
+        byte[] data = Codec.serialize(VERSION, new Message.Presence());
         DatagramPacket packet = new DatagramPacket(data, data.length, groupAddress);
-        multicastSock.send(packet);
+        groupSendingSock.send(packet);
     }
 }

@@ -5,14 +5,7 @@ import java.util.UUID;
 public sealed interface Message {
     MessageType getType();
 
-    record Discover(int tcpPort) implements Message {
-        @Override
-        public MessageType getType() {
-            return MessageType.DISCOVER;
-        }
-    }
-
-    record Presence(int tcpPort) implements Message {
+    record Presence() implements Message {
         @Override
         public MessageType getType() {
             return MessageType.PRESENCE;
