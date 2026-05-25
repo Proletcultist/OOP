@@ -6,7 +6,9 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.util.Arrays;
+import java.util.UUID;
 import ru.nsu.zenin.primenumbers.cluster.protocol.exception.UnknownMessageTypeException;
 import ru.nsu.zenin.primenumbers.cluster.protocol.exception.UnknownVersionException;
 import ru.nsu.zenin.primenumbers.cluster.protocol.exception.WrongMagicNumberException;
@@ -47,7 +49,7 @@ public class Codec {
 
         ret +=
                 switch (msg) {
-                    case Message.Presence p -> 0;
+                    case Message.Presence p -> Long.SIZE + Long.SIZE + 4 * Byte.SIZE + Integer.SIZE;
                     case Message.TaskSubmit t ->
                             Long.SIZE
                                     + Long.SIZE
@@ -57,6 +59,7 @@ public class Codec {
                     case Message.TaskStop s -> Long.SIZE + Long.SIZE;
                     case Message.Ping p -> 0;
                     case Message.Pong p -> 0;
+                    case Message.Handshake h -> Long.SIZE + Long.SIZE;
                 };
 
         return ret;
@@ -69,7 +72,12 @@ public class Codec {
         dos.writeByte(msg.getType().getCode());
 
         switch (msg) {
-            case Message.Presence p -> {}
+            case Message.Presence p -> {
+                dos.writeLong(p.nodeId().getMostSignificantBits());
+                dos.writeLong(p.nodeId().getLeastSignificantBits());
+                dos.write(p.address().getAddress(), 0, 4);
+                dos.writeInt(p.port());
+            }
             case Message.TaskSubmit t -> {
                 dos.writeLong(t.taskId().getMostSignificantBits());
                 dos.writeLong(t.taskId().getLeastSignificantBits());
@@ -87,6 +95,10 @@ public class Codec {
             }
             case Message.Ping p -> {}
             case Message.Pong p -> {}
+            case Message.Handshake h -> {
+                dos.writeLong(h.nodeId().getMostSignificantBits());
+                dos.writeLong(h.nodeId().getLeastSignificantBits());
+            }
         }
     }
 
@@ -110,20 +122,28 @@ public class Codec {
         MessageType type = MessageType.fromCode(dis.readByte());
 
         return switch (type) {
-            case PRESENCE -> new Message.Presence();
+            case PRESENCE -> {
+                UUID id = new UUID(dis.readLong(), dis.readLong());
+                byte[] ip = new byte[4];
+                if (dis.read(ip, 0, ip.length) != ip.length) {
+                    throw new EOFException("Unexpected EOF");
+                }
+                int port = dis.readInt();
+                yield new Message.Presence(id, InetAddress.getByAddress(ip), port);
+            }
             case TASK_SUBMIT -> {
-                java.util.UUID id = new java.util.UUID(dis.readLong(), dis.readLong());
+                UUID id = new UUID(dis.readLong(), dis.readLong());
                 int[] nums = new int[dis.readInt()];
                 for (int i = 0; i < nums.length; i++) nums[i] = dis.readInt();
                 yield new Message.TaskSubmit(id, nums);
             }
             case TASK_RESULT ->
                     new Message.TaskResult(
-                            new java.util.UUID(dis.readLong(), dis.readLong()), dis.readBoolean());
-            case TASK_STOP ->
-                    new Message.TaskStop(new java.util.UUID(dis.readLong(), dis.readLong()));
+                            new UUID(dis.readLong(), dis.readLong()), dis.readBoolean());
+            case TASK_STOP -> new Message.TaskStop(new UUID(dis.readLong(), dis.readLong()));
             case PING -> new Message.Ping();
             case PONG -> new Message.Pong();
+            case HANDSHAKE -> new Message.Handshake(new UUID(dis.readLong(), dis.readLong()));
         };
     }
 }

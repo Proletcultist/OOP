@@ -9,7 +9,8 @@ public enum MessageType {
     TASK_RESULT((byte) 0x03),
     TASK_STOP((byte) 0x04),
     PING((byte) 0x05),
-    PONG((byte) 0x06);
+    PONG((byte) 0x06),
+    HANDSHAKE((byte) 0x07);
 
     @Getter private final byte code;
 
@@ -25,6 +26,7 @@ public enum MessageType {
             case 0x04 -> TASK_STOP;
             case 0x05 -> PING;
             case 0x06 -> PONG;
+            case 0x07 -> HANDSHAKE;
             default -> throw new UnknownMessageTypeException("Unknown message type: " + code);
         };
     }
