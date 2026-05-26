@@ -183,7 +183,18 @@ public abstract class ClusterConnection {
             try {
                 Socket socket = tcpServer.accept();
                 System.out.println(nodeId + ": Connected new " + socket.getRemoteSocketAddress());
-                addNewNodeConnection(socket);
+
+                try {
+                    addNewNodeConnection(socket);
+                } catch (IOException | InterruptedException e) {
+                    try {
+                        socket.close();
+                    } catch (IOException ignore) {
+                    }
+                    if (e instanceof InterruptedException) {
+                        break;
+                    }
+                }
             } catch (IOException ignore) {
             }
         }
@@ -217,47 +228,54 @@ public abstract class ClusterConnection {
                     Socket socket = new Socket();
                     socket.connect(
                             new InetSocketAddress(p.address(), p.port()), CONNECTION_TIMEOUT);
-                    addNewNodeConnection(socket);
+
+                    try {
+                        addNewNodeConnection(socket);
+                    } catch (IOException | InterruptedException e) {
+                        try {
+                            socket.close();
+                        } catch (IOException ignore) {
+                        }
+                        if (e instanceof InterruptedException) {
+                            break;
+                        }
+                    }
                 } catch (IOException ignore) {
                 }
             }
         }
     }
 
-    private void addNewNodeConnection(Socket socket) {
-        try {
-            NodeConnection newConn =
-                    new NodeConnection(VERSION, socket, nodeId) {
-                        @Override
-                        protected void onStateChange(NodeConnection.State state) {
-                            System.out.println(this.getRemoteNodeId() + ": " + state);
-                            switch (state) {
-                                case NodeConnection.State.CONNECTED -> {}
-                                case NodeConnection.State.IDENTIFIED -> {
-                                    UUID remote = this.getRemoteNodeId();
-                                    if (nodeConnections.containsKey(remote)) {
-                                        this.close();
-                                    } else {
-                                        nodeConnections.put(remote, this);
-                                    }
+    private void addNewNodeConnection(Socket socket) throws IOException, InterruptedException {
+        NodeConnection newConn =
+                new NodeConnection(VERSION, socket, nodeId) {
+                    @Override
+                    protected void onStateChange(NodeConnection.State state) {
+                        System.out.println(this.getRemoteNodeId() + ": " + state);
+                        switch (state) {
+                            case NodeConnection.State.CONNECTED -> {}
+                            case NodeConnection.State.IDENTIFIED -> {
+                                UUID remote = this.getRemoteNodeId();
+                                if (nodeConnections.containsKey(remote)) {
+                                    this.close();
+                                } else {
+                                    nodeConnections.put(remote, this);
                                 }
-                                case NodeConnection.State.DISCONNECTED -> {
-                                    UUID remote = this.getRemoteNodeId();
-                                    if (remote != null) {
-                                        nodeConnections.remove(remote, this);
-                                    }
+                            }
+                            case NodeConnection.State.DISCONNECTED -> {
+                                UUID remote = this.getRemoteNodeId();
+                                if (remote != null) {
+                                    nodeConnections.remove(remote, this);
                                 }
                             }
                         }
+                    }
 
-                        @Override
-                        protected void onIncomingTask(
-                                int[] nums, CompletableFuture<Boolean> future) {
-                            ClusterConnection.this.onIncomingTask(nums, future);
-                        }
-                    };
-        } catch (IOException ignore) {
-        }
+                    @Override
+                    protected void onIncomingTask(int[] nums, CompletableFuture<Boolean> future) {
+                        ClusterConnection.this.onIncomingTask(nums, future);
+                    }
+                };
     }
 
     private void announceNode() throws IOException {

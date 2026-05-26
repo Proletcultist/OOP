@@ -45,7 +45,8 @@ public abstract class NodeConnection {
             new ConcurrentHashMap<UUID, CompletableFuture<Boolean>>();
     private final BlockingQueue<byte[]> sendQueue = new LinkedBlockingQueue<byte[]>();
 
-    public NodeConnection(ProtocolVersion ver, Socket socket, UUID localNodeId) throws IOException {
+    public NodeConnection(ProtocolVersion ver, Socket socket, UUID localNodeId)
+            throws IOException, InterruptedException {
         this.ver = ver;
         this.localNodeId = localNodeId;
         this.socket = socket;
@@ -53,14 +54,11 @@ public abstract class NodeConnection {
         in = new DataInputStream(socket.getInputStream());
         out = new DataOutputStream(socket.getOutputStream());
 
-        state = new AtomicReference(State.CONNECTED);
+        send(new Message.Handshake(localNodeId));
+
         pingedFuture = CompletableFuture.completedFuture(null);
 
-        try {
-            send(new Message.Handshake(localNodeId));
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
+        state = new AtomicReference(State.CONNECTED);
 
         readingThread = Thread.ofVirtual().start(() -> serviceReceivings());
         writingThread = Thread.ofVirtual().start(() -> serviceSendings());
@@ -119,7 +117,6 @@ public abstract class NodeConnection {
                         }
                     }
                     case Message.TaskStop s -> {
-                        System.out.println("STOP");
                         CompletableFuture<Boolean> fut = receivedTasks.remove(s.taskId());
                         if (fut != null) {
                             fut.cancel(true);
@@ -155,7 +152,7 @@ public abstract class NodeConnection {
         fut.whenComplete(
                 (result, exception) -> {
                     try {
-                        if (exception != null && !fut.isCancelled()) {
+                        if (exception != null) {
                             send(new Message.TaskFailed(t.taskId()));
                         } else {
                             send(new Message.TaskResult(t.taskId(), result));
