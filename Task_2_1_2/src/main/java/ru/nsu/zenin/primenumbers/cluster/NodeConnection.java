@@ -148,8 +148,6 @@ public abstract class NodeConnection {
                     case Message.Handshake h -> {}
                 }
             }
-        } catch (InterruptedException e) {
-            return;
         } catch (Exception e) {
             close();
         }
@@ -183,8 +181,6 @@ public abstract class NodeConnection {
                 byte[] data = sendQueue.take();
                 out.write(data, 0, data.length);
             }
-        } catch (InterruptedException e) {
-            return;
         } catch (Exception e) {
             close();
         }
@@ -201,8 +197,6 @@ public abstract class NodeConnection {
 
                 pingedFuture.get(HEARTBEAT_RATE, HEARTBEAT_UNIT);
             }
-        } catch (InterruptedException e) {
-            return;
         } catch (Exception e) {
             close();
         }
