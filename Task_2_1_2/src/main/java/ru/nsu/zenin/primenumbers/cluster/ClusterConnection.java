@@ -15,17 +15,20 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import ru.nsu.zenin.primenumbers.cluster.protocol.Codec;
 import ru.nsu.zenin.primenumbers.cluster.protocol.Message;
 import ru.nsu.zenin.primenumbers.cluster.protocol.ProtocolVersion;
 
-public abstract class ClusterConnection implements AutoCloseable {
+public abstract class ClusterConnection {
     private final int CONNECTION_TIMEOUT = 1000;
     private final ProtocolVersion VERSION = ProtocolVersion.LEET_VER;
 
     private final UUID nodeId;
+
+    private final AtomicBoolean open;
 
     private final InetSocketAddress groupAddress;
     private final InetSocketAddress nodeAddress;
@@ -56,6 +59,8 @@ public abstract class ClusterConnection implements AutoCloseable {
         NetworkInterface nf = NetworkInterface.getByInetAddress(nodeAddress.getAddress());
         multicastSock.setNetworkInterface(nf);
         multicastSock.joinGroup(groupAddress, nf);
+
+        open = new AtomicBoolean(true);
 
         tcpThread = Thread.ofVirtual().start(() -> serviceTcp());
         udpThread = Thread.ofVirtual().start(() -> serviceUdp());
@@ -148,9 +153,30 @@ public abstract class ClusterConnection implements AutoCloseable {
         }
     }
 
-    // TODO: Implement
-    @Override
-    public void close() {}
+    public boolean close() {
+        if (open.compareAndSet(true, false)) {
+            try {
+                multicastSock.close();
+                tcpServer.close();
+            } catch (IOException ignore) {
+            }
+
+            if (udpThread != null) {
+                udpThread.interrupt();
+            }
+            if (tcpThread != null) {
+                tcpThread.interrupt();
+            }
+
+            for (NodeConnection con : nodeConnections.values()) {
+                con.close();
+            }
+
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     private void serviceTcp() {
         while (!Thread.interrupted()) {
@@ -172,6 +198,7 @@ public abstract class ClusterConnection implements AutoCloseable {
                 multicastSock.receive(packet);
             } catch (IOException e) {
                 close();
+                return;
             }
 
             Message msg;
