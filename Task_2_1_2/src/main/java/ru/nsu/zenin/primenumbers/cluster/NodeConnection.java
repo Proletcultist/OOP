@@ -37,7 +37,7 @@ public abstract class NodeConnection {
     private final Thread writingThread;
     private final Thread heartbeatThread;
 
-    private CompletableFuture<?> pingedFuture;
+    private volatile CompletableFuture<?> pingedFuture;
 
     private final Map<UUID, CompletableFuture<Boolean>> submittedTasks =
             new ConcurrentHashMap<UUID, CompletableFuture<Boolean>>();
