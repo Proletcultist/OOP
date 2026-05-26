@@ -94,6 +94,8 @@ public abstract class NodeConnection {
             try {
                 send(new Message.TaskSubmit(taskId, numbers));
             } catch (InterruptedException e) {
+                submittedTasks.remove(taskId);
+                fut.completeExceptionally(e);
                 Thread.currentThread().interrupt();
             } catch (IOException e) {
                 close();
