@@ -10,13 +10,13 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import ru.nsu.zenin.primenumbers.cluster.protocol.Codec;
 import ru.nsu.zenin.primenumbers.cluster.protocol.Message;
@@ -39,7 +39,7 @@ public abstract class ClusterConnection {
     private final MulticastSocket multicastSock;
     private final ServerSocket tcpServer;
 
-    private final Map<UUID, NodeConnection> nodeConnections;
+    private final ConcurrentHashMap<UUID, NodeConnection> nodeConnections;
 
     public abstract void onIncomingTask(int[] nums, CompletableFuture<Boolean> future);
 
@@ -189,7 +189,7 @@ public abstract class ClusterConnection {
                 System.out.println(nodeId + ": Connected new " + socket.getRemoteSocketAddress());
 
                 try {
-                    addNewNodeConnection(socket);
+                    addNewNodeConnection(socket, false);
                 } catch (IOException | InterruptedException e) {
                     try {
                         socket.close();
@@ -235,7 +235,7 @@ public abstract class ClusterConnection {
                             new InetSocketAddress(p.address(), p.port()), CONNECTION_TIMEOUT);
 
                     try {
-                        addNewNodeConnection(socket);
+                        addNewNodeConnection(socket, true);
                     } catch (IOException | InterruptedException e) {
                         try {
                             socket.close();
@@ -253,9 +253,10 @@ public abstract class ClusterConnection {
         close();
     }
 
-    private void addNewNodeConnection(Socket socket) throws IOException, InterruptedException {
+    private void addNewNodeConnection(Socket socket, boolean outgoing)
+            throws IOException, InterruptedException {
         NodeConnection newConn =
-                new NodeConnection(VERSION, socket, nodeId) {
+                new NodeConnection(VERSION, socket, nodeId, outgoing) {
                     @Override
                     protected void onStateChange(NodeConnection.State state) {
                         System.out.println(this.getRemoteNodeId() + ": " + state);
@@ -263,10 +264,35 @@ public abstract class ClusterConnection {
                             case NodeConnection.State.CONNECTED -> {}
                             case NodeConnection.State.IDENTIFIED -> {
                                 UUID remote = this.getRemoteNodeId();
-                                if (nodeConnections.containsKey(remote)) {
-                                    this.close();
-                                } else {
-                                    nodeConnections.put(remote, this);
+                                final AtomicReference<NodeConnection> toClose =
+                                        new AtomicReference<NodeConnection>(null);
+
+                                nodeConnections.compute(
+                                        remote,
+                                        (key, current) -> {
+                                            if (current == null) {
+                                                return this;
+                                            }
+
+                                            boolean thisCanonical =
+                                                    (nodeId.compareTo(remote) < 0)
+                                                            == this.isOutgoing();
+                                            boolean currentCanonical =
+                                                    (nodeId.compareTo(remote) < 0)
+                                                            == current.isOutgoing();
+
+                                            if (thisCanonical && !currentCanonical) {
+                                                toClose.set(current);
+                                                return this;
+                                            } else {
+                                                toClose.set(this);
+                                                return current;
+                                            }
+                                        });
+
+                                NodeConnection losingConn = toClose.get();
+                                if (losingConn != null) {
+                                    losingConn.close();
                                 }
                             }
                             case NodeConnection.State.DISCONNECTED -> {

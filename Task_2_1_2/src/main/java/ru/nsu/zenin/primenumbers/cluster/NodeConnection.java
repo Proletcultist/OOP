@@ -24,6 +24,7 @@ public abstract class NodeConnection {
 
     private final ProtocolVersion ver;
 
+    @Getter private final boolean outgoing;
     @Getter private final UUID localNodeId;
     @Getter private UUID remoteNodeId = null;
 
@@ -45,11 +46,12 @@ public abstract class NodeConnection {
             new ConcurrentHashMap<UUID, CompletableFuture<Boolean>>();
     private final BlockingQueue<byte[]> sendQueue = new LinkedBlockingQueue<byte[]>();
 
-    public NodeConnection(ProtocolVersion ver, Socket socket, UUID localNodeId)
+    public NodeConnection(ProtocolVersion ver, Socket socket, UUID localNodeId, boolean outgoing)
             throws IOException, InterruptedException {
         this.ver = ver;
         this.localNodeId = localNodeId;
         this.socket = socket;
+        this.outgoing = outgoing;
 
         in = new DataInputStream(socket.getInputStream());
         out = new DataOutputStream(socket.getOutputStream());
