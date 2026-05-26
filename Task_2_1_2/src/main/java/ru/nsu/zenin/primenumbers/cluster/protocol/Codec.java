@@ -49,7 +49,12 @@ public class Codec {
 
         ret +=
                 switch (msg) {
-                    case Message.Presence p -> Long.BYTES + Long.BYTES + 4 * Byte.BYTES + Integer.BYTES;
+                    case Message.Presence p ->
+                            Long.BYTES
+                                    + Long.BYTES
+                                    + Byte.BYTES
+                                    + p.address().getAddress().length * Byte.BYTES
+                                    + Integer.BYTES;
                     case Message.TaskSubmit t ->
                             Long.BYTES
                                     + Long.BYTES
@@ -76,7 +81,11 @@ public class Codec {
             case Message.Presence p -> {
                 dos.writeLong(p.nodeId().getMostSignificantBits());
                 dos.writeLong(p.nodeId().getLeastSignificantBits());
-                dos.write(p.address().getAddress(), 0, 4);
+
+                byte[] addr = p.address().getAddress();
+                dos.writeByte(addr.length);
+                dos.write(p.address().getAddress(), 0, addr.length);
+
                 dos.writeInt(p.port());
             }
             case Message.TaskSubmit t -> {
@@ -127,8 +136,10 @@ public class Codec {
         return switch (type) {
             case PRESENCE -> {
                 UUID id = new UUID(dis.readLong(), dis.readLong());
-                byte[] ip = new byte[4];
+
+                byte[] ip = new byte[dis.readByte()];
                 dis.readFully(ip);
+
                 int port = dis.readInt();
                 yield new Message.Presence(id, InetAddress.getByAddress(ip), port);
             }
