@@ -18,7 +18,7 @@ import ru.nsu.zenin.primenumbers.cluster.protocol.Codec;
 import ru.nsu.zenin.primenumbers.cluster.protocol.Message;
 import ru.nsu.zenin.primenumbers.cluster.protocol.ProtocolVersion;
 
-public abstract class NodeConnection implements AutoCloseable {
+public abstract class NodeConnection {
     private static final TimeUnit HEARTBEAT_UNIT = TimeUnit.SECONDS;
     private static final long HEARTBEAT_RATE = 2;
 
@@ -82,7 +82,7 @@ public abstract class NodeConnection implements AutoCloseable {
                         } catch (InterruptedException e) {
                             Thread.currentThread().interrupt();
                         } catch (IOException e) {
-                            tryClose();
+                            close();
                         }
                     }
                 });
@@ -98,7 +98,7 @@ public abstract class NodeConnection implements AutoCloseable {
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             } catch (IOException e) {
-                tryClose();
+                close();
             }
         }
 
@@ -138,7 +138,7 @@ public abstract class NodeConnection implements AutoCloseable {
                             remoteNodeId = h.nodeId();
                             onStateChange(State.IDENTIFIED);
                         } else {
-                            tryClose();
+                            close();
                         }
                     }
                 }
@@ -146,7 +146,7 @@ public abstract class NodeConnection implements AutoCloseable {
         } catch (InterruptedException e) {
             return;
         } catch (Exception e) {
-            tryClose();
+            close();
         }
     }
 
@@ -164,7 +164,7 @@ public abstract class NodeConnection implements AutoCloseable {
                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt();
                     } catch (IOException e) {
-                        tryClose();
+                        close();
                     }
                 });
         receivedTasks.put(t.taskId(), fut);
@@ -181,7 +181,7 @@ public abstract class NodeConnection implements AutoCloseable {
         } catch (InterruptedException e) {
             return;
         } catch (Exception e) {
-            tryClose();
+            close();
         }
     }
 
@@ -199,18 +199,11 @@ public abstract class NodeConnection implements AutoCloseable {
         } catch (InterruptedException e) {
             return;
         } catch (Exception e) {
-            tryClose();
-        }
-    }
-
-    public void tryClose() {
-        try {
             close();
-        } catch (IllegalStateException ignore) {
         }
     }
 
-    public void close() {
+    public boolean close() {
         if (state.getAndSet(State.DISCONNECTED) != State.DISCONNECTED) {
             try {
                 socket.close();
@@ -237,8 +230,10 @@ public abstract class NodeConnection implements AutoCloseable {
             }
 
             onStateChange(State.DISCONNECTED);
+
+            return true;
         } else {
-            throw new IllegalStateException("Connection already closed");
+            return false;
         }
     }
 
