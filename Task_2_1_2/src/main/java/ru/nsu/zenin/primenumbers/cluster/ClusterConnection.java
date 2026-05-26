@@ -7,10 +7,14 @@ import java.net.MulticastSocket;
 import java.net.NetworkInterface;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import ru.nsu.zenin.primenumbers.cluster.protocol.Codec;
 import ru.nsu.zenin.primenumbers.cluster.protocol.Message;
 import ru.nsu.zenin.primenumbers.cluster.protocol.ProtocolVersion;
@@ -49,8 +53,75 @@ public abstract class ClusterConnection implements AutoCloseable {
         announceNode();
     }
 
-    // public CompletableFuture<Boolean> submit(int[] nums) {}
+    public CompletableFuture<Boolean> submit(int[] nums) {
+        // Make a snapshot of connected nodes
+        List<NodeConnection> activeConnections =
+                new ArrayList<NodeConnection>(nodeConnections.values());
 
+        if (activeConnections.isEmpty()) {
+            return CompletableFuture.failedFuture(new IllegalStateException("No nodes in network"));
+        }
+
+        int chunkSize = (int) Math.ceil((double) nums.length / activeConnections.size());
+
+        List<CompletableFuture<Boolean>> subfutures = new ArrayList<CompletableFuture<Boolean>>();
+        for (int i = 0; i < activeConnections.size(); i++) {
+            int start = i * chunkSize;
+            int length = Math.min(chunkSize, nums.length - start);
+            if (length <= 0) break;
+
+            int[] chunk = Arrays.copyOfRange(nums, start, start + length);
+
+            // Create completable future with retry logic
+            try {
+                subfutures.add(
+                        activeConnections
+                                .get(i)
+                                .submit(chunk)
+                                .exceptionallyCompose(ex -> resubmit(chunk)));
+            } catch (IOException e) {
+                subfutures.add(resubmit(chunk));
+            }
+        }
+
+        CompletableFuture<Boolean> mainFut = new CompletableFuture<Boolean>();
+        // Counter for false results
+        AtomicInteger falseCounter = new AtomicInteger(0);
+
+        for (CompletableFuture<Boolean> fut : subfutures) {
+            fut.whenComplete(
+                    (result, exception) -> {
+                        if (exception != null) {
+                            if (mainFut.completeExceptionally(exception)) {
+                                cancelAll(subfutures);
+                            }
+                        } else {
+                            if (result == true) {
+                                if (mainFut.complete(result)) {
+                                    cancelAll(subfutures);
+                                }
+                            } else if (falseCounter.incrementAndGet() == subfutures.size()) {
+                                mainFut.complete(result);
+                            }
+                        }
+                    });
+        }
+
+        return mainFut;
+    }
+
+    private static void cancelAll(List<CompletableFuture<Boolean>> futures) {
+        for (CompletableFuture<Boolean> fut : futures) {
+            fut.cancel(true);
+        }
+    }
+
+    public CompletableFuture<Boolean> resubmit(int[] nums) {
+        // TODO: Implement (submit to any node, also with retry logic)
+        return CompletableFuture.failedFuture(new IllegalStateException("Failed to resubmit"));
+    }
+
+    // TODO: Implement
     @Override
     public void close() {}
 

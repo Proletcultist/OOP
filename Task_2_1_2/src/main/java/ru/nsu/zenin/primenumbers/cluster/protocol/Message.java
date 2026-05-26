@@ -34,6 +34,13 @@ public sealed interface Message {
         }
     }
 
+    record TaskFailed(UUID taskId) implements Message {
+        @Override
+        public MessageType getType() {
+            return MessageType.TASK_FAILED;
+        }
+    }
+
     record Ping() implements Message {
         @Override
         public MessageType getType() {
