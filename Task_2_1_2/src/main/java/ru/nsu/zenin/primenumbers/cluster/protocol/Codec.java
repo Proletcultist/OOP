@@ -57,6 +57,7 @@ public class Codec {
                                     + t.numbers().length * Integer.SIZE;
                     case Message.TaskResult r -> Long.SIZE + Long.SIZE + Byte.SIZE;
                     case Message.TaskStop s -> Long.SIZE + Long.SIZE;
+                    case Message.TaskFailed s -> Long.SIZE + Long.SIZE;
                     case Message.Ping p -> 0;
                     case Message.Pong p -> 0;
                     case Message.Handshake h -> Long.SIZE + Long.SIZE;
@@ -92,6 +93,10 @@ public class Codec {
             case Message.TaskStop s -> {
                 dos.writeLong(s.taskId().getMostSignificantBits());
                 dos.writeLong(s.taskId().getLeastSignificantBits());
+            }
+            case Message.TaskFailed f -> {
+                dos.writeLong(f.taskId().getMostSignificantBits());
+                dos.writeLong(f.taskId().getLeastSignificantBits());
             }
             case Message.Ping p -> {}
             case Message.Pong p -> {}
@@ -141,6 +146,7 @@ public class Codec {
                     new Message.TaskResult(
                             new UUID(dis.readLong(), dis.readLong()), dis.readBoolean());
             case TASK_STOP -> new Message.TaskStop(new UUID(dis.readLong(), dis.readLong()));
+            case TASK_FAILED -> new Message.TaskFailed(new UUID(dis.readLong(), dis.readLong()));
             case PING -> new Message.Ping();
             case PONG -> new Message.Pong();
             case HANDSHAKE -> new Message.Handshake(new UUID(dis.readLong(), dis.readLong()));

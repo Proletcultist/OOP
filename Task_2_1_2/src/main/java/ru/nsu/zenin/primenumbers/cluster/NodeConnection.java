@@ -4,9 +4,11 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
@@ -37,8 +39,10 @@ public abstract class NodeConnection implements AutoCloseable {
     private CompletableFuture<?> pingedFuture;
 
     private long lastSeen;
-    // private final Set<CompletableFuture<Boolean>> tasks = new
-    // HashSet<CompletableFuture<Boolean>>();
+    private final Map<UUID, CompletableFuture<Boolean>> submittedTasks =
+            new ConcurrentHashMap<UUID, CompletableFuture<Boolean>>();
+    private final Map<UUID, CompletableFuture<Boolean>> receivedTasks =
+            new ConcurrentHashMap<UUID, CompletableFuture<Boolean>>();
     private final BlockingQueue<byte[]> sendQueue = new LinkedBlockingQueue<byte[]>();
 
     public NodeConnection(ProtocolVersion ver, Socket socket, UUID localNodeId) throws IOException {
@@ -69,7 +73,25 @@ public abstract class NodeConnection implements AutoCloseable {
 
     protected abstract void onIncomingTask(int[] nums, CompletableFuture<Boolean> future);
 
-    // public CompletableFuture<Boolean> submit(int[] numbers) {}
+    public CompletableFuture<Boolean> submit(int[] numbers) throws IOException {
+        UUID taskId = UUID.randomUUID();
+        CompletableFuture<Boolean> fut = new CompletableFuture<Boolean>();
+        submittedTasks.put(taskId, fut);
+
+        // If connection isn't a thing - fail task
+        if (state.get() == State.DISCONNECTED) {
+            submittedTasks.remove(taskId);
+            fut.completeExceptionally(new IOException("Connection is down"));
+        } else {
+            try {
+                send(new Message.TaskSubmit(taskId, numbers));
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+
+        return fut;
+    }
 
     private void serviceReceivings() {
         try {
@@ -77,9 +99,15 @@ public abstract class NodeConnection implements AutoCloseable {
                 Message msg = recieve();
                 switch (msg) {
                     case Message.Presence p -> {}
-                    case Message.TaskSubmit t -> {}
-                    case Message.TaskResult r -> {}
+                    case Message.TaskSubmit t -> handleTaskSubmit(t);
+                    case Message.TaskResult r -> {
+                        CompletableFuture<Boolean> fut = submittedTasks.remove(r.taskId());
+                        if (fut != null) {
+                            fut.complete(r.hasComposite());
+                        }
+                    }
                     case Message.TaskStop s -> {}
+                    case Message.TaskFailed f -> {}
                     case Message.Ping p -> send(new Message.Pong());
                     case Message.Pong pp -> pingedFuture.complete(null);
                     case Message.Handshake h -> {
@@ -93,10 +121,32 @@ public abstract class NodeConnection implements AutoCloseable {
                 }
             }
         } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+            return;
         } catch (Exception e) {
             tryClose();
         }
+    }
+
+    private void handleTaskSubmit(Message.TaskSubmit t) {
+        CompletableFuture<Boolean> fut = new CompletableFuture<Boolean>();
+        fut.whenComplete(
+                (result, exception) -> {
+                    try {
+                        if (exception != null) {
+                            send(new Message.TaskFailed(t.taskId()));
+                        } else {
+                            send(new Message.TaskResult(t.taskId(), result));
+                        }
+                        receivedTasks.remove(t.taskId());
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    } catch (IOException e) {
+                        tryClose();
+                    }
+                });
+        receivedTasks.put(t.taskId(), fut);
+
+        onIncomingTask(t.numbers(), fut);
     }
 
     private void serviceSendings() {
@@ -105,6 +155,8 @@ public abstract class NodeConnection implements AutoCloseable {
                 byte[] data = sendQueue.take();
                 out.write(data, 0, data.length);
             }
+        } catch (InterruptedException e) {
+            return;
         } catch (Exception e) {
             tryClose();
         }
@@ -122,7 +174,7 @@ public abstract class NodeConnection implements AutoCloseable {
                 pingedFuture.get(HEARTBEAT_RATE, HEARTBEAT_UNIT);
             }
         } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+            return;
         } catch (Exception e) {
             tryClose();
         }
@@ -154,7 +206,12 @@ public abstract class NodeConnection implements AutoCloseable {
                 heartbeatThread.interrupt();
             }
 
-            // TODO: Fail all tasks
+            for (CompletableFuture<Boolean> fut : submittedTasks.values()) {
+                fut.completeExceptionally(new IOException("Connection is down"));
+            }
+            for (CompletableFuture<Boolean> fut : receivedTasks.values()) {
+                fut.cancel(true);
+            }
 
             onStateChange(State.DISCONNECTED);
         } else {
