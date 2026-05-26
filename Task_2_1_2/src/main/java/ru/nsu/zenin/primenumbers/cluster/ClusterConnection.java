@@ -11,10 +11,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 import ru.nsu.zenin.primenumbers.cluster.protocol.Codec;
 import ru.nsu.zenin.primenumbers.cluster.protocol.Message;
 import ru.nsu.zenin.primenumbers.cluster.protocol.ProtocolVersion;
@@ -54,9 +56,15 @@ public abstract class ClusterConnection implements AutoCloseable {
     }
 
     public CompletableFuture<Boolean> submit(int[] nums) {
+        return submit(nums, ConcurrentHashMap.newKeySet());
+    }
+
+    private CompletableFuture<Boolean> submit(int[] nums, Set<UUID> dontSubmitTo) {
         // Make a snapshot of connected nodes
         List<NodeConnection> activeConnections =
-                new ArrayList<NodeConnection>(nodeConnections.values());
+                nodeConnections.values().stream()
+                        .filter(con -> !dontSubmitTo.contains(con.getRemoteNodeId()))
+                        .collect(Collectors.toList());
 
         if (activeConnections.isEmpty()) {
             return CompletableFuture.failedFuture(new IllegalStateException("No nodes in network"));
@@ -73,23 +81,26 @@ public abstract class ClusterConnection implements AutoCloseable {
             int[] chunk = Arrays.copyOfRange(nums, start, start + length);
 
             // Create completable future with retry logic
-            try {
-                CompletableFuture<Boolean> originalFut = activeConnections.get(i).submit(chunk);
-                // If original fut was failed - retry
-                CompletableFuture<Boolean> retryFut =
-                        originalFut.exceptionallyCompose(ex -> resubmit(chunk));
-                // If this future with retry logic was cancelled - cancel underlying future
-                retryFut.whenComplete(
-                        (result, exception) -> {
-                            if (retryFut.isCancelled()) {
-                                originalFut.cancel(true);
-                            }
-                        });
-                subfutures.add(retryFut);
-            } catch (IOException e) {
-                // TODO: Is it really right way?
-                subfutures.add(resubmit(chunk));
-            }
+            CompletableFuture<Boolean> originalFut = activeConnections.get(i).submit(chunk);
+
+            // If original fut was failed - retry, but dont submit to the same node to aboid
+            // infinite loops
+            final UUID currentNodeUUID = activeConnections.get(i).getRemoteNodeId();
+            CompletableFuture<Boolean> retryFut =
+                    originalFut.exceptionallyCompose(
+                            ex -> {
+                                dontSubmitTo.add(currentNodeUUID);
+                                return submit(chunk, dontSubmitTo);
+                            });
+
+            // If this future with retry logic was cancelled - cancel underlying future
+            retryFut.whenComplete(
+                    (result, exception) -> {
+                        if (retryFut.isCancelled()) {
+                            originalFut.cancel(true);
+                        }
+                    });
+            subfutures.add(retryFut);
         }
 
         CompletableFuture<Boolean> mainFut = new CompletableFuture<Boolean>();
@@ -122,11 +133,6 @@ public abstract class ClusterConnection implements AutoCloseable {
         for (CompletableFuture<Boolean> fut : futures) {
             fut.cancel(true);
         }
-    }
-
-    public CompletableFuture<Boolean> resubmit(int[] nums) {
-        // TODO: Implement (submit to any node, also with retry logic)
-        return CompletableFuture.failedFuture(new IllegalStateException("Failed to resubmit"));
     }
 
     // TODO: Implement
