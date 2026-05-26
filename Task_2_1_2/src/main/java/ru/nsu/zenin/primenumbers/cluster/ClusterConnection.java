@@ -74,12 +74,20 @@ public abstract class ClusterConnection implements AutoCloseable {
 
             // Create completable future with retry logic
             try {
-                subfutures.add(
-                        activeConnections
-                                .get(i)
-                                .submit(chunk)
-                                .exceptionallyCompose(ex -> resubmit(chunk)));
+                CompletableFuture<Boolean> originalFut = activeConnections.get(i).submit(chunk);
+                // If original fut was failed - retry
+                CompletableFuture<Boolean> retryFut =
+                        originalFut.exceptionallyCompose(ex -> resubmit(chunk));
+                // If this future with retry logic was cancelled - cancel underlying future
+                retryFut.whenComplete(
+                        (result, exception) -> {
+                            if (retryFut.isCancelled()) {
+                                originalFut.cancel(true);
+                            }
+                        });
+                subfutures.add(retryFut);
             } catch (IOException e) {
+                // TODO: Is it really right way?
                 subfutures.add(resubmit(chunk));
             }
         }

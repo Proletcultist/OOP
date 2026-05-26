@@ -13,6 +13,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import lombok.Getter;
+import ru.nsu.zenin.primenumbers.cluster.exception.NodeFaultException;
 import ru.nsu.zenin.primenumbers.cluster.protocol.Codec;
 import ru.nsu.zenin.primenumbers.cluster.protocol.Message;
 import ru.nsu.zenin.primenumbers.cluster.protocol.ProtocolVersion;
@@ -38,7 +39,6 @@ public abstract class NodeConnection implements AutoCloseable {
 
     private CompletableFuture<?> pingedFuture;
 
-    private long lastSeen;
     private final Map<UUID, CompletableFuture<Boolean>> submittedTasks =
             new ConcurrentHashMap<UUID, CompletableFuture<Boolean>>();
     private final Map<UUID, CompletableFuture<Boolean>> receivedTasks =
@@ -52,8 +52,6 @@ public abstract class NodeConnection implements AutoCloseable {
 
         in = new DataInputStream(socket.getInputStream());
         out = new DataOutputStream(socket.getOutputStream());
-
-        lastSeen = System.currentTimeMillis();
 
         state = new AtomicReference(State.CONNECTED);
         pingedFuture = CompletableFuture.completedFuture(null);
@@ -76,6 +74,19 @@ public abstract class NodeConnection implements AutoCloseable {
     public CompletableFuture<Boolean> submit(int[] numbers) throws IOException {
         UUID taskId = UUID.randomUUID();
         CompletableFuture<Boolean> fut = new CompletableFuture<Boolean>();
+        fut.whenComplete((result, exception) -> {
+            if (fut.isCancelled()) {
+                try {
+                    send(new Message.TaskStop(taskId));
+                }
+                catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+                catch (IOException e) {
+                    tryClose();
+                }
+            }
+        });
         submittedTasks.put(taskId, fut);
 
         // If connection isn't a thing - fail task
@@ -106,8 +117,19 @@ public abstract class NodeConnection implements AutoCloseable {
                             fut.complete(r.hasComposite());
                         }
                     }
-                    case Message.TaskStop s -> {}
-                    case Message.TaskFailed f -> {}
+                    case Message.TaskStop s -> {
+                        System.out.println("STOP");
+                        CompletableFuture<Boolean> fut = receivedTasks.remove(s.taskId());
+                        if (fut != null) {
+                            fut.cancel(true);
+                        }
+                    }
+                    case Message.TaskFailed f -> {
+                        CompletableFuture<Boolean> fut = submittedTasks.remove(f.taskId());
+                        if (fut != null) {
+                            fut.completeExceptionally(new NodeFaultException("Node fault"));
+                        }
+                    }
                     case Message.Ping p -> send(new Message.Pong());
                     case Message.Pong pp -> pingedFuture.complete(null);
                     case Message.Handshake h -> {
