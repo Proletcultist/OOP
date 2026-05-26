@@ -105,6 +105,19 @@ public abstract class NodeConnection {
 
     private void serviceReceivings() {
         try {
+            Message fst_msg = recieve();
+            if (fst_msg instanceof Message.Handshake handshake) {
+                if (state.getAndSet(State.IDENTIFIED) == State.CONNECTED) {
+                    remoteNodeId = handshake.nodeId();
+                    onStateChange(State.IDENTIFIED);
+                } else {
+                    close();
+                }
+            } else {
+                close();
+                return;
+            }
+
             while (!Thread.interrupted()) {
                 Message msg = recieve();
                 switch (msg) {
@@ -130,14 +143,7 @@ public abstract class NodeConnection {
                     }
                     case Message.Ping p -> send(new Message.Pong());
                     case Message.Pong pp -> pingedFuture.complete(null);
-                    case Message.Handshake h -> {
-                        if (state.getAndSet(State.IDENTIFIED) == State.CONNECTED) {
-                            remoteNodeId = h.nodeId();
-                            onStateChange(State.IDENTIFIED);
-                        } else {
-                            close();
-                        }
-                    }
+                    case Message.Handshake h -> {}
                 }
             }
         } catch (InterruptedException e) {
