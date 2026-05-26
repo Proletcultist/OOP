@@ -202,6 +202,8 @@ public abstract class ClusterConnection {
             } catch (IOException ignore) {
             }
         }
+
+        close();
     }
 
     private void serviceUdp() {
@@ -212,8 +214,7 @@ public abstract class ClusterConnection {
             try {
                 multicastSock.receive(packet);
             } catch (IOException e) {
-                close();
-                return;
+                continue;
             }
 
             Message msg;
@@ -248,6 +249,8 @@ public abstract class ClusterConnection {
                 }
             }
         }
+
+        close();
     }
 
     private void addNewNodeConnection(Socket socket) throws IOException, InterruptedException {
