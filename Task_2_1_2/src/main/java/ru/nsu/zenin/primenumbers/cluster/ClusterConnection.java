@@ -74,6 +74,10 @@ public abstract class ClusterConnection {
     }
 
     public CompletableFuture<Boolean> submit(int[] nums) {
+        if (nums.length == 0) {
+            return CompletableFuture.completedFuture(false);
+        }
+
         return submit(nums, ConcurrentHashMap.newKeySet());
     }
 
