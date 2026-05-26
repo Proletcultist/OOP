@@ -25,7 +25,7 @@ public class App {
                     @Override
                     public void onIncomingTask(int[] nums, CompletableFuture<Boolean> future) {
                         System.out.println("Received task: " + Arrays.toString(nums));
-                        future.complete(true);
+                        future.complete(false);
                     }
 
                     @Override
@@ -37,6 +37,7 @@ public class App {
                     @Override
                     public void onIncomingTask(int[] nums, CompletableFuture<Boolean> future) {
                         System.out.println("Received task: " + Arrays.toString(nums));
+                        future.completeExceptionally(new Exception());
                     }
 
                     @Override

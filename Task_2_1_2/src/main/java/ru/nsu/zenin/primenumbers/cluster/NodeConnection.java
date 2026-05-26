@@ -71,22 +71,21 @@ public abstract class NodeConnection implements AutoCloseable {
 
     protected abstract void onIncomingTask(int[] nums, CompletableFuture<Boolean> future);
 
-    public CompletableFuture<Boolean> submit(int[] numbers) throws IOException {
+    public CompletableFuture<Boolean> submit(int[] numbers) {
         UUID taskId = UUID.randomUUID();
         CompletableFuture<Boolean> fut = new CompletableFuture<Boolean>();
-        fut.whenComplete((result, exception) -> {
-            if (fut.isCancelled()) {
-                try {
-                    send(new Message.TaskStop(taskId));
-                }
-                catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
-                catch (IOException e) {
-                    tryClose();
-                }
-            }
-        });
+        fut.whenComplete(
+                (result, exception) -> {
+                    if (fut.isCancelled()) {
+                        try {
+                            send(new Message.TaskStop(taskId));
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                        } catch (IOException e) {
+                            tryClose();
+                        }
+                    }
+                });
         submittedTasks.put(taskId, fut);
 
         // If connection isn't a thing - fail task
@@ -98,6 +97,8 @@ public abstract class NodeConnection implements AutoCloseable {
                 send(new Message.TaskSubmit(taskId, numbers));
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
+            } catch (IOException e) {
+                tryClose();
             }
         }
 
