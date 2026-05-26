@@ -44,23 +44,23 @@ public class Codec {
         int ret = 0;
 
         ret += MAGIC_NUMBER.length;
-        ret += Short.SIZE;
-        ret += Byte.SIZE;
+        ret += Short.BYTES;
+        ret += Byte.BYTES;
 
         ret +=
                 switch (msg) {
-                    case Message.Presence p -> Long.SIZE + Long.SIZE + 4 * Byte.SIZE + Integer.SIZE;
+                    case Message.Presence p -> Long.BYTES + Long.BYTES + 4 * Byte.BYTES + Integer.BYTES;
                     case Message.TaskSubmit t ->
-                            Long.SIZE
-                                    + Long.SIZE
-                                    + Integer.SIZE
-                                    + t.numbers().length * Integer.SIZE;
-                    case Message.TaskResult r -> Long.SIZE + Long.SIZE + Byte.SIZE;
-                    case Message.TaskStop s -> Long.SIZE + Long.SIZE;
-                    case Message.TaskFailed s -> Long.SIZE + Long.SIZE;
+                            Long.BYTES
+                                    + Long.BYTES
+                                    + Integer.BYTES
+                                    + t.numbers().length * Integer.BYTES;
+                    case Message.TaskResult r -> Long.BYTES + Long.BYTES + Byte.BYTES;
+                    case Message.TaskStop s -> Long.BYTES + Long.BYTES;
+                    case Message.TaskFailed s -> Long.BYTES + Long.BYTES;
                     case Message.Ping p -> 0;
                     case Message.Pong p -> 0;
-                    case Message.Handshake h -> Long.SIZE + Long.SIZE;
+                    case Message.Handshake h -> Long.BYTES + Long.BYTES;
                 };
 
         return ret;
@@ -115,9 +115,7 @@ public class Codec {
                     EOFException {
 
         byte[] magic_num = new byte[MAGIC_NUMBER.length];
-        if (dis.read(magic_num, 0, magic_num.length) != MAGIC_NUMBER.length) {
-            throw new EOFException("Unexpected EOF");
-        }
+        dis.readFully(magic_num);
         if (!Arrays.equals(magic_num, MAGIC_NUMBER)) {
             throw new WrongMagicNumberException(
                     "Wrong magic number: " + Arrays.toString(magic_num));
@@ -130,9 +128,7 @@ public class Codec {
             case PRESENCE -> {
                 UUID id = new UUID(dis.readLong(), dis.readLong());
                 byte[] ip = new byte[4];
-                if (dis.read(ip, 0, ip.length) != ip.length) {
-                    throw new EOFException("Unexpected EOF");
-                }
+                dis.readFully(ip);
                 int port = dis.readInt();
                 yield new Message.Presence(id, InetAddress.getByAddress(ip), port);
             }
