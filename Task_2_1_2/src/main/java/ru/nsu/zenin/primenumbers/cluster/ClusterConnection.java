@@ -30,11 +30,11 @@ public abstract class ClusterConnection implements AutoCloseable {
     private final InetSocketAddress groupAddress;
     private final InetSocketAddress nodeAddress;
 
-    private Thread udpThread;
-    private Thread tcpThread;
+    private final Thread udpThread;
+    private final Thread tcpThread;
 
-    private MulticastSocket multicastSock;
-    private ServerSocket tcpServer;
+    private final MulticastSocket multicastSock;
+    private final ServerSocket tcpServer;
 
     private final Map<UUID, NodeConnection> nodeConnections;
 
@@ -49,10 +49,23 @@ public abstract class ClusterConnection implements AutoCloseable {
         this.nodeConnections = new ConcurrentHashMap<UUID, NodeConnection>();
         this.nodeId = UUID.randomUUID();
 
-        startTcpServer();
-        startUdpListener();
+        this.tcpServer = new ServerSocket();
+        tcpServer.bind(nodeAddress);
 
-        announceNode();
+        multicastSock = new MulticastSocket(groupAddress.getPort());
+        NetworkInterface nf = NetworkInterface.getByInetAddress(nodeAddress.getAddress());
+        multicastSock.setNetworkInterface(nf);
+        multicastSock.joinGroup(groupAddress, nf);
+
+        tcpThread = Thread.ofVirtual().start(() -> serviceTcp());
+        udpThread = Thread.ofVirtual().start(() -> serviceUdp());
+
+        try {
+            announceNode();
+        } catch (IOException e) {
+            close();
+            throw e;
+        }
     }
 
     public CompletableFuture<Boolean> submit(int[] nums) {
@@ -139,78 +152,49 @@ public abstract class ClusterConnection implements AutoCloseable {
     @Override
     public void close() {}
 
-    private void startTcpServer() throws IOException {
-        tcpServer = new ServerSocket();
-        tcpServer.bind(nodeAddress);
-
-        tcpThread =
-                Thread.ofVirtual()
-                        .start(
-                                () -> {
-                                    while (!Thread.interrupted()) {
-                                        try {
-                                            Socket socket = tcpServer.accept();
-                                            System.out.println(
-                                                    nodeId
-                                                            + ": Connected new "
-                                                            + socket.getRemoteSocketAddress());
-                                            addNewNodeConnection(socket);
-                                        } catch (IOException ignore) {
-                                            close();
-                                        }
-                                    }
-                                });
+    private void serviceTcp() {
+        while (!Thread.interrupted()) {
+            try {
+                Socket socket = tcpServer.accept();
+                System.out.println(nodeId + ": Connected new " + socket.getRemoteSocketAddress());
+                addNewNodeConnection(socket);
+            } catch (IOException ignore) {
+            }
+        }
     }
 
-    private void startUdpListener() throws IOException {
-        multicastSock = new MulticastSocket(groupAddress.getPort());
-        NetworkInterface nf = NetworkInterface.getByInetAddress(nodeAddress.getAddress());
-        multicastSock.setNetworkInterface(nf);
-        multicastSock.joinGroup(groupAddress, nf);
+    private void serviceUdp() {
+        byte[] buffer = new byte[512];
+        while (!Thread.interrupted()) {
+            DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 
-        udpThread =
-                Thread.ofVirtual()
-                        .start(
-                                () -> {
-                                    byte[] buffer = new byte[512];
-                                    while (!Thread.interrupted()) {
-                                        DatagramPacket packet =
-                                                new DatagramPacket(buffer, buffer.length);
+            try {
+                multicastSock.receive(packet);
+            } catch (IOException e) {
+                close();
+            }
 
-                                        try {
-                                            multicastSock.receive(packet);
-                                        } catch (IOException e) {
-                                            close();
-                                        }
+            Message msg;
+            try {
+                msg = Codec.deserialize(packet.getData(), packet.getOffset(), packet.getLength());
+            } catch (Exception ignore) {
+                continue;
+            }
 
-                                        Message msg;
-                                        try {
-                                            msg =
-                                                    Codec.deserialize(
-                                                            packet.getData(),
-                                                            packet.getOffset(),
-                                                            packet.getLength());
-                                        } catch (Exception ignore) {
-                                            continue;
-                                        }
+            if (msg instanceof Message.Presence p
+                    && !p.nodeId().equals(nodeId)
+                    && !nodeConnections.containsKey(p.nodeId())) {
+                System.out.println(nodeId + ": Presence " + p.nodeId());
 
-                                        if (msg instanceof Message.Presence p
-                                                && !p.nodeId().equals(nodeId)
-                                                && !nodeConnections.containsKey(p.nodeId())) {
-                                            System.out.println(nodeId + ": Presence " + p.nodeId());
-
-                                            try {
-                                                Socket socket = new Socket();
-                                                socket.connect(
-                                                        new InetSocketAddress(
-                                                                p.address(), p.port()),
-                                                        CONNECTION_TIMEOUT);
-                                                addNewNodeConnection(socket);
-                                            } catch (IOException ignore) {
-                                            }
-                                        }
-                                    }
-                                });
+                try {
+                    Socket socket = new Socket();
+                    socket.connect(
+                            new InetSocketAddress(p.address(), p.port()), CONNECTION_TIMEOUT);
+                    addNewNodeConnection(socket);
+                } catch (IOException ignore) {
+                }
+            }
+        }
     }
 
     private void addNewNodeConnection(Socket socket) {

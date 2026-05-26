@@ -155,7 +155,7 @@ public abstract class NodeConnection implements AutoCloseable {
         fut.whenComplete(
                 (result, exception) -> {
                     try {
-                        if (exception != null) {
+                        if (exception != null && !fut.isCancelled()) {
                             send(new Message.TaskFailed(t.taskId()));
                         } else {
                             send(new Message.TaskResult(t.taskId(), result));
