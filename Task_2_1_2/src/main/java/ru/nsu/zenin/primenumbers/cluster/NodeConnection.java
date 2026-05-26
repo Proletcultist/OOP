@@ -188,9 +188,9 @@ public abstract class NodeConnection {
 
     private void heartbeat() {
         try {
-            HEARTBEAT_UNIT.sleep(HEARTBEAT_RATE);
-
             while (!Thread.interrupted()) {
+                HEARTBEAT_UNIT.sleep(HEARTBEAT_RATE);
+
                 pingedFuture = new CompletableFuture<>();
 
                 send(new Message.Ping());
