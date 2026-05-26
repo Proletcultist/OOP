@@ -244,7 +244,7 @@ public abstract class ClusterConnection {
                                 case NodeConnection.State.DISCONNECTED -> {
                                     UUID remote = this.getRemoteNodeId();
                                     if (remote != null) {
-                                        nodeConnections.remove(this.getRemoteNodeId());
+                                        nodeConnections.remove(remote, this);
                                     }
                                 }
                             }
