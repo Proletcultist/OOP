@@ -7,9 +7,6 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
 import java.net.InetSocketAddress;
-import java.util.Arrays;
-import java.util.concurrent.CompletableFuture;
-import ru.nsu.zenin.primenumbers.cluster.ClusterConnection;
 import ru.nsu.zenin.primenumbers.logging.Logger;
 
 public class App {
@@ -18,27 +15,16 @@ public class App {
 
         Logger.init(new BufferedWriter(new OutputStreamWriter(System.err)));
 
-        ClusterConnection con1 =
-                new ClusterConnection(group, new InetSocketAddress("127.0.0.1", 12345)) {
+        Node b_node1 =
+                new Node(group, new InetSocketAddress("127.0.0.1", 12345)) {
                     @Override
-                    public void onIncomingTask(int[] nums, CompletableFuture<Boolean> future) {
-                        System.out.println("Received task: " + Arrays.toString(nums));
-                    }
-
-                    @Override
-                    public void onClose() {}
+                    protected void onShutdown() {}
                 };
 
-        ClusterConnection con2 =
-                new ClusterConnection(group, new InetSocketAddress("127.0.0.1", 54321)) {
+        Node b_node2 =
+                new Node(group, new InetSocketAddress("127.0.0.1", 54321)) {
                     @Override
-                    public void onIncomingTask(int[] nums, CompletableFuture<Boolean> future) {
-                        System.out.println("Received task: " + Arrays.toString(nums));
-                        future.complete(false);
-                    }
-
-                    @Override
-                    public void onClose() {}
+                    protected void onShutdown() {}
                 };
 
         Node node =

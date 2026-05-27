@@ -12,6 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Stream;
 import ru.nsu.zenin.primenumbers.cluster.ClusterConnection;
 
 public abstract class Node {
@@ -59,7 +60,13 @@ public abstract class Node {
                     String command = in.next();
 
                     switch (command) {
-                        case "check" -> {}
+                        case "check" -> {
+                            try {
+                                out.println(connection.submit(readIntsArray(in)).get());
+                            } catch (Exception e) {
+                                out.println("Failed to check: " + e.getMessage());
+                            }
+                        }
                         case "shutdown" -> {
                             shutdown();
                             break;
@@ -72,7 +79,6 @@ public abstract class Node {
             }
             // If underlying stream was closed - just stop repl
             catch (Exception ignore) {
-                ignore.printStackTrace();
             }
         }
     }
@@ -90,6 +96,11 @@ public abstract class Node {
         } else {
             return false;
         }
+    }
+
+    private int[] readIntsArray(Scanner sc) {
+        String line = sc.nextLine().trim();
+        return Stream.of(line.split("\\s+")).mapToInt(s -> Integer.parseInt(s)).toArray();
     }
 
     private boolean compute(int[] nums, CompletableFuture<Boolean> fut) {
