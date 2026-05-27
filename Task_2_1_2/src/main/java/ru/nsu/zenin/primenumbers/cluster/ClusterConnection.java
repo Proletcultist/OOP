@@ -157,31 +157,6 @@ public abstract class ClusterConnection {
         }
     }
 
-    public boolean close() {
-        if (open.compareAndSet(true, false)) {
-            try {
-                multicastSock.close();
-                tcpServer.close();
-            } catch (IOException ignore) {
-            }
-
-            if (udpThread != null) {
-                udpThread.interrupt();
-            }
-            if (tcpThread != null) {
-                tcpThread.interrupt();
-            }
-
-            for (NodeConnection con : nodeConnections.values()) {
-                con.close();
-            }
-
-            return true;
-        } else {
-            return false;
-        }
-    }
-
     private void serviceTcp() {
         while (!Thread.interrupted()) {
             try {
@@ -309,6 +284,33 @@ public abstract class ClusterConnection {
                         ClusterConnection.this.onIncomingTask(nums, future);
                     }
                 };
+    }
+
+    public boolean close() {
+        if (open.compareAndSet(true, false)) {
+            try {
+                multicastSock.close();
+                tcpServer.close();
+            } catch (IOException ignore) {
+            }
+
+            if (udpThread != null) {
+                udpThread.interrupt();
+            }
+            if (tcpThread != null) {
+                tcpThread.interrupt();
+            }
+
+            for (NodeConnection con : nodeConnections.values()) {
+                con.close();
+            }
+
+            onClose();
+
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private void announceNode() throws IOException {

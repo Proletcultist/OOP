@@ -1,5 +1,11 @@
 package ru.nsu.zenin.primenumbers;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.Writer;
 import java.net.InetSocketAddress;
 import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
@@ -32,23 +38,17 @@ public class App {
                     public void onClose() {}
                 };
 
-        ClusterConnection con3 =
-                new ClusterConnection(group, new InetSocketAddress("127.0.0.1", 53321)) {
+        Node node =
+                new Node(group, new InetSocketAddress("127.0.0.1", 53321)) {
                     @Override
-                    public void onIncomingTask(int[] nums, CompletableFuture<Boolean> future) {
-                        System.out.println("Received task: " + Arrays.toString(nums));
-                        future.completeExceptionally(new Exception());
+                    protected void onShutdown() {
+                        System.exit(0);
                     }
-
-                    @Override
-                    public void onClose() {}
                 };
 
-        Thread.sleep(1000);
-
-        int[] nums = {3, 2, 1, 3, 5};
-        System.out.println(con1.submit(nums).get());
-
-        while (true) {}
+        try (Reader reader = new BufferedReader(new InputStreamReader(System.in));
+                Writer writer = new BufferedWriter(new OutputStreamWriter(System.out))) {
+            node.serviceRepl(reader, writer);
+        }
     }
 }
