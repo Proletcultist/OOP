@@ -31,6 +31,7 @@ public class App {
                 new Node(group, new InetSocketAddress("127.0.0.1", 53321)) {
                     @Override
                     protected void onShutdown() {
+                        Logger.close();
                         System.exit(0);
                     }
                 };
@@ -40,6 +41,7 @@ public class App {
             node.serviceRepl(reader, writer);
         }
 
-        Logger.close();
+        // If repl ended - shutdown node
+        node.shutdown();
     }
 }

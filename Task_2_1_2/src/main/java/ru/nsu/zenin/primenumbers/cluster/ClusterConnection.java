@@ -24,6 +24,7 @@ import ru.nsu.zenin.primenumbers.cluster.protocol.ProtocolVersion;
 import ru.nsu.zenin.primenumbers.logging.Logger;
 
 public abstract class ClusterConnection {
+    private final int MIN_CHUNK_SIZE = 32;
     private final int CONNECTION_TIMEOUT = 1000;
     private final ProtocolVersion VERSION = ProtocolVersion.LEET_VER;
 
@@ -93,7 +94,10 @@ public abstract class ClusterConnection {
             return CompletableFuture.failedFuture(new IllegalStateException("No nodes in network"));
         }
 
-        int chunkSize = (int) Math.ceil((double) nums.length / activeConnections.size());
+        int chunkSize =
+                Math.max(
+                        MIN_CHUNK_SIZE,
+                        (int) Math.ceil((double) nums.length / activeConnections.size()));
 
         List<CompletableFuture<Boolean>> subfutures = new ArrayList<CompletableFuture<Boolean>>();
         for (int i = 0; i < activeConnections.size(); i++) {
