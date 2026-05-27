@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 import ru.nsu.zenin.primenumbers.cluster.protocol.Codec;
 import ru.nsu.zenin.primenumbers.cluster.protocol.Message;
 import ru.nsu.zenin.primenumbers.cluster.protocol.ProtocolVersion;
+import ru.nsu.zenin.primenumbers.logging.Logger;
 
 public abstract class ClusterConnection {
     private final int CONNECTION_TIMEOUT = 1000;
@@ -161,7 +162,9 @@ public abstract class ClusterConnection {
         while (!Thread.interrupted()) {
             try {
                 Socket socket = tcpServer.accept();
-                System.out.println(nodeId + ": Connected new " + socket.getRemoteSocketAddress());
+                Logger.tryLog(
+                        Logger.LogLevel.INFO,
+                        nodeId + ": Connected new " + socket.getRemoteSocketAddress());
 
                 try {
                     addNewNodeConnection(socket, false);
@@ -202,7 +205,7 @@ public abstract class ClusterConnection {
             if (msg instanceof Message.Presence p
                     && !p.nodeId().equals(nodeId)
                     && !nodeConnections.containsKey(p.nodeId())) {
-                System.out.println(nodeId + ": Presence " + p.nodeId());
+                Logger.tryLog(Logger.LogLevel.INFO, nodeId + ": Presence " + p.nodeId());
 
                 try {
                     Socket socket = new Socket();
@@ -234,7 +237,7 @@ public abstract class ClusterConnection {
                 new NodeConnection(VERSION, socket, nodeId, outgoing) {
                     @Override
                     protected void onStateChange(NodeConnection.State state) {
-                        System.out.println(this.getRemoteNodeId() + ": " + state);
+                        Logger.tryLog(Logger.LogLevel.INFO, this.getRemoteNodeId() + ": " + state);
                         switch (state) {
                             case NodeConnection.State.CONNECTED -> {}
                             case NodeConnection.State.IDENTIFIED -> {

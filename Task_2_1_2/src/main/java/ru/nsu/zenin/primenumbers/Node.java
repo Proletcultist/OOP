@@ -51,10 +51,11 @@ public abstract class Node {
     public void serviceRepl(Reader is, Writer os) {
         try (PrintWriter out = new PrintWriter(os, true);
                 Scanner in = new Scanner(is)) {
-            out.print("> ");
-
             try {
                 while (true) {
+                    out.print("> ");
+                    out.flush();
+
                     String command = in.next();
 
                     switch (command) {
