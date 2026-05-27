@@ -5,6 +5,9 @@ import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.Writer;
 import java.net.InetSocketAddress;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.concurrent.CompletableFuture;
@@ -57,14 +60,38 @@ public abstract class Node {
                     out.print("> ");
                     out.flush();
 
-                    String command = in.next();
+                    String[] command = in.nextLine().trim().split("\\s+");
+                    if (command.length == 0) {
+                        continue;
+                    }
 
-                    switch (command) {
+                    switch (command[0]) {
                         case "check" -> {
                             try {
-                                out.println(connection.submit(readIntsArray(in)).get());
+                                out.println(
+                                        connection
+                                                .submit(
+                                                        Stream.of(command)
+                                                                .skip(1)
+                                                                .mapToInt(s -> Integer.parseInt(s))
+                                                                .toArray())
+                                                .get());
                             } catch (Exception e) {
                                 out.println("Failed to check: " + e.getMessage());
+                            }
+                        }
+                        case "checkf" -> {
+                            if (command.length != 2) {
+                                out.println("Wrong amount of arguments, expected: 1");
+                            } else {
+                                try {
+                                    out.println(
+                                            connection
+                                                    .submit(readIntsArray(Paths.get(command[1])))
+                                                    .get());
+                                } catch (Exception e) {
+                                    out.println("Failed to check: " + e.getMessage());
+                                }
                             }
                         }
                         case "shutdown" -> {
@@ -98,9 +125,11 @@ public abstract class Node {
         }
     }
 
-    private int[] readIntsArray(Scanner sc) {
-        String line = sc.nextLine().trim();
-        return Stream.of(line.split("\\s+")).mapToInt(s -> Integer.parseInt(s)).toArray();
+    private int[] readIntsArray(Path path) throws IOException {
+        try (Scanner sc = new Scanner(Files.newBufferedReader(path))) {
+            String line = sc.nextLine().trim();
+            return Stream.of(line.split("\\s+")).mapToInt(s -> Integer.parseInt(s)).toArray();
+        }
     }
 
     private boolean compute(int[] nums, CompletableFuture<Boolean> fut) {
