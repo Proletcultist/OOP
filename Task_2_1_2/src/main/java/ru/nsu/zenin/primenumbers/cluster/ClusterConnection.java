@@ -284,6 +284,8 @@ public abstract class ClusterConnection {
 
                     @Override
                     protected void onIncomingTask(int[] nums, CompletableFuture<Boolean> future) {
+                        Logger.tryLog(
+                                Logger.LogLevel.INFO, "Received task: " + Arrays.toString(nums));
                         ClusterConnection.this.onIncomingTask(nums, future);
                     }
                 };
