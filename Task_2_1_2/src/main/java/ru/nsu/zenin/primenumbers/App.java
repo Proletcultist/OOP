@@ -85,9 +85,13 @@ public class App {
                     @Override
                     protected void onShutdown() {
                         Logger.close();
-                        System.exit(0);
+                        synchronized (this) {
+                            this.notifyAll();
+                        }
                     }
                 };
+
+        Runtime.getRuntime().addShutdownHook(new Thread(node::shutdown));
 
         if (repl) {
             try (Reader reader = new BufferedReader(new InputStreamReader(System.in));
@@ -100,7 +104,12 @@ public class App {
         } else {
             // Freeze main thread until process is killed
             synchronized (node) {
-                node.wait();
+                try {
+                    node.wait();
+                } catch (InterruptedException e) {
+                    node.shutdown();
+                    Thread.currentThread().interrupt();
+                }
             }
         }
     }
