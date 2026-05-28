@@ -272,6 +272,10 @@ public abstract class ClusterConnection {
                                             }
                                         });
 
+                                if (!open.get()) {
+                                    nodeConnections.get(remote).close();
+                                }
+
                                 NodeConnection losingConn = toClose.get();
                                 if (losingConn != null) {
                                     losingConn.close();
