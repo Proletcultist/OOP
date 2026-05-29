@@ -174,7 +174,9 @@ public abstract class NodeConnection {
                 });
         receivedTasks.put(t.taskId(), fut);
 
-        onIncomingTask(t.numbers(), fut);
+        if (state.get() != State.DISCONNECTED) {
+            onIncomingTask(t.numbers(), fut);
+        }
     }
 
     private void serviceSendings() {
